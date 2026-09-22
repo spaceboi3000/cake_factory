@@ -6,15 +6,15 @@
   <title>⚡ Overclocking Cake Factory - Live Preview</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    @keyframes conveyorScroll {
-      0% {
-        transform: translateX(0);
-        background-position: 0 0;
-      }
-      100% {
-        transform: translateX(-48px);
-        background-position: -48px 0;
-      }
+    /* Exact 96px seamless translation matching 96px cake station width */
+    @keyframes cakeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-96px); }
+    }
+    /* Seamless background-position scrolling with no element shift */
+    @keyframes beltScroll {
+      0% { background-position: 0 0; }
+      100% { background-position: -96px 0; }
     }
     @keyframes spinRoller {
       0% { transform: rotate(0deg); }
@@ -92,8 +92,9 @@
           <span id="batteryPercent" class="font-bold text-slate-200">100.0%</span>
         </div>
 
-        <div class="my-3 w-full h-7 bg-slate-950 rounded-xl overflow-hidden p-1 border border-slate-800 flex items-center">
-          <div id="batteryBar" class="h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400 w-full"></div>
+        <!-- Enlarged & Jitter-Free Battery Bar -->
+        <div class="my-3 w-full h-9 bg-slate-950 rounded-xl overflow-hidden p-1.5 border border-slate-800 flex items-center shadow-inner">
+          <div id="batteryBar" class="h-full rounded-lg transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-500 to-teal-400 w-full shadow-[0_0_12px_rgba(16,185,129,0.3)]"></div>
         </div>
 
         <div class="border-t border-slate-800/80 pt-3 flex justify-between items-center text-xs font-mono text-slate-400">
@@ -126,63 +127,81 @@
 
     </div>
 
-    <!-- Conveyor Visual Assembly -->
-    <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col gap-5 relative">
-      <!-- Thermal Header -->
-      <div class="flex flex-col gap-2">
+    <!-- Conveyor Visual Assembly - Enlarged & 100% Seamless -->
+    <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
+      <!-- Enlarged Thermal Header -->
+      <div class="flex flex-col gap-2.5">
         <div class="flex justify-between items-center text-xs tracking-wider font-mono">
           <span class="text-slate-400 flex items-center gap-2">
-            <span id="heatIndicatorDot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span id="heatIndicatorDot" class="inline-block w-3 h-3 rounded-full bg-emerald-500"></span>
             THERMAL POWER DISSIPATION (P = C · V² · f)
           </span>
-          <span id="heatLabel" class="text-emerald-400">NOMINAL DISSIPATION — 0.0%</span>
+          <span id="heatLabel" class="text-emerald-400 font-semibold">NOMINAL DISSIPATION — 0.0%</span>
         </div>
 
-        <div class="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+        <!-- Enlarged Thermal Bar (h-6) -->
+        <div class="w-full h-6 bg-slate-950 rounded-full overflow-hidden p-1 border border-slate-800 shadow-inner">
           <div id="heatBar" class="h-full rounded-full transition-all duration-300 ease-out bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style="width: 2%;"></div>
         </div>
       </div>
 
-      <!-- Factory Floor -->
-      <div class="relative w-full h-44 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-end overflow-hidden shadow-inner">
+      <!-- Factory Floor - Enlarged (h-60) -->
+      <div class="relative w-full h-60 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-end overflow-hidden shadow-inner">
         <!-- Thermal Throttling Warning Overlay -->
         <div id="heatOverlay" class="hidden absolute inset-0 bg-red-500/10 pointer-events-none z-20 animate-pulse flex items-center justify-center">
-          <span class="text-red-400/30 text-3xl md:text-4xl font-black tracking-widest uppercase select-none">
+          <span class="text-red-400/30 text-4xl md:text-5xl font-black tracking-widest uppercase select-none">
             THERMAL THROTTLING
           </span>
         </div>
 
-        <!-- Moving Cakes -->
-        <div class="absolute top-6 left-0 right-0 h-16 overflow-hidden pointer-events-none z-10">
-          <div id="cakesTrack" class="flex items-center gap-16 w-[200%] absolute left-0" style="animation: conveyorScroll 1.5s linear infinite;">
-            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#101</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#102</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#103</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#104</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#105</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#106</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#107</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#108</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#109</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#110</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#111</span></div>
-            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#112</span></div>
+        <!-- Moving Cakes Layer: Exact 96px Station Spacing -->
+        <div class="absolute top-6 left-0 right-0 h-28 overflow-hidden pointer-events-none z-10">
+          <div id="cakesTrack" class="flex items-center w-[300%] absolute left-0" style="animation: cakeScroll 1.5s linear infinite;">
+            <!-- 24 cakes @ 96px width each = 2304px seamless repeating track -->
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#101</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#102</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#103</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#104</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#105</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#106</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#107</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#108</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#109</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#110</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#111</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#112</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#113</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#114</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#115</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#116</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#117</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#118</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#119</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#120</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#121</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🎂</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#122</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🧁</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#123</span></div>
+            <div class="flex-shrink-0 w-24 flex flex-col items-center"><span class="text-4xl md:text-5xl filter drop-shadow-lg">🍰</span><span class="text-[10px] font-mono text-slate-500 mt-1">PKG#124</span></div>
           </div>
         </div>
 
-        <!-- Conveyor Belt Tread -->
-        <div id="beltTread" class="w-full h-12 border-t-2 border-slate-700 relative z-0" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 24px, #334155 24px, #334155 48px); background-size: 48px 100%; animation: conveyorScroll 1.5s linear infinite;"></div>
+        <!-- Conveyor Belt Tread - Enlarged (h-20) with Pure Background Position Scrolling -->
+        <div id="beltTread" class="w-full h-20 border-t-2 border-slate-700 relative z-0" style="background-image: url('public/conveyor.png'), repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%; animation: beltScroll 1.5s linear infinite;"></div>
 
-        <!-- Conveyor Rollers -->
-        <div class="h-6 w-full bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4">
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
-          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+        <!-- Conveyor Rollers (h-8) -->
+        <div class="h-8 w-full bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4">
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-4 h-4 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
         </div>
       </div>
     </div>
@@ -303,18 +322,18 @@
         handleGameOver();
       }
 
-      // Update Battery Bar
+      // Update Battery Bar with smooth linear duration
       batteryPercentEl.textContent = battery.toFixed(1) + '%';
       batteryBarEl.style.width = Math.max(0, battery) + '%';
 
       if (battery > 50) {
-        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400';
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]';
         batteryPercentEl.className = 'font-bold text-slate-200';
       } else if (battery > 20) {
-        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-amber-500 to-yellow-400';
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-100 ease-linear bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]';
         batteryPercentEl.className = 'font-bold text-amber-400';
       } else {
-        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-red-600 to-rose-500 animate-pulse';
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-100 ease-linear bg-gradient-to-r from-red-600 to-rose-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]';
         batteryPercentEl.className = 'font-bold text-red-400 animate-pulse';
       }
     }, TICK_INTERVAL);
@@ -341,19 +360,19 @@
       heatBarEl.style.width = Math.max(2, heatPercent) + '%';
 
       if (heatPercent < 50) {
-        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-emerald-500';
-        heatLabelEl.className = 'text-emerald-400';
+        heatIndicatorDotEl.className = 'inline-block w-3 h-3 rounded-full bg-emerald-500';
+        heatLabelEl.className = 'text-emerald-400 font-semibold';
         heatLabelEl.textContent = 'NOMINAL DISSIPATION — ' + heatPercent.toFixed(1) + '%';
         heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]';
         heatOverlayEl.classList.add('hidden');
       } else if (heatPercent <= 80) {
-        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-400';
-        heatLabelEl.className = 'text-amber-400';
+        heatIndicatorDotEl.className = 'inline-block w-3 h-3 rounded-full bg-amber-400';
+        heatLabelEl.className = 'text-amber-400 font-semibold';
         heatLabelEl.textContent = 'ELEVATED THERMAL LOAD — ' + heatPercent.toFixed(1) + '%';
         heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]';
         heatOverlayEl.classList.add('hidden');
       } else {
-        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping';
+        heatIndicatorDotEl.className = 'inline-block w-3 h-3 rounded-full bg-red-500 animate-ping';
         heatLabelEl.className = 'text-red-400 font-bold animate-pulse';
         heatLabelEl.textContent = 'CRITICAL OVERHEATING (P ∝ f³) — ' + heatPercent.toFixed(1) + '%';
         heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.8)]';
@@ -393,7 +412,7 @@
       cakeCountEl.textContent = '0';
       batteryPercentEl.textContent = '100.0%';
       batteryBarEl.style.width = '100%';
-      batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400';
+      batteryBarEl.className = 'h-full rounded-lg transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]';
       gameOverModalEl.classList.add('hidden');
 
       cakesTrackEl.style.animationPlayState = 'running';
@@ -409,7 +428,7 @@
     // -------------------------------------------------------------------------
     btnConnectEl.addEventListener('click', async () => {
       if (!('serial' in navigator)) {
-        errorMessageEl.textContent = 'Web Serial API is not supported in this browser iframe. Open this file directly in Chrome, Edge, or Opera to connect your physical Pico!';
+        errorMessageEl.textContent = 'Web Serial API is not supported in this browser iframe. Open preview.html directly in Chrome, Edge, or Opera to connect your physical Pico!';
         errorAlertEl.classList.remove('hidden');
         return;
       }

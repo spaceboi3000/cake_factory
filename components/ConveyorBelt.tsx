@@ -41,11 +41,11 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
   return (
     <div className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
       {/* Thermal & Dynamic Power Dissipation Header */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         <div className="flex justify-between items-center text-xs tracking-wider font-mono">
           <span className="text-slate-400 flex items-center gap-2">
             <span
-              className={`inline-block w-2.5 h-2.5 rounded-full ${
+              className={`inline-block w-3 h-3 rounded-full ${
                 powerHeat > 80 ? 'bg-red-500 animate-ping' : powerHeat > 50 ? 'bg-amber-400' : 'bg-emerald-500'
               }`}
             />
@@ -56,8 +56,8 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
           </span>
         </div>
 
-        {/* Heat Progress Bar */}
-        <div className="w-full h-4 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+        {/* Heat Progress Bar - Enlarged with smooth transitions */}
+        <div className="w-full h-6 bg-slate-950 rounded-full overflow-hidden p-1 border border-slate-800 shadow-inner">
           <div
             className={`h-full rounded-full transition-all duration-300 ease-out ${heatStyle.barClass}`}
             style={{ width: `${Math.min(100, Math.max(2, powerHeat))}%` }}
@@ -65,47 +65,47 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
         </div>
       </div>
 
-      {/* Industrial Conveyor Visual Assembly */}
-      <div className="relative w-full h-48 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-end overflow-hidden shadow-inner">
+      {/* Industrial Conveyor Visual Assembly - Bigger and Fully Seamless */}
+      <div className="relative w-full h-60 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-end overflow-hidden shadow-inner">
         {/* Steam / Heat Haze Overlay when > 80% */}
         {powerHeat > 80 && !isDead && (
-          <div className="absolute inset-0 bg-red-500/10 pointer-events-none z-10 animate-pulse flex items-center justify-center">
-            <span className="text-red-400/30 text-4xl font-black tracking-widest uppercase select-none">
+          <div className="absolute inset-0 bg-red-500/10 pointer-events-none z-20 animate-pulse flex items-center justify-center">
+            <span className="text-red-400/30 text-4xl md:text-5xl font-black tracking-widest uppercase select-none">
               THERMAL THROTTLING
             </span>
           </div>
         )}
 
-        {/* Moving Cakes Layer */}
-        <div className="absolute top-8 left-0 right-0 h-16 overflow-hidden pointer-events-none z-10">
+        {/* Moving Cakes Layer - Exact 96px station width matching the 96px translation period */}
+        <div className="absolute top-6 left-0 right-0 h-28 overflow-hidden pointer-events-none z-10">
           <div
-            className="flex items-center gap-20 w-[200%] absolute left-0"
+            className="flex items-center w-[300%] absolute left-0"
             style={{
-              animationName: 'conveyorScroll',
+              animationName: 'cakeScroll',
               animationDuration: `${animationDurationSeconds}s`,
               animationTimingFunction: 'linear',
               animationIterationCount: 'infinite',
               animationPlayState: isDead ? 'paused' : 'running',
             }}
           >
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <span className="text-3xl filter drop-shadow-md select-none">
+            {[...Array(24)].map((_, i) => (
+              <div key={i} className="flex-shrink-0 w-24 flex flex-col items-center">
+                <span className="text-4xl md:text-5xl filter drop-shadow-lg select-none">
                   {i % 3 === 0 ? '🎂' : i % 3 === 1 ? '🧁' : '🍰'}
                 </span>
-                <span className="text-[10px] font-mono text-slate-500 mt-1">PKG#{100 + i}</span>
+                <span className="text-[10px] font-mono text-slate-500 mt-1">PKG#{100 + (i % 12)}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Conveyor Belt Surface (Uses seamless texture with inline CSS pattern fallback) */}
+        {/* Conveyor Belt Surface - Pure background-position scrolling (No element shift / No snap jitter) */}
         <div
-          className="w-full h-14 border-t-2 border-slate-700 relative z-0"
+          className="w-full h-20 border-t-2 border-slate-700 relative z-0"
           style={{
-            backgroundImage: `url('/conveyor.png'), repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 24px, #334155 24px, #334155 48px)`,
-            backgroundSize: '48px 100%',
-            animationName: 'conveyorScroll',
+            backgroundImage: `url('/conveyor.png'), repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px)`,
+            backgroundSize: '96px 100%',
+            animationName: 'beltScroll',
             animationDuration: `${animationDurationSeconds}s`,
             animationTimingFunction: 'linear',
             animationIterationCount: 'infinite',
@@ -114,11 +114,11 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
         />
 
         {/* Conveyor Mechanical Rollers */}
-        <div className="h-6 w-full bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4">
-          {[...Array(10)].map((_, i) => (
+        <div className="h-8 w-full bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4">
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
-              className="w-3 h-3 rounded-full bg-slate-700 border border-slate-600 relative flex items-center justify-center"
+              className="w-4 h-4 rounded-full bg-slate-700 border border-slate-600 relative flex items-center justify-center"
               style={{
                 animationName: 'spinRoller',
                 animationDuration: `${animationDurationSeconds}s`,
@@ -127,22 +127,28 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
                 animationPlayState: isDead ? 'paused' : 'running',
               }}
             >
-              <div className="w-1 h-1 bg-slate-900 rounded-full" />
+              <div className="w-1.5 h-1.5 bg-slate-900 rounded-full" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Embedded Dynamic CSS Keyframes */}
+      {/* Embedded Dynamic CSS Keyframes: Separate 96px seamless loops */}
       <style jsx>{`
-        @keyframes conveyorScroll {
+        @keyframes cakeScroll {
           0% {
             transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-96px);
+          }
+        }
+        @keyframes beltScroll {
+          0% {
             background-position: 0 0;
           }
           100% {
-            transform: translateX(-48px);
-            background-position: -48px 0;
+            background-position: -96px 0;
           }
         }
         @keyframes spinRoller {
@@ -157,4 +163,3 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead }: Conveyor
     </div>
   );
 }
-

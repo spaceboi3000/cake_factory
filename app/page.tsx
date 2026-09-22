@@ -200,15 +200,15 @@ export default function FactoryDashboard() {
               </span>
             </div>
 
-            {/* Battery Progress Bar */}
-            <div className="my-4 w-full h-8 bg-slate-950 rounded-xl overflow-hidden p-1 border border-slate-800 flex items-center">
+            {/* Battery Progress Bar - Enlarged & Jitter-Free */}
+            <div className="my-4 w-full h-10 bg-slate-950 rounded-xl overflow-hidden p-1.5 border border-slate-800 flex items-center shadow-inner">
               <div
-                className={`h-full rounded-lg transition-all duration-150 ${
+                className={`h-full rounded-lg transition-all duration-100 ease-linear ${
                   battery > 50
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                     : battery > 20
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400'
-                    : 'bg-gradient-to-r from-red-600 to-rose-500 animate-pulse'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                    : 'bg-gradient-to-r from-red-600 to-rose-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]'
                 }`}
                 style={{ width: `${Math.max(0, battery)}%` }}
               />
