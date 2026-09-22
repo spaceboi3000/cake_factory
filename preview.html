@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Overclocking Cake Factory - Live Preview</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes conveyorScroll {
+      0% {
+        transform: translateX(0);
+        background-position: 0 0;
+      }
+      100% {
+        transform: translateX(-48px);
+        background-position: -48px 0;
+      }
+    }
+    @keyframes spinRoller {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased p-4 md:p-8 min-h-screen flex flex-col items-center justify-start select-none font-sans">
+  <div class="w-full max-w-4xl flex flex-col gap-6">
+
+    <!-- Top Header -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <h1 class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase">
+            Overclocking Cake Factory
+          </h1>
+        </div>
+        <p class="text-xs md:text-sm text-slate-400 mt-1">
+          Dynamic Voltage & Frequency Scaling (DVFS) Demonstration
+        </p>
+      </div>
+
+      <!-- Hardware Connect Button -->
+      <div class="flex items-center gap-3">
+        <button id="btnConnect" class="flex items-center gap-2 text-xs md:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-600/30 active:scale-95">
+          <span>🔌 Connect Pico</span>
+        </button>
+        <span id="picoBadge" class="hidden text-xs font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-700/50 px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          PICO CONNECTED
+        </span>
+      </div>
+    </header>
+
+    <!-- Error Alert Box -->
+    <div id="errorAlert" class="hidden bg-red-950/50 border border-red-800/80 text-red-300 text-xs px-4 py-3 rounded-xl flex items-center justify-between">
+      <span id="errorMessage">⚠️ Error</span>
+      <button onclick="document.getElementById('errorAlert').classList.add('hidden')" class="text-red-400 hover:underline">Dismiss</button>
+    </div>
+
+    <!-- Primary Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Total Cakes Produced Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+        <span class="text-[11px] font-mono text-slate-400 tracking-wider">TOTAL CAKES PRODUCED</span>
+        <div class="my-3 flex items-baseline">
+          <span id="cakeCount" class="text-5xl font-black tracking-tight text-white font-mono">0</span>
+          <span class="text-slate-500 font-mono text-sm ml-2">units</span>
+        </div>
+        <div class="border-t border-slate-800/80 pt-3 flex flex-col gap-1">
+          <div class="flex justify-between text-xs font-mono">
+            <span class="text-slate-400">Optimal (1.0 GHz):</span>
+            <span class="text-emerald-400 font-bold">200 units</span>
+          </div>
+          <p class="text-[10px] text-slate-500 leading-snug">
+            Operating above 1.0 GHz reduces total yield due to cubic energy decay.
+          </p>
+        </div>
+      </div>
+
+      <!-- Battery Reserve Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+        <div class="flex justify-between items-center text-[11px] font-mono">
+          <span class="text-slate-400 tracking-wider">POWER CELL REMAINING</span>
+          <span id="batteryPercent" class="font-bold text-slate-200">100.0%</span>
+        </div>
+
+        <div class="my-3 w-full h-7 bg-slate-950 rounded-xl overflow-hidden p-1 border border-slate-800 flex items-center">
+          <div id="batteryBar" class="h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400 w-full"></div>
+        </div>
+
+        <div class="border-t border-slate-800/80 pt-3 flex justify-between items-center text-xs font-mono text-slate-400">
+          <span>Drain Rate:</span>
+          <span id="drainRate" class="text-slate-200">0.50 %/sec</span>
+        </div>
+      </div>
+
+      <!-- Frequency (Clock Speed) Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+        <div class="flex justify-between items-center text-[11px] font-mono">
+          <span class="text-slate-400 tracking-wider">PROCESSOR CLOCK (f)</span>
+          <span id="sourceLabel" class="bg-slate-800 text-indigo-300 px-2 py-0.5 rounded text-[10px]">MANUAL SLIDER</span>
+        </div>
+
+        <div class="my-3 flex items-baseline">
+          <span id="freqDisplay" class="text-5xl font-black font-mono text-indigo-400">1.00</span>
+          <span class="text-slate-400 font-mono text-lg ml-2">GHz</span>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between text-[10px] font-mono text-slate-500">
+            <span>1.0 GHz</span>
+            <span>3.0 GHz</span>
+            <span>5.0 GHz</span>
+          </div>
+          <input id="sliderFreq" type="range" min="1.0" max="5.0" step="0.05" value="1.00" class="w-full accent-indigo-500 cursor-pointer">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Conveyor Visual Assembly -->
+    <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col gap-5 relative">
+      <!-- Thermal Header -->
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center text-xs tracking-wider font-mono">
+          <span class="text-slate-400 flex items-center gap-2">
+            <span id="heatIndicatorDot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            THERMAL POWER DISSIPATION (P = C · V² · f)
+          </span>
+          <span id="heatLabel" class="text-emerald-400">NOMINAL DISSIPATION — 0.0%</span>
+        </div>
+
+        <div class="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+          <div id="heatBar" class="h-full rounded-full transition-all duration-300 ease-out bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style="width: 2%;"></div>
+        </div>
+      </div>
+
+      <!-- Factory Floor -->
+      <div class="relative w-full h-44 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-end overflow-hidden shadow-inner">
+        <!-- Thermal Throttling Warning Overlay -->
+        <div id="heatOverlay" class="hidden absolute inset-0 bg-red-500/10 pointer-events-none z-20 animate-pulse flex items-center justify-center">
+          <span class="text-red-400/30 text-3xl md:text-4xl font-black tracking-widest uppercase select-none">
+            THERMAL THROTTLING
+          </span>
+        </div>
+
+        <!-- Moving Cakes -->
+        <div class="absolute top-6 left-0 right-0 h-16 overflow-hidden pointer-events-none z-10">
+          <div id="cakesTrack" class="flex items-center gap-16 w-[200%] absolute left-0" style="animation: conveyorScroll 1.5s linear infinite;">
+            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#101</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#102</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#103</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#104</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#105</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#106</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#107</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#108</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#109</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🎂</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#110</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🧁</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#111</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🍰</span><span class="text-[9px] font-mono text-slate-500 mt-1">PKG#112</span></div>
+          </div>
+        </div>
+
+        <!-- Conveyor Belt Tread -->
+        <div id="beltTread" class="w-full h-12 border-t-2 border-slate-700 relative z-0" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 24px, #334155 24px, #334155 48px); background-size: 48px 100%; animation: conveyorScroll 1.5s linear infinite;"></div>
+
+        <!-- Conveyor Rollers -->
+        <div class="h-6 w-full bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4">
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+          <div class="roller w-3 h-3 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Footer -->
+    <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-xs text-slate-400 flex flex-col md:flex-row gap-5 items-start justify-between">
+      <div class="flex-1">
+        <h2 class="text-sm font-bold text-slate-200 mb-1">
+          The Physics of DVFS: Why did the battery drain faster?
+        </h2>
+        <p class="leading-relaxed">
+          Throughput scales <span class="text-indigo-400 font-semibold">linearly</span> with clock frequency ($f$), but dynamic CMOS power dissipation scales <span class="text-amber-400 font-semibold">cubically</span> ($P \propto V^2 \cdot f \approx f^3$). Operating at 5.0 GHz delivers 5× speed, but consumes energy at a <span class="text-red-400 font-mono font-bold">125× greater rate</span>!
+        </p>
+      </div>
+      <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto">
+        <span class="text-slate-500">// DVFS EQUATIONS</span>
+        <span class="text-slate-300">Throughput = Base × f</span>
+        <span class="text-amber-400">Power = Base × f³</span>
+        <span class="text-emerald-400">Max Yield occurs at min(f) = 1.0 GHz</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="gameOverModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-red-500/50 rounded-3xl p-7 max-w-md w-full shadow-2xl flex flex-col items-center text-center gap-5 animate-fadeIn">
+      <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-3xl">
+        💥
+      </div>
+      <div>
+        <h3 class="text-2xl font-black text-white">POWER CELL DEPLETED</h3>
+        <p class="text-xs text-red-400 font-mono mt-1 uppercase tracking-wider">
+          CPU Thermal Breakdown Occurred
+        </p>
+      </div>
+      <div class="w-full bg-slate-950 rounded-2xl p-4 border border-slate-800 flex flex-col gap-3 text-sm">
+        <div class="flex justify-between items-center font-mono">
+          <span class="text-slate-400">Your Score:</span>
+          <span id="finalScore" class="text-white font-bold">0 cakes</span>
+        </div>
+        <div class="flex justify-between items-center font-mono">
+          <span class="text-slate-400">Theoretical 1.0 GHz Max:</span>
+          <span class="text-emerald-400 font-bold">200 cakes</span>
+        </div>
+        <div id="scoreFeedback" class="border-t border-slate-800 pt-2 text-left text-xs text-slate-400">
+          Overclocking burned through your energy reserves before production could scale efficiently!
+        </div>
+      </div>
+      <button id="btnRestart" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-rose-600/30 active:scale-95 transition-all">
+        REPLACE BATTERY & RESTART
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------------------
+    // SIMULATION STATE & CONSTANTS
+    // -------------------------------------------------------------------------
+    const BASE_PRODUCTION = 0.1;
+    const BASE_DRAIN = 0.05;
+    const TICK_INTERVAL = 100; // ms
+    const THEORETICAL_MAX = 200;
+
+    let cakes = 0;
+    let battery = 100.0;
+    let isDead = false;
+    let clockSpeed = 1.0;
+    let hardwareSpeed = null;
+    let isConnected = false;
+
+    // DOM Elements
+    const cakeCountEl = document.getElementById('cakeCount');
+    const batteryPercentEl = document.getElementById('batteryPercent');
+    const batteryBarEl = document.getElementById('batteryBar');
+    const drainRateEl = document.getElementById('drainRate');
+    const freqDisplayEl = document.getElementById('freqDisplay');
+    const sliderFreqEl = document.getElementById('sliderFreq');
+    const heatIndicatorDotEl = document.getElementById('heatIndicatorDot');
+    const heatLabelEl = document.getElementById('heatLabel');
+    const heatBarEl = document.getElementById('heatBar');
+    const heatOverlayEl = document.getElementById('heatOverlay');
+    const cakesTrackEl = document.getElementById('cakesTrack');
+    const beltTreadEl = document.getElementById('beltTread');
+    const rollers = document.querySelectorAll('.roller');
+    const gameOverModalEl = document.getElementById('gameOverModal');
+    const finalScoreEl = document.getElementById('finalScore');
+    const scoreFeedbackEl = document.getElementById('scoreFeedback');
+    const btnRestartEl = document.getElementById('btnRestart');
+    const btnConnectEl = document.getElementById('btnConnect');
+    const picoBadgeEl = document.getElementById('picoBadge');
+    const sourceLabelEl = document.getElementById('sourceLabel');
+    const errorAlertEl = document.getElementById('errorAlert');
+    const errorMessageEl = document.getElementById('errorMessage');
+
+    // -------------------------------------------------------------------------
+    // SIMULATION ENGINE LOOP
+    // -------------------------------------------------------------------------
+    setInterval(() => {
+      if (isDead) return;
+
+      const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
+
+      // Linear throughput
+      cakes += BASE_PRODUCTION * effectiveSpeed;
+      cakeCountEl.textContent = Math.floor(cakes).toLocaleString();
+
+      // Cubic power drain: drain = base * f^3
+      const drain = BASE_DRAIN * Math.pow(effectiveSpeed, 3);
+      battery -= drain;
+
+      // Update drain rate display (%/sec = drain per tick * 10)
+      drainRateEl.textContent = (drain * 10).toFixed(2) + ' %/sec';
+
+      if (battery <= 0) {
+        battery = 0;
+        isDead = true;
+        handleGameOver();
+      }
+
+      // Update Battery Bar
+      batteryPercentEl.textContent = battery.toFixed(1) + '%';
+      batteryBarEl.style.width = Math.max(0, battery) + '%';
+
+      if (battery > 50) {
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400';
+        batteryPercentEl.className = 'font-bold text-slate-200';
+      } else if (battery > 20) {
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-amber-500 to-yellow-400';
+        batteryPercentEl.className = 'font-bold text-amber-400';
+      } else {
+        batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-red-600 to-rose-500 animate-pulse';
+        batteryPercentEl.className = 'font-bold text-red-400 animate-pulse';
+      }
+    }, TICK_INTERVAL);
+
+    // -------------------------------------------------------------------------
+    // DYNAMIC SPEED & HEAT UPDATES
+    // -------------------------------------------------------------------------
+    function updateFrequency(newFreq) {
+      const effectiveSpeed = Math.min(5.0, Math.max(1.0, newFreq));
+      freqDisplayEl.textContent = effectiveSpeed.toFixed(2);
+
+      // Animation duration: 1.0 GHz -> 1.5s, 5.0 GHz -> 0.3s
+      const animDuration = Math.max(0.15, 1.5 / effectiveSpeed).toFixed(3);
+      cakesTrackEl.style.animationDuration = animDuration + 's';
+      beltTreadEl.style.animationDuration = animDuration + 's';
+      rollers.forEach(r => r.style.animationDuration = animDuration + 's');
+
+      // Heat calculation: P ~ f^3 (1.0^3 = 1, 5.0^3 = 125)
+      const minP = 1.0;
+      const maxP = 125.0;
+      const curP = Math.pow(effectiveSpeed, 3);
+      const heatPercent = Math.min(100, Math.max(0, ((curP - minP) / (maxP - minP)) * 100));
+
+      heatBarEl.style.width = Math.max(2, heatPercent) + '%';
+
+      if (heatPercent < 50) {
+        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-emerald-500';
+        heatLabelEl.className = 'text-emerald-400';
+        heatLabelEl.textContent = 'NOMINAL DISSIPATION — ' + heatPercent.toFixed(1) + '%';
+        heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]';
+        heatOverlayEl.classList.add('hidden');
+      } else if (heatPercent <= 80) {
+        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-400';
+        heatLabelEl.className = 'text-amber-400';
+        heatLabelEl.textContent = 'ELEVATED THERMAL LOAD — ' + heatPercent.toFixed(1) + '%';
+        heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]';
+        heatOverlayEl.classList.add('hidden');
+      } else {
+        heatIndicatorDotEl.className = 'inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping';
+        heatLabelEl.className = 'text-red-400 font-bold animate-pulse';
+        heatLabelEl.textContent = 'CRITICAL OVERHEATING (P ∝ f³) — ' + heatPercent.toFixed(1) + '%';
+        heatBarEl.className = 'h-full rounded-full transition-all duration-300 ease-out bg-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.8)]';
+        if (!isDead) heatOverlayEl.classList.remove('hidden');
+      }
+    }
+
+    sliderFreqEl.addEventListener('input', (e) => {
+      clockSpeed = parseFloat(e.target.value);
+      if (!isConnected) {
+        updateFrequency(clockSpeed);
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // GAME OVER & RESET
+    // -------------------------------------------------------------------------
+    function handleGameOver() {
+      cakesTrackEl.style.animationPlayState = 'paused';
+      beltTreadEl.style.animationPlayState = 'paused';
+      rollers.forEach(r => r.style.animationPlayState = 'paused');
+      heatOverlayEl.classList.add('hidden');
+
+      finalScoreEl.textContent = Math.floor(cakes) + ' cakes';
+      if (cakes < THEORETICAL_MAX * 0.5) {
+        scoreFeedbackEl.textContent = 'Overclocking burned through your energy reserves before production could scale efficiently!';
+      } else {
+        scoreFeedbackEl.textContent = 'Good balance, but lower frequencies achieve maximum energy-delay product (EDP)!';
+      }
+      gameOverModalEl.classList.remove('hidden');
+    }
+
+    btnRestartEl.addEventListener('click', () => {
+      cakes = 0;
+      battery = 100.0;
+      isDead = false;
+      cakeCountEl.textContent = '0';
+      batteryPercentEl.textContent = '100.0%';
+      batteryBarEl.style.width = '100%';
+      batteryBarEl.className = 'h-full rounded-lg transition-all duration-150 bg-gradient-to-r from-emerald-500 to-teal-400';
+      gameOverModalEl.classList.add('hidden');
+
+      cakesTrackEl.style.animationPlayState = 'running';
+      beltTreadEl.style.animationPlayState = 'running';
+      rollers.forEach(r => r.style.animationPlayState = 'running');
+
+      const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
+      updateFrequency(effectiveSpeed);
+    });
+
+    // -------------------------------------------------------------------------
+    // WEB SERIAL API BRIDGE (Raspberry Pi Pico)
+    // -------------------------------------------------------------------------
+    btnConnectEl.addEventListener('click', async () => {
+      if (!('serial' in navigator)) {
+        errorMessageEl.textContent = 'Web Serial API is not supported in this browser iframe. Open this file directly in Chrome, Edge, or Opera to connect your physical Pico!';
+        errorAlertEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+
+        isConnected = true;
+        btnConnectEl.classList.add('hidden');
+        picoBadgeEl.classList.remove('hidden');
+        sourceLabelEl.textContent = 'HARDWARE (ADC0)';
+        sliderFreqEl.disabled = true;
+        sliderFreqEl.classList.add('opacity-40', 'cursor-not-allowed');
+
+        const textDecoder = new TextDecoderStream();
+        port.readable.pipeTo(textDecoder.writable);
+        const reader = textDecoder.readable.getReader();
+
+        let lineBuffer = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) {
+            lineBuffer += value;
+            const lines = lineBuffer.split('\n');
+            lineBuffer = lines.pop() ?? '';
+            for (const rawLine of lines) {
+              const val = parseFloat(rawLine.trim());
+              if (!isNaN(val) && val >= 0.9 && val <= 5.1) {
+                hardwareSpeed = Math.min(5.0, Math.max(1.0, val));
+                updateFrequency(hardwareSpeed);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        if (err.name !== 'NotFoundError') {
+          errorMessageEl.textContent = err.message || 'Failed to connect serial port.';
+          errorAlertEl.classList.remove('hidden');
+        }
+      }
+    });
+
+    // Initial state
+    updateFrequency(1.0);
+  </script>
+</body>
+</html>
