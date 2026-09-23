@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface ConveyorBeltProps {
   clockSpeed: number;
@@ -10,9 +10,111 @@ interface ConveyorBeltProps {
 }
 
 export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed }: ConveyorBeltProps) {
-  // Speed is inversely proportional to animation duration.
-  // At 1.0 GHz -> 1.5s per cycle; at 5.0 GHz -> 0.3s per cycle.
-  const animationDurationSeconds = Math.max(0.15, 1.5 / Math.max(1.0, clockSpeed));
+  const trackRef = useRef<HTMLDivElement>(null);
+  const beltRef = useRef<HTMLDivElement>(null);
+  const rollersContainerRef = useRef<HTMLDivElement>(null);
+
+  const clockSpeedRef = useRef(clockSpeed);
+  clockSpeedRef.current = clockSpeed;
+  const isDeadRef = useRef(isDead);
+  isDeadRef.current = isDead;
+
+  useEffect(() => {
+    const trackEl = trackRef.current;
+    const beltEl = beltRef.current;
+    const rollersContainer = rollersContainerRef.current;
+    if (!trackEl || !beltEl || !rollersContainer) return;
+
+    const rollers = rollersContainer.querySelectorAll<HTMLDivElement>('.roller');
+    const cakeEmojis = ['🎂', '🧁', '🍰'];
+    const CAKE_SPACING = 110;
+    const NUM_CAKES = 14;
+    let nextPkgNumber = 100;
+
+    trackEl.innerHTML = '';
+    const cakesList: Array<{
+      el: HTMLDivElement;
+      emojiEl: HTMLSpanElement;
+      badgeEl: HTMLSpanElement;
+      x: number;
+      pkg: number;
+    }> = [];
+
+    for (let i = 0; i < NUM_CAKES; i++) {
+      const cakeEl = document.createElement('div');
+      cakeEl.className = 'w-24 flex flex-col items-center justify-end pb-1.5 absolute bottom-0 select-none';
+      const pkg = nextPkgNumber++;
+      const emoji = cakeEmojis[i % 3];
+      cakeEl.innerHTML = `
+        <span class="cakeEmoji text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
+          ${emoji}
+        </span>
+        <span class="cakeBadge text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+          PKG#${pkg}
+        </span>
+      `;
+      trackEl.appendChild(cakeEl);
+      cakesList.push({
+        el: cakeEl,
+        emojiEl: cakeEl.querySelector('.cakeEmoji')!,
+        badgeEl: cakeEl.querySelector('.cakeBadge')!,
+        x: i * CAKE_SPACING,
+        pkg: pkg,
+      });
+    }
+
+    let lastAnimTime = performance.now();
+    let beltScrollOffset = 0;
+    let rollerRotationDeg = 0;
+    let animId: number;
+
+    function render(now: number) {
+      const dt = Math.min(0.1, (now - lastAnimTime) / 1000);
+      lastAnimTime = now;
+
+      if (!isDeadRef.current) {
+        const speed = Math.max(1.0, Math.min(5.0, clockSpeedRef.current));
+        const pxPerSec = CAKE_SPACING * speed;
+
+        for (let i = 0; i < cakesList.length; i++) {
+          const c = cakesList[i];
+          c.x -= pxPerSec * dt;
+          c.el.style.transform = `translateX(${c.x}px)`;
+        }
+
+        for (let i = 0; i < cakesList.length; i++) {
+          const c = cakesList[i];
+          if (c.x < -120) {
+            let maxX = -120;
+            for (let j = 0; j < cakesList.length; j++) {
+              if (cakesList[j].x > maxX) maxX = cakesList[j].x;
+            }
+            c.x = maxX + CAKE_SPACING;
+            c.el.style.transform = `translateX(${c.x}px)`;
+            c.pkg = nextPkgNumber++;
+            c.emojiEl.textContent = cakeEmojis[c.pkg % 3];
+            c.badgeEl.textContent = `PKG#${c.pkg}`;
+          }
+        }
+
+        beltScrollOffset = (beltScrollOffset + pxPerSec * dt) % 96;
+        beltEl.style.backgroundPosition = `-${beltScrollOffset}px 0`;
+
+        rollerRotationDeg = (rollerRotationDeg + 360 * speed * dt) % 360;
+        rollers.forEach((r) => {
+          r.style.transform = `rotate(${rollerRotationDeg}deg)`;
+        });
+      }
+
+      animId = requestAnimationFrame(render);
+    }
+
+    animId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animId);
+    };
+  }, []);
 
   // Determine power heat bar color and visual pulse (preserving exact gauge names & labels)
   const getHeatBarStyle = () => {
@@ -132,56 +234,25 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
 
           {/* Original Moving Cakes: Clean, Non-Layered Cakes from First Version */}
           <div className="relative h-28 overflow-hidden pointer-events-none w-full">
-            <div
-              className="flex items-end w-[300%] absolute left-0 bottom-0"
-              style={{
-                animationName: 'cakeScroll',
-                animationDuration: `${animationDurationSeconds}s`,
-                animationTimingFunction: 'linear',
-                animationIterationCount: 'infinite',
-                animationPlayState: isDead ? 'paused' : 'running',
-              }}
-            >
-              {[...Array(24)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-24 flex flex-col items-center justify-end pb-1.5">
-                  <span className="text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
-                    {i % 3 === 0 ? '🎂' : i % 3 === 1 ? '🧁' : '🍰'}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
-                    PKG#{100 + (i % 12)}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <div ref={trackRef} className="w-full h-full relative" />
           </div>
 
           {/* Conveyor Belt Surface (Dark Rubber Tread with 96px Repeat) */}
           <div
+            ref={beltRef}
             className="w-full h-16 border-y-2 border-slate-700 relative z-10"
             style={{
               backgroundImage: `repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px)`,
               backgroundSize: '96px 100%',
-              animationName: 'beltScroll',
-              animationDuration: `${animationDurationSeconds}s`,
-              animationTimingFunction: 'linear',
-              animationIterationCount: 'infinite',
-              animationPlayState: isDead ? 'paused' : 'running',
             }}
           />
 
           {/* Conveyor Mechanical Cylinders / Rollers (Re-added, rotating directly under the belt) */}
-          <div className="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
+          <div ref={rollersContainerRef} className="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
             {[...Array(14)].map((_, i) => (
               <div
                 key={i}
-                className="w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"
-                style={{
-                  animationName: 'spinRoller',
-                  animationDuration: `${animationDurationSeconds}s`,
-                  animationTimingFunction: 'linear',
-                  animationIterationCount: 'infinite',
-                  animationPlayState: isDead ? 'paused' : 'running',
-                }}
+                className="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"
               >
                 <div className="w-1.5 h-1.5 bg-slate-900 rounded-full" />
               </div>
@@ -190,34 +261,6 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
 
         </div>
       </div>
-
-      {/* Embedded Dynamic CSS Keyframes: Exact 96px seamless loops */}
-      <style jsx>{`
-        @keyframes cakeScroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-96px);
-          }
-        }
-        @keyframes beltScroll {
-          0% {
-            background-position: 0 0;
-          }
-          100% {
-            background-position: -96px 0;
-          }
-        }
-        @keyframes spinRoller {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }

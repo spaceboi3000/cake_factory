@@ -6,20 +6,6 @@
   <title>⚡ Overclocking Cake Factory - Authentic Purble Place Edition</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    /* Exact 96px seamless translation matching 96px cake station width */
-    @keyframes cakeScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-96px); }
-    }
-    /* Seamless background-position scrolling */
-    @keyframes beltScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: -96px 0; }
-    }
-    @keyframes spinRoller {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.96); }
       to { opacity: 1; transform: scale(1); }
@@ -136,28 +122,28 @@
 
             <!-- Original Moving Cakes: Clean, Non-Layered Cakes from First Version -->
             <div class="relative h-28 overflow-hidden pointer-events-none w-full">
-              <div id="cakesTrack" class="flex items-end w-[300%] absolute left-0 bottom-0" style="animation: cakeScroll 1.5s linear infinite;"></div>
+              <div id="cakesTrack" class="w-full h-full relative"></div>
             </div>
 
             <!-- Conveyor Belt Surface (Dark Rubber Tread with 96px Repeat) -->
-            <div id="beltTread" class="w-full h-16 border-y-2 border-slate-700 relative z-10" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%; animation: beltScroll 1.5s linear infinite;"></div>
+            <div id="beltTread" class="w-full h-16 border-y-2 border-slate-700 relative z-10" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%;"></div>
 
             <!-- Conveyor Mechanical Rollers / Cylinders (Re-added, rotating directly under the belt) -->
-            <div class="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+            <div id="rollersContainer" class="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
             </div>
 
           </div>
@@ -305,22 +291,86 @@
   </div>
 
   <script>
-    // Populate the 24 original version 1 cakes in the conveyor track
+    // -------------------------------------------------------------------------
+    // CONTINUOUS CONVEYOR BELT ENGINE (Cakes never change while on belt)
+    // -------------------------------------------------------------------------
     const cakesTrackEl = document.getElementById('cakesTrack');
     const cakeEmojis = ['🎂', '🧁', '🍰'];
-    for (let i = 0; i < 24; i++) {
-      const cakeDiv = document.createElement('div');
-      cakeDiv.className = 'flex-shrink-0 w-24 flex flex-col items-center justify-end pb-1.5';
-      cakeDiv.innerHTML = `
-        <span class="text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
-          ${cakeEmojis[i % 3]}
+    const CAKE_SPACING = 110;
+    const NUM_CAKES = 14;
+    let nextPkgNumber = 100;
+
+    cakesTrackEl.innerHTML = '';
+    const cakesList = [];
+
+    for (let i = 0; i < NUM_CAKES; i++) {
+      const cakeEl = document.createElement('div');
+      cakeEl.className = 'w-24 flex flex-col items-center justify-end pb-1.5 absolute bottom-0 select-none';
+      const pkg = nextPkgNumber++;
+      const emoji = cakeEmojis[i % 3];
+      cakeEl.innerHTML = `
+        <span class="cakeEmoji text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
+          ${emoji}
         </span>
-        <span class="text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
-          PKG#${100 + (i % 12)}
+        <span class="cakeBadge text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+          PKG#${pkg}
         </span>
       `;
-      cakesTrackEl.appendChild(cakeDiv);
+      cakesTrackEl.appendChild(cakeEl);
+      cakesList.push({
+        el: cakeEl,
+        emojiEl: cakeEl.querySelector('.cakeEmoji'),
+        badgeEl: cakeEl.querySelector('.cakeBadge'),
+        x: i * CAKE_SPACING,
+        pkg: pkg,
+      });
     }
+
+    let lastAnimTime = performance.now();
+    let beltScrollOffset = 0;
+    let rollerRotationDeg = 0;
+
+    function renderConveyor(now) {
+      const dt = Math.min(0.1, (now - lastAnimTime) / 1000);
+      lastAnimTime = now;
+
+      if (!isDead) {
+        const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
+        const pxPerSec = CAKE_SPACING * effectiveSpeed;
+
+        for (let i = 0; i < cakesList.length; i++) {
+          const c = cakesList[i];
+          c.x -= pxPerSec * dt;
+          c.el.style.transform = `translateX(${c.x}px)`;
+        }
+
+        for (let i = 0; i < cakesList.length; i++) {
+          const c = cakesList[i];
+          if (c.x < -120) {
+            let maxX = -120;
+            for (let j = 0; j < cakesList.length; j++) {
+              if (cakesList[j].x > maxX) maxX = cakesList[j].x;
+            }
+            c.x = maxX + CAKE_SPACING;
+            c.el.style.transform = `translateX(${c.x}px)`;
+            c.pkg = nextPkgNumber++;
+            c.emojiEl.textContent = cakeEmojis[c.pkg % 3];
+            c.badgeEl.textContent = `PKG#${c.pkg}`;
+          }
+        }
+
+        beltScrollOffset = (beltScrollOffset + pxPerSec * dt) % 96;
+        beltTreadEl.style.backgroundPosition = `-${beltScrollOffset}px 0`;
+
+        rollerRotationDeg = (rollerRotationDeg + 360 * effectiveSpeed * dt) % 360;
+        rollers.forEach((r) => {
+          r.style.transform = `rotate(${rollerRotationDeg}deg)`;
+        });
+      }
+
+      requestAnimationFrame(renderConveyor);
+    }
+    requestAnimationFrame(renderConveyor);
 
     // -------------------------------------------------------------------------
     // SIMULATION STATE & CONSTANTS
@@ -413,11 +463,7 @@
       stageSpeedBadgeEl.textContent = effectiveSpeed.toFixed(2) + ' GHz';
       sliderFreqEl.value = effectiveSpeed;
 
-      // Animation duration: 1.0 GHz -> 1.5s, 5.0 GHz -> 0.3s
-      const animDuration = Math.max(0.15, 1.5 / effectiveSpeed).toFixed(3);
-      cakesTrackEl.style.animationDuration = animDuration + 's';
-      beltTreadEl.style.animationDuration = animDuration + 's';
-      rollers.forEach(r => r.style.animationDuration = animDuration + 's');
+
 
       // Heat calculation: P ~ f^3 (1.0^3 = 1, 5.0^3 = 125)
       const minP = 1.0;
@@ -473,9 +519,6 @@
     // GAME OVER & RESET
     // -------------------------------------------------------------------------
     function handleGameOver() {
-      cakesTrackEl.style.animationPlayState = 'paused';
-      beltTreadEl.style.animationPlayState = 'paused';
-      rollers.forEach(r => r.style.animationPlayState = 'paused');
       heatOverlayEl.classList.add('hidden');
 
       finalScoreEl.textContent = Math.floor(cakes) + ' cakes';
@@ -496,10 +539,6 @@
       batteryBarEl.style.width = '100%';
       batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
       gameOverModalEl.classList.add('hidden');
-
-      cakesTrackEl.style.animationPlayState = 'running';
-      beltTreadEl.style.animationPlayState = 'running';
-      rollers.forEach(r => r.style.animationPlayState = 'running');
 
       const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
       updateFrequency(effectiveSpeed);
