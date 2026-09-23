@@ -5,9 +5,10 @@ import { useFactorySimulation } from '../hooks/useFactorySimulation';
 import ConveyorBelt from '../components/ConveyorBelt';
 
 export default function FactoryDashboard() {
-  // Serial and Clock Speed States
+  // Serial, Clock Speed, and VLIW Computing States
   const [hardwareClockSpeed, setHardwareClockSpeed] = useState<number | null>(null);
   const [manualClockSpeed, setManualClockSpeed] = useState<number>(1.0);
+  const [vliwEnabled, setVliwEnabled] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [serialError, setSerialError] = useState<string | null>(null);
 
@@ -19,7 +20,7 @@ export default function FactoryDashboard() {
   // Active clock speed: hardware potentiometer takes precedence when connected
   const effectiveClockSpeed = isConnected && hardwareClockSpeed !== null ? hardwareClockSpeed : manualClockSpeed;
 
-  // Mount the simulation game engine
+  // Mount the simulation game engine (supports VLIW dual-pipeline mode)
   const {
     cakes,
     battery,
@@ -27,7 +28,7 @@ export default function FactoryDashboard() {
     powerHeat,
     theoreticalMaxCakes,
     resetSimulation,
-  } = useFactorySimulation(effectiveClockSpeed);
+  } = useFactorySimulation(effectiveClockSpeed, vliwEnabled);
 
   // -------------------------------------------------------------------------
   // WEB SERIAL API BRIDGE (Non-blocking Line-Buffered Reader)
@@ -166,12 +167,14 @@ export default function FactoryDashboard() {
             </div>
           )}
 
-          {/* The Large Purble Place Bakery Conveyor Component */}
+          {/* The Large Purble Place Bakery Conveyor Component (Supports VLIW Dual Lane) */}
           <ConveyorBelt
             clockSpeed={effectiveClockSpeed}
             powerHeat={powerHeat}
             isDead={isDead}
             onSetSpeed={(s) => setManualClockSpeed(s)}
+            vliwEnabled={vliwEnabled}
+            onToggleVliw={setVliwEnabled}
           />
 
           {/* Scroll Down Hint Banner */}
@@ -298,9 +301,9 @@ export default function FactoryDashboard() {
               </p>
             </div>
             <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto shadow-sm">
-              <span className="text-purple-600 font-bold">// DVFS EQUATIONS</span>
-              <span className="text-slate-700 font-bold">Throughput = Base × f</span>
-              <span className="text-rose-600 font-bold">Power = Base × f³</span>
+              <span className="text-purple-600 font-bold">// DVFS & VLIW EQUATIONS</span>
+              <span className="text-slate-700 font-bold">Throughput = Base × f × (VLIW ? 2 : 1)</span>
+              <span className="text-rose-600 font-bold">Power = Base × f³ × (VLIW ? 2 : 1)</span>
               <span className="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
             </div>
           </section>

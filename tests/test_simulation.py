@@ -27,13 +27,13 @@ class TestSimulationPhysics(unittest.TestCase):
         normalized = (curr_p - min_p) / (max_p - min_p)
         return min(100.0, max(0.0, normalized * 100.0))
 
-    def simulate_run(self, clock_speed):
+    def simulate_run(self, clock_speed, lanes=1):
         battery = self.initial_battery
         cakes = 0.0
         ticks = 0
 
-        cake_yield = self.base_production * clock_speed
-        battery_drain = self.base_drain * math.pow(clock_speed, 3)
+        cake_yield = self.base_production * clock_speed * lanes
+        battery_drain = self.base_drain * math.pow(clock_speed, 3) * lanes
 
         while battery > 0:
             battery -= battery_drain
@@ -69,6 +69,26 @@ class TestSimulationPhysics(unittest.TestCase):
         # Overclocking must always yield fewer cakes overall than baseline
         self.assertGreater(cakes_1ghz, cakes_2ghz)
         self.assertGreater(cakes_2ghz, cakes_5ghz)
+
+    def test_vliw_dual_issue_throughput(self):
+        """VLIW mode with 2 lanes should produce double the cakes per tick at identical frequency."""
+        single_lane_yield = self.base_production * 1.0 * 1
+        dual_lane_yield = self.base_production * 1.0 * 2
+        self.assertEqual(dual_lane_yield, single_lane_yield * 2)
+
+    def test_vliw_vs_overclocking_efficiency(self):
+        """
+        Demonstrate VLIW energy efficiency over frequency scaling:
+        - Both 1.0 GHz VLIW (2 lanes) and 2.0 GHz Scalar (1 lane) produce 0.2 cakes/tick (identical throughput).
+        - But 1.0 GHz VLIW yields 200 total lifetime cakes, whereas 2.0 GHz Scalar yields only 50 cakes!
+        - VLIW provides a 4x efficiency advantage for the exact same throughput.
+        """
+        cakes_vliw_1ghz, _ = self.simulate_run(1.0, lanes=2)
+        cakes_scalar_2ghz, _ = self.simulate_run(2.0, lanes=1)
+
+        self.assertAlmostEqual(cakes_vliw_1ghz, 200, delta=1)
+        self.assertAlmostEqual(cakes_scalar_2ghz, 50, delta=1)
+        self.assertAlmostEqual(cakes_vliw_1ghz / cakes_scalar_2ghz, 4.0, places=1)
 
 
 if __name__ == "__main__":

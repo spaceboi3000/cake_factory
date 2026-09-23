@@ -26,26 +26,32 @@ const BASE_DRAIN = 0.05;
 const MIN_CLOCK = 1.0;
 const MAX_CLOCK = 5.0;
 
-export function useFactorySimulation(inputClockSpeed: number): FactorySimulationState {
+export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boolean = false): FactorySimulationState {
   const [cakes, setCakes] = useState<number>(0);
   const [battery, setBattery] = useState<number>(INITIAL_BATTERY);
   const [isDead, setIsDead] = useState<boolean>(false);
 
-  // Mutable ref to clock speed to prevent timer teardown on rapid serial updates
+  // Mutable ref to clock speed and vliw state to prevent timer teardown on rapid updates
   const clockSpeedRef = useRef<number>(inputClockSpeed);
   useEffect(() => {
     clockSpeedRef.current = Math.min(MAX_CLOCK, Math.max(MIN_CLOCK, inputClockSpeed));
   }, [inputClockSpeed]);
+
+  const vliwRef = useRef<boolean>(vliwEnabled);
+  useEffect(() => {
+    vliwRef.current = vliwEnabled;
+  }, [vliwEnabled]);
 
   // Derive instantaneous heat on a 0-100% scale based on cubic power scaling (P ~ f^3)
   // 1.0^3 = 1, 5.0^3 = 125
   const powerHeat = useMemo(() => {
     const minPower = Math.pow(MIN_CLOCK, 3); // 1.0
     const maxPower = Math.pow(MAX_CLOCK, 3); // 125.0
-    const currentPower = Math.pow(clockSpeedRef.current, 3);
+    const lanes = vliwEnabled ? 2 : 1;
+    const currentPower = Math.pow(clockSpeedRef.current, 3) * lanes;
     const normalized = (currentPower - minPower) / (maxPower - minPower);
     return Math.min(100, Math.max(0, normalized * 100));
-  }, [inputClockSpeed]);
+  }, [inputClockSpeed, vliwEnabled]);
 
   // Theoretical maximum cakes: score if operated strictly at optimal 1.0 GHz efficiency.
   // Lifetime ticks at 1.0 GHz = INITIAL_BATTERY / (BASE_DRAIN * 1.0^3) = 100 / 0.05 = 2000 ticks.
@@ -61,12 +67,13 @@ export function useFactorySimulation(inputClockSpeed: number): FactorySimulation
 
     const intervalId = setInterval(() => {
       const currentSpeed = clockSpeedRef.current;
+      const lanes = vliwRef.current ? 2 : 1;
 
-      // 1. Linear Throughput: cakes += base * f
-      const cakeYield = BASE_PRODUCTION * currentSpeed;
+      // 1. Linear Throughput: cakes += base * f * lanes
+      const cakeYield = BASE_PRODUCTION * currentSpeed * lanes;
 
-      // 2. Cubic Power Drain: drain = base * f^3
-      const batteryDrain = BASE_DRAIN * Math.pow(currentSpeed, 3);
+      // 2. Cubic Power Drain: drain = base * f^3 * lanes
+      const batteryDrain = BASE_DRAIN * Math.pow(currentSpeed, 3) * lanes;
 
       setBattery((prevBattery) => {
         const nextBattery = prevBattery - batteryDrain;
