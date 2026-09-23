@@ -33,3 +33,4 @@ All game graphics have been split into modular placeholder sprites located in [`
 1. Create or export your PNG image with transparency.
 2. Save it directly to `public/sprites/<filename>.png` replacing the placeholder.
 3. Refresh your browser window—the game will immediately display your new artwork!
+

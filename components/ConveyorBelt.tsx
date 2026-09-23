@@ -56,7 +56,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
           </span>
         </div>
 
-        {/* Heat Progress Bar - Enlarged with glossy border */}
+        {/* Heat Progress Bar */}
         <div className="w-full h-7 bg-slate-200/80 rounded-full overflow-hidden p-1 border-2 border-slate-300 shadow-inner">
           <div
             className={`h-full rounded-full transition-all duration-300 ease-out ${heatStyle.barClass}`}
@@ -65,72 +65,62 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
         </div>
       </div>
 
-      {/* Massive Purble Place Bakery Stage (Height 680px for full immersive view) */}
-      <div className="relative w-full h-[680px] bg-gradient-to-b from-[#fce7f3] via-[#ffedd5] to-[#fed7aa] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner">
-
-        {/* Top Zone: Order Screen & Overhead Dispensers */}
-        <div className="w-full pt-4 px-6 flex justify-between items-start z-10 select-none">
+      {/* Massive Purble Place Bakery Stage (680px Height with Authentic In-Game Background) */}
+      <div
+        className="relative w-full h-[680px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center"
+        style={{ backgroundImage: `url('/sprites/purble_background.png')` }}
+      >
+        {/* Top Zone: Authentic Order Screen & Overhead Dispensers */}
+        <div className="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
           {/* Order Screen (TV Monitor) */}
           <div className="flex flex-col items-center">
             <img
               src="/sprites/order_tv.png"
-              alt="Order TV Screen [order_tv.png]"
-              className="w-36 h-24 object-contain filter drop-shadow-md"
+              alt="Order TV Screen"
+              className="w-36 h-28 object-contain filter drop-shadow-lg"
             />
-            <span className="text-[10px] font-mono text-purple-700 font-bold bg-white/70 px-2 py-0.5 rounded-full mt-1">
-              order_tv.png
-            </span>
           </div>
 
           {/* Overhead Dispensers Rack */}
-          <div className="flex gap-6 items-start">
+          <div className="flex gap-8 items-start">
             {/* Batter Dispenser */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_batter.png"
-                alt="Batter Dispenser [dispenser_batter.png]"
-                className="w-28 h-36 object-contain filter drop-shadow-md"
+                alt="Batter Dispenser"
+                className="w-32 h-40 object-contain filter drop-shadow-xl"
               />
-              <span className="text-[9px] font-mono text-purple-700 bg-white/70 px-1.5 rounded mt-0.5">
-                dispenser_batter.png
-              </span>
             </div>
 
             {/* Icing Dispenser */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_icing.png"
-                alt="Icing Dispenser [dispenser_icing.png]"
-                className="w-28 h-36 object-contain filter drop-shadow-md"
+                alt="Icing Dispenser"
+                className="w-32 h-40 object-contain filter drop-shadow-xl"
               />
-              <span className="text-[9px] font-mono text-rose-700 bg-white/70 px-1.5 rounded mt-0.5">
-                dispenser_icing.png
-              </span>
             </div>
 
             {/* Sprinkle Dispenser */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_sprinkles.png"
-                alt="Sprinkle Dispenser [dispenser_sprinkles.png]"
-                className="w-28 h-36 object-contain filter drop-shadow-md"
+                alt="Sprinkle Dispenser"
+                className="w-32 h-40 object-contain filter drop-shadow-xl"
               />
-              <span className="text-[9px] font-mono text-cyan-700 bg-white/70 px-1.5 rounded mt-0.5">
-                dispenser_sprinkles.png
-              </span>
             </div>
           </div>
 
-          {/* Clock Speed Indicator in Top-Right Corner */}
-          <div className="bg-white/80 border-2 border-purple-300 rounded-2xl p-3 flex flex-col items-center shadow-md">
-            <span className="text-[10px] font-mono font-bold text-purple-800">SPEED</span>
+          {/* Current Speed Badge */}
+          <div className="bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
+            <span className="text-[10px] font-mono font-bold text-purple-800">FREQUENCY</span>
             <span className="text-xl font-black font-mono text-purple-900">{clockSpeed.toFixed(2)} GHz</span>
           </div>
         </div>
 
         {/* Thermal Throttling Warning Overlay (Exact Name Kept) */}
         {powerHeat > 80 && !isDead && (
-          <div className="absolute inset-0 bg-rose-500/20 backdrop-blur-[1px] pointer-events-none z-30 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-0 bg-rose-500/25 backdrop-blur-[1px] pointer-events-none z-30 animate-pulse flex items-center justify-center">
             <div className="bg-rose-600/95 text-white border-2 border-white px-8 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
               <span className="text-3xl animate-spin">⚠️</span>
               <span className="text-2xl font-black tracking-widest font-mono uppercase">
@@ -140,7 +130,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
           </div>
         )}
 
-        {/* Middle & Lower Stage: Conveyor Track & Purble Place Control Console */}
+        {/* Middle & Lower Stage: Conveyor Track & Console */}
         <div className="w-full flex flex-col justify-end relative z-20">
 
           {/* Moving Cakes Layer: 128px Repeat Period */}
@@ -157,68 +147,67 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
             >
               {[...Array(20)].map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-32 flex flex-col items-center justify-end pb-0.5">
-                  {/* Layered Purble Place Cake Built with Placeholder Sprites */}
-                  <div className="flex flex-col items-center filter drop-shadow-md select-none transform transition-transform">
-                    {/* Topper: Smiley or Cherry */}
+                  {/* Layered Purble Place Cake Built with Authentic Sprites */}
+                  <div className="flex flex-col items-center filter drop-shadow-lg select-none transform transition-transform">
+                    {/* Topper: Authentic Smiley or Cherry */}
                     <img
                       src={i % 2 === 0 ? '/sprites/cake_topper_smiley.png' : '/sprites/cake_topper_strawberry.png'}
                       alt="Cake Topper"
-                      className="w-8 h-8 object-contain -mb-1 z-10"
+                      className="w-10 h-10 object-contain -mb-1.5 z-10 filter drop-shadow-sm"
                     />
                     {/* Top Layer */}
                     <img
                       src="/sprites/cake_top_layer.png"
                       alt="Top Layer"
-                      className="w-20 h-7 object-contain -mb-1"
+                      className="w-22 h-9 object-contain -mb-1"
                     />
                     {/* Cream Layer */}
                     <img
                       src="/sprites/cake_cream.png"
                       alt="Cream Layer"
-                      className="w-22 h-4 object-contain -mb-1"
+                      className="w-24 h-5 object-contain -mb-1"
                     />
                     {/* Middle Layer */}
                     <img
                       src="/sprites/cake_middle_layer.png"
                       alt="Middle Layer"
-                      className="w-24 h-8 object-contain -mb-1"
+                      className="w-26 h-9 object-contain -mb-1"
                     />
                     {/* Cream Layer */}
                     <img
                       src="/sprites/cake_cream.png"
                       alt="Cream Layer"
-                      className="w-24 h-4 object-contain -mb-1"
+                      className="w-26 h-5 object-contain -mb-1"
                     />
                     {/* Bottom Layer */}
                     <img
                       src="/sprites/cake_bottom_layer.png"
                       alt="Bottom Layer"
-                      className="w-26 h-9 object-contain"
+                      className="w-28 h-10 object-contain"
                     />
                   </div>
 
                   {/* Scalloped Cake Doily / Plate */}
                   <img
                     src="/sprites/cake_plate.png"
-                    alt="Cake Plate [cake_plate.png]"
-                    className="w-28 h-7 object-contain mt-0.5"
+                    alt="Cake Plate"
+                    className="w-28 h-8 object-contain mt-0.5 filter drop-shadow-sm"
                   />
                 </div>
               ))}
             </div>
 
-            {/* Trash Chute on the Right Edge (Purble Place Style) */}
+            {/* Authentic Trash Chute on Right Edge */}
             <div className="absolute right-4 bottom-0 z-30 pointer-events-auto flex flex-col items-center">
               <img
                 src="/sprites/trash_can.png"
-                alt="Trash Chute [trash_can.png]"
-                className="w-20 h-36 object-contain filter drop-shadow-lg"
+                alt="Trash Chute"
+                className="w-24 h-40 object-contain filter drop-shadow-2xl"
               />
-              <span className="text-[9px] font-mono text-slate-600 bg-white/80 px-1 rounded">trash_can.png</span>
             </div>
           </div>
 
-          {/* Conveyor Belt Surface (Repeating 128px Tread) */}
+          {/* Conveyor Belt Surface (Repeating Authentic 128px Tread) */}
           <div
             className="w-full h-16 border-y-2 border-slate-600 relative z-10"
             style={{
@@ -238,7 +227,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               <img
                 key={i}
                 src="/sprites/conveyor_roller.png"
-                alt="Roller [conveyor_roller.png]"
+                alt="Roller"
                 className="w-6 h-6 object-contain shadow-sm"
                 style={{
                   animationName: 'spinRoller',
@@ -251,45 +240,45 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
             ))}
           </div>
 
-          {/* Purble Place Control Console Lower Area */}
-          <div className="w-full bg-[#f5f3ff] border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Console Sprite Placeholder */}
+          {/* Purble Place Authentic Control Console Lower Area */}
+          <div className="w-full bg-[#f5f3ff]/95 border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Authentic Console Panel Graphic */}
             <div className="flex items-center gap-2">
               <img
                 src="/sprites/console_panel.png"
-                alt="Console Panel [console_panel.png]"
+                alt="Console Panel"
                 className="max-h-24 max-w-full object-contain filter drop-shadow-md rounded-xl"
               />
             </div>
 
-            {/* Quick Action Push Buttons (Green 1.0 GHz & Purple 5.0 GHz) */}
-            <div className="flex items-center gap-4 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-sm">
+            {/* Authentic 3D Push Buttons (Green 1.0 GHz & Purple 5.0 GHz) */}
+            <div className="flex items-center gap-5 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-md">
               <button
                 type="button"
                 onClick={() => onSetSpeed && onSetSpeed(1.0)}
                 className="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform"
-                title="Click to set 1.0 GHz Baseline"
+                title="Click for 1.0 GHz Baseline"
               >
                 <img
                   src="/sprites/button_green.png"
-                  alt="Green Button [button_green.png]"
-                  className="w-14 h-14 object-contain"
+                  alt="Green Button"
+                  className="w-16 h-16 object-contain filter drop-shadow-md"
                 />
-                <span className="text-[10px] font-mono font-bold text-emerald-700 mt-0.5">1.0 GHz</span>
+                <span className="text-[10px] font-mono font-bold text-emerald-700 mt-1">1.0 GHz</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onSetSpeed && onSetSpeed(5.0)}
                 className="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform"
-                title="Click to set 5.0 GHz Turbo"
+                title="Click for 5.0 GHz Turbo"
               >
                 <img
                   src="/sprites/button_purple.png"
-                  alt="Purple Button [button_purple.png]"
-                  className="w-14 h-14 object-contain"
+                  alt="Purple Button"
+                  className="w-16 h-16 object-contain filter drop-shadow-md"
                 />
-                <span className="text-[10px] font-mono font-bold text-purple-700 mt-0.5">5.0 GHz</span>
+                <span className="text-[10px] font-mono font-bold text-purple-700 mt-1">5.0 GHz</span>
               </button>
             </div>
           </div>

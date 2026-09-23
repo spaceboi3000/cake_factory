@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚡ Overclocking Cake Factory - Purble Place Edition</title>
+  <title>⚡ Overclocking Cake Factory - Authentic Purble Place Edition</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     /* Exact 128px seamless translation matching 128px cake station width */
@@ -69,7 +69,7 @@
         <button onclick="document.getElementById('errorAlert').classList.add('hidden')" class="text-rose-600 font-bold hover:underline">Dismiss</button>
       </div>
 
-      <!-- Purble Place Stage Visual Assembly (Enlarged to 680px) -->
+      <!-- Purble Place Stage Visual Assembly (Enlarged to 680px with Authentic In-Game Background) -->
       <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
 
         <!-- Thermal & Dynamic Power Dissipation Header (Exact Gauge Names Kept) -->
@@ -88,45 +88,41 @@
           </div>
         </div>
 
-        <!-- Purble Place Large Stage View (680px Height) -->
-        <div class="relative w-full h-[680px] bg-gradient-to-b from-[#fce7f3] via-[#ffedd5] to-[#fed7aa] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner">
+        <!-- Purble Place Large Stage View (680px Height with Authentic In-Game Background) -->
+        <div class="relative w-full h-[680px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center" style="background-image: url('sprites/purble_background.png');">
 
           <!-- Top Zone: Order Screen & Overhead Dispensers -->
-          <div class="w-full pt-4 px-6 flex justify-between items-start z-10 select-none">
+          <div class="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
             <!-- Order Screen (TV Monitor) -->
             <div class="flex flex-col items-center">
-              <img src="sprites/order_tv.png" alt="Order TV [order_tv.png]" class="w-36 h-24 object-contain filter drop-shadow-md">
-              <span class="text-[10px] font-mono text-purple-700 font-bold bg-white/70 px-2 py-0.5 rounded-full mt-1">order_tv.png</span>
+              <img src="sprites/order_tv.png" alt="Order TV" class="w-36 h-28 object-contain filter drop-shadow-lg">
             </div>
 
             <!-- Overhead Dispensers Rack -->
-            <div class="flex gap-6 items-start">
+            <div class="flex gap-8 items-start">
               <!-- Batter Dispenser -->
-              <div class="flex flex-col items-center">
-                <img src="sprites/dispenser_batter.png" alt="Batter Dispenser" class="w-28 h-36 object-contain filter drop-shadow-md">
-                <span class="text-[9px] font-mono text-purple-700 bg-white/70 px-1.5 rounded mt-0.5">dispenser_batter.png</span>
+              <div class="flex flex-col items-center hover:scale-105 transition-transform">
+                <img src="sprites/dispenser_batter.png" alt="Batter Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
               </div>
               <!-- Icing Dispenser -->
-              <div class="flex flex-col items-center">
-                <img src="sprites/dispenser_icing.png" alt="Icing Dispenser" class="w-28 h-36 object-contain filter drop-shadow-md">
-                <span class="text-[9px] font-mono text-rose-700 bg-white/70 px-1.5 rounded mt-0.5">dispenser_icing.png</span>
+              <div class="flex flex-col items-center hover:scale-105 transition-transform">
+                <img src="sprites/dispenser_icing.png" alt="Icing Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
               </div>
               <!-- Sprinkle Dispenser -->
-              <div class="flex flex-col items-center">
-                <img src="sprites/dispenser_sprinkles.png" alt="Sprinkle Dispenser" class="w-28 h-36 object-contain filter drop-shadow-md">
-                <span class="text-[9px] font-mono text-cyan-700 bg-white/70 px-1.5 rounded mt-0.5">dispenser_sprinkles.png</span>
+              <div class="flex flex-col items-center hover:scale-105 transition-transform">
+                <img src="sprites/dispenser_sprinkles.png" alt="Sprinkle Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
               </div>
             </div>
 
             <!-- Current Speed Pill -->
-            <div class="bg-white/80 border-2 border-purple-300 rounded-2xl p-3 flex flex-col items-center shadow-md">
-              <span class="text-[10px] font-mono font-bold text-purple-800">SPEED</span>
+            <div class="bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
+              <span class="text-[10px] font-mono font-bold text-purple-800">FREQUENCY</span>
               <span id="stageSpeedBadge" class="text-xl font-black font-mono text-purple-900">1.00 GHz</span>
             </div>
           </div>
 
           <!-- Thermal Throttling Warning Overlay (Exact Name Kept) -->
-          <div id="heatOverlay" class="hidden absolute inset-0 bg-rose-500/20 backdrop-blur-[1px] pointer-events-none z-30 animate-pulse flex items-center justify-center">
+          <div id="heatOverlay" class="hidden absolute inset-0 bg-rose-500/25 backdrop-blur-[1px] pointer-events-none z-30 animate-pulse flex items-center justify-center">
             <div class="bg-rose-600/95 text-white border-2 border-white px-8 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
               <span class="text-3xl animate-spin">⚠️</span>
               <span class="text-2xl font-black tracking-widest font-mono uppercase">
@@ -141,26 +137,25 @@
             <!-- Moving Cakes Layer: 128px Repeat Period -->
             <div class="relative h-44 overflow-hidden pointer-events-none w-full">
               <div id="cakesTrack" class="flex items-end w-[300%] absolute left-0 bottom-1" style="animation: cakeScroll 1.5s linear infinite;">
-                <!-- 20 cakes built with placeholder sprites -->
+                <!-- 20 authentic Purble Place cakes -->
                 <template id="cakeTemplate">
                   <div class="flex-shrink-0 w-32 flex flex-col items-center justify-end pb-0.5">
-                    <div class="flex flex-col items-center filter drop-shadow-md select-none transform transition-transform">
-                      <img class="topperImg w-8 h-8 object-contain -mb-1 z-10" src="sprites/cake_topper_smiley.png" alt="Topper">
-                      <img class="w-20 h-7 object-contain -mb-1" src="sprites/cake_top_layer.png" alt="Top Layer">
-                      <img class="w-22 h-4 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
-                      <img class="w-24 h-8 object-contain -mb-1" src="sprites/cake_middle_layer.png" alt="Middle Layer">
-                      <img class="w-24 h-4 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
-                      <img class="w-26 h-9 object-contain" src="sprites/cake_bottom_layer.png" alt="Bottom Layer">
+                    <div class="flex flex-col items-center filter drop-shadow-lg select-none transform transition-transform">
+                      <img class="topperImg w-10 h-10 object-contain -mb-1.5 z-10 filter drop-shadow-sm" src="sprites/cake_topper_smiley.png" alt="Topper">
+                      <img class="w-22 h-9 object-contain -mb-1" src="sprites/cake_top_layer.png" alt="Top Layer">
+                      <img class="w-24 h-5 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
+                      <img class="w-26 h-9 object-contain -mb-1" src="sprites/cake_middle_layer.png" alt="Middle Layer">
+                      <img class="w-26 h-5 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
+                      <img class="w-28 h-10 object-contain" src="sprites/cake_bottom_layer.png" alt="Bottom Layer">
                     </div>
-                    <img class="w-28 h-7 object-contain mt-0.5" src="sprites/cake_plate.png" alt="Cake Plate">
+                    <img class="w-28 h-8 object-contain mt-0.5 filter drop-shadow-sm" src="sprites/cake_plate.png" alt="Cake Plate">
                   </div>
                 </template>
               </div>
 
               <!-- Trash Chute on Right Edge -->
               <div class="absolute right-4 bottom-0 z-30 pointer-events-auto flex flex-col items-center">
-                <img src="sprites/trash_can.png" alt="Trash Chute" class="w-20 h-36 object-contain filter drop-shadow-lg">
-                <span class="text-[9px] font-mono text-slate-600 bg-white/80 px-1 rounded">trash_can.png</span>
+                <img src="sprites/trash_can.png" alt="Trash Chute" class="w-24 h-40 object-contain filter drop-shadow-2xl">
               </div>
             </div>
 
@@ -177,25 +172,23 @@
               <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
               <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
               <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
             </div>
 
-            <!-- Purble Place Control Console Lower Area -->
-            <div class="w-full bg-[#f5f3ff] border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- Purble Place Authentic Control Console Lower Area -->
+            <div class="w-full bg-[#f5f3ff]/95 border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
               <div class="flex items-center gap-2">
                 <img src="sprites/console_panel.png" alt="Console Panel" class="max-h-24 max-w-full object-contain filter drop-shadow-md rounded-xl">
               </div>
 
               <!-- Push Buttons (Green 1.0 GHz & Purple 5.0 GHz) -->
-              <div class="flex items-center gap-4 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-sm">
+              <div class="flex items-center gap-5 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-md">
                 <button type="button" id="btnPreset1G" class="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform" title="Set 1.0 GHz Baseline">
-                  <img src="sprites/button_green.png" alt="Green Button" class="w-14 h-14 object-contain">
-                  <span class="text-[10px] font-mono font-bold text-emerald-700 mt-0.5">1.0 GHz</span>
+                  <img src="sprites/button_green.png" alt="Green Button" class="w-16 h-16 object-contain filter drop-shadow-md">
+                  <span class="text-[10px] font-mono font-bold text-emerald-700 mt-1">1.0 GHz</span>
                 </button>
                 <button type="button" id="btnPreset5G" class="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform" title="Set 5.0 GHz Turbo Overclock">
-                  <img src="sprites/button_purple.png" alt="Purple Button" class="w-14 h-14 object-contain">
-                  <span class="text-[10px] font-mono font-bold text-purple-700 mt-0.5">5.0 GHz</span>
+                  <img src="sprites/button_purple.png" alt="Purple Button" class="w-16 h-16 object-contain filter drop-shadow-md">
+                  <span class="text-[10px] font-mono font-bold text-purple-700 mt-1">5.0 GHz</span>
                 </button>
               </div>
             </div>
@@ -292,7 +285,7 @@
           <h2 class="text-sm font-black text-purple-900 mb-1">
             Why did my battery deplete so quickly?
           </h2>
-          <p class="leading-relaxed">
+          <p className="leading-relaxed">
             When clock frequency increases from <span class="text-purple-700 font-bold">1.0 GHz</span> to{' '}
             <span class="text-purple-700 font-bold">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
             However, dynamic power scales with the cube of the frequency:
