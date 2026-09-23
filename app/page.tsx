@@ -35,27 +35,23 @@ export default function FactoryDashboard() {
   const connectPico = async () => {
     setSerialError(null);
 
-    // Browser feature detection
     if (typeof window === 'undefined' || !('serial' in navigator)) {
       setSerialError('Web Serial API is not supported in this browser. Please use Chrome, Edge, or Opera.');
       return;
     }
 
     try {
-      // 1. Request port from user
       const port = await (navigator as any).serial.requestPort();
       await port.open({ baudRate: 115200 });
       portRef.current = port;
       setIsConnected(true);
       keepReadingRef.current = true;
 
-      // 2. Setup text decoding pipeline
       const textDecoder = new TextDecoderStream();
       port.readable.pipeTo(textDecoder.writable);
       const reader = textDecoder.readable.getReader();
       readerRef.current = reader;
 
-      // 3. Read stream in a chunked, line-buffered loop
       let lineBuffer = '';
 
       while (keepReadingRef.current) {
@@ -65,7 +61,6 @@ export default function FactoryDashboard() {
         if (value) {
           lineBuffer += value;
           const lines = lineBuffer.split('\n');
-          // Retain any incomplete chunk at the end of the split
           lineBuffer = lines.pop() ?? '';
 
           for (const rawLine of lines) {
@@ -74,7 +69,6 @@ export default function FactoryDashboard() {
 
             const parsedVal = parseFloat(cleanLine);
             if (!isNaN(parsedVal) && parsedVal >= 0.9 && parsedVal <= 5.1) {
-              // Clamp cleanly to 1.0 - 5.0
               const clamped = Math.min(5.0, Math.max(1.0, parsedVal));
               setHardwareClockSpeed(clamped);
             }
@@ -110,7 +104,6 @@ export default function FactoryDashboard() {
     }
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (portRef.current) {
@@ -120,15 +113,17 @@ export default function FactoryDashboard() {
   }, [disconnectPico]);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans flex flex-col items-center justify-start relative">
+    <main className="min-h-screen bg-gradient-to-br from-[#ffe4e6] via-[#fef3c7]/30 to-[#f3e8ff] text-slate-800 p-4 md:p-10 font-sans flex flex-col items-center justify-start relative">
       <div className="w-full max-w-5xl flex flex-col gap-8">
-        {/* Top Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+
+        {/* Top Header - Purble Place Candy Bakery Style */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b-2 border-purple-200">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white flex items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-purple-900 flex items-center gap-3">
+              <span className="p-2 bg-pink-100 rounded-2xl shadow-inner border border-pink-200">🎂</span>
               <span>⚡ OVERCLOCKING CAKE FACTORY</span>
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm font-medium text-purple-700/80 mt-1">
               Dynamic Voltage & Frequency Scaling (DVFS) Demonstration
             </p>
           </div>
@@ -137,13 +132,13 @@ export default function FactoryDashboard() {
           <div className="flex items-center gap-3">
             {isConnected ? (
               <div className="flex items-center gap-3">
-                <span className="flex items-center gap-2 text-xs font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-700/50 px-3 py-1.5 rounded-lg">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="flex items-center gap-2 text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-400 px-3.5 py-2 rounded-2xl shadow-sm">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
                   PICO CONNECTED (115200 BAUD)
                 </span>
                 <button
                   onClick={disconnectPico}
-                  className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+                  className="text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-700 px-3.5 py-2 rounded-2xl border border-purple-300 transition-colors shadow-sm"
                 >
                   Disconnect
                 </button>
@@ -151,7 +146,7 @@ export default function FactoryDashboard() {
             ) : (
               <button
                 onClick={connectPico}
-                className="flex items-center gap-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-600/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="flex items-center gap-2 text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-2xl transition-all shadow-lg shadow-purple-500/25 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>🔌 Connect Pico</span>
               </button>
@@ -161,29 +156,30 @@ export default function FactoryDashboard() {
 
         {/* Error notification if Web Serial encounters an issue */}
         {serialError && (
-          <div className="bg-red-950/50 border border-red-800/80 text-red-300 text-xs px-4 py-3 rounded-xl flex items-center justify-between">
+          <div className="bg-rose-100 border-2 border-rose-300 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between shadow-sm">
             <span>⚠️ {serialError}</span>
-            <button onClick={() => setSerialError(null)} className="text-red-400 hover:underline">
+            <button onClick={() => setSerialError(null)} className="text-rose-600 font-bold hover:underline">
               Dismiss
             </button>
           </div>
         )}
 
-        {/* Primary Metrics Grid */}
+        {/* Primary Metrics Grid (Exact Gauge Names Kept) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
           {/* Production Output Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-            <span className="text-xs font-mono text-slate-400 tracking-wider">TOTAL CAKES PRODUCED</span>
+          <div className="bg-white/80 backdrop-blur-sm border-2 border-pink-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/50">
+            <span className="text-xs font-mono font-bold text-pink-700 tracking-wider">TOTAL CAKES PRODUCED</span>
             <div className="my-4">
-              <span className="text-6xl font-black tracking-tight text-white font-mono">
+              <span className="text-6xl font-black tracking-tight text-slate-800 font-mono">
                 {Math.floor(cakes).toLocaleString()}
               </span>
-              <span className="text-slate-500 font-mono text-sm ml-2">units</span>
+              <span className="text-purple-600 font-mono font-bold text-sm ml-2">units</span>
             </div>
-            <div className="border-t border-slate-800/80 pt-3 flex flex-col gap-1">
+            <div className="border-t border-pink-100 pt-3 flex flex-col gap-1">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-400">Optimal (1.0 GHz):</span>
-                <span className="text-emerald-400 font-bold">{theoreticalMaxCakes} units</span>
+                <span className="text-slate-600 font-medium">Optimal (1.0 GHz):</span>
+                <span className="text-emerald-600 font-bold">{theoreticalMaxCakes} units</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-snug">
                 Operating above 1.0 GHz reduces total yield due to cubic energy decay.
@@ -192,55 +188,55 @@ export default function FactoryDashboard() {
           </div>
 
           {/* Battery Reserve Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+          <div className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-purple-100/50">
             <div className="flex justify-between items-center text-xs font-mono">
-              <span className="text-slate-400 tracking-wider">POWER CELL REMAINING</span>
-              <span className={`font-bold ${battery < 20 ? 'text-red-400 animate-pulse' : 'text-slate-200'}`}>
+              <span className="text-purple-700 font-bold tracking-wider">POWER CELL REMAINING</span>
+              <span className={`font-black ${battery < 20 ? 'text-rose-600 animate-pulse' : 'text-slate-700'}`}>
                 {battery.toFixed(1)}%
               </span>
             </div>
 
-            {/* Battery Progress Bar - Enlarged & Jitter-Free */}
-            <div className="my-4 w-full h-10 bg-slate-950 rounded-xl overflow-hidden p-1.5 border border-slate-800 flex items-center shadow-inner">
+            {/* Battery Progress Bar - Glossy Purble Place style */}
+            <div className="my-4 w-full h-10 bg-slate-200/80 rounded-2xl overflow-hidden p-1.5 border-2 border-slate-300 flex items-center shadow-inner">
               <div
-                className={`h-full rounded-lg transition-all duration-100 ease-linear ${
+                className={`h-full rounded-xl transition-all duration-100 ease-linear ${
                   battery > 50
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                    ? 'bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]'
                     : battery > 20
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'bg-gradient-to-r from-red-600 to-rose-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]'
+                    : 'bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.6)]'
                 }`}
                 style={{ width: `${Math.max(0, battery)}%` }}
               />
             </div>
 
-            <div className="border-t border-slate-800/80 pt-3 flex justify-between items-center text-xs font-mono text-slate-400">
-              <span>Drain Rate:</span>
-              <span className="text-slate-200">
+            <div className="border-t border-purple-100 pt-3 flex justify-between items-center text-xs font-mono text-slate-600">
+              <span className="font-medium">Drain Rate:</span>
+              <span className="text-slate-800 font-bold">
                 {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)} %/sec
               </span>
             </div>
           </div>
 
           {/* Operating Frequency (Clock Speed) Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+          <div className="bg-white/80 backdrop-blur-sm border-2 border-indigo-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-indigo-100/50">
             <div className="flex justify-between items-center text-xs font-mono">
-              <span className="text-slate-400 tracking-wider">PROCESSOR CLOCK (f)</span>
-              <span className="bg-slate-800 text-indigo-300 px-2 py-0.5 rounded text-[11px]">
+              <span className="text-indigo-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
+              <span className="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-lg text-[11px] border border-indigo-200">
                 {isConnected ? 'HARDWARE (ADC0)' : 'MANUAL SLIDER'}
               </span>
             </div>
 
             <div className="my-4">
-              <span className="text-5xl font-black font-mono text-indigo-400">
+              <span className="text-5xl font-black font-mono text-purple-700">
                 {effectiveClockSpeed.toFixed(2)}
               </span>
-              <span className="text-slate-400 font-mono text-xl ml-2">GHz</span>
+              <span className="text-slate-500 font-mono text-xl ml-2 font-bold">GHz</span>
             </div>
 
             {/* Slider Fallback when Hardware is Disconnected */}
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+              <div className="flex justify-between text-[11px] font-mono text-slate-500 font-bold">
                 <span>1.0 GHz</span>
                 <span>3.0 GHz</span>
                 <span>5.0 GHz</span>
@@ -253,7 +249,7 @@ export default function FactoryDashboard() {
                 disabled={isConnected}
                 value={effectiveClockSpeed}
                 onChange={(e) => setManualClockSpeed(parseFloat(e.target.value))}
-                className={`w-full accent-indigo-500 cursor-pointer ${
+                className={`w-full accent-purple-600 cursor-pointer ${
                   isConnected ? 'opacity-40 cursor-not-allowed' : ''
                 }`}
               />
@@ -261,62 +257,62 @@ export default function FactoryDashboard() {
           </div>
         </div>
 
-        {/* Conveyor Belt Visual Simulation Assembly */}
+        {/* Purble Place Conveyor Belt Visual Simulation Assembly */}
         <ConveyorBelt
           clockSpeed={effectiveClockSpeed}
           powerHeat={powerHeat}
           isDead={isDead}
         />
 
-        {/* DVFS Educational Insight Footer */}
-        <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 text-xs text-slate-400 flex flex-col md:flex-row gap-6 items-start justify-between">
+        {/* DVFS Educational Insight Footer (Exact Names Kept) */}
+        <section className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 text-xs text-slate-600 flex flex-col md:flex-row gap-6 items-start justify-between shadow-lg">
           <div className="flex-1">
-            <h2 className="text-sm font-bold text-slate-200 mb-1">
+            <h2 className="text-sm font-black text-purple-900 mb-1">
               Why did my battery deplete so quickly?
             </h2>
             <p className="leading-relaxed">
-              When clock frequency increases from <span className="text-indigo-400">1.0 GHz</span> to{' '}
-              <span className="text-indigo-400">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
+              When clock frequency increases from <span className="text-purple-700 font-bold">1.0 GHz</span> to{' '}
+              <span className="text-purple-700 font-bold">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
               However, dynamic power scales with the cube of the frequency:
-              <span className="text-amber-400 font-mono ml-1">
+              <span className="text-rose-600 font-mono font-bold ml-1">
                 (5.0 / 1.0)³ = 125× greater power consumption!
               </span>
             </p>
           </div>
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/80 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto">
-            <span className="text-slate-500">// DVFS EQUATIONS</span>
-            <span className="text-slate-300">Throughput = Base × f</span>
-            <span className="text-amber-400">Power = Base × f³</span>
-            <span className="text-emerald-400">Max Yield occurs at min(f)</span>
+          <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto shadow-sm">
+            <span className="text-purple-600 font-bold">// DVFS EQUATIONS</span>
+            <span className="text-slate-700 font-bold">Throughput = Base × f</span>
+            <span className="text-rose-600 font-bold">Power = Base × f³</span>
+            <span className="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
           </div>
         </section>
       </div>
 
-      {/* Game Over Modal Overlay */}
+      {/* Game Over Modal Overlay (Exact Names Kept) */}
       {isDead && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-slate-900 border border-red-500/50 rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center gap-6">
-            <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-3xl">
-              💥
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white border-4 border-rose-300 rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center gap-6">
+            <div className="w-20 h-20 rounded-3xl bg-pink-100 border-2 border-pink-300 flex items-center justify-center text-4xl shadow-md">
+              🧁
             </div>
 
             <div>
-              <h3 className="text-2xl font-black text-white">POWER CELL DEPLETED</h3>
-              <p className="text-xs text-red-400 font-mono mt-1 uppercase tracking-wider">
+              <h3 className="text-2xl font-black text-purple-950">POWER CELL DEPLETED</h3>
+              <p className="text-xs text-rose-600 font-mono font-bold mt-1 uppercase tracking-wider">
                 CPU Thermal Breakdown Occurred
               </p>
             </div>
 
-            <div className="w-full bg-slate-950 rounded-2xl p-4 border border-slate-800 flex flex-col gap-3 text-sm">
+            <div className="w-full bg-pink-50/70 rounded-2xl p-4 border border-pink-200 flex flex-col gap-3 text-sm">
               <div className="flex justify-between items-center font-mono">
-                <span className="text-slate-400">Your Score:</span>
-                <span className="text-white font-bold">{Math.floor(cakes)} cakes</span>
+                <span className="text-slate-600">Your Score:</span>
+                <span className="text-purple-900 font-black text-base">{Math.floor(cakes)} cakes</span>
               </div>
               <div className="flex justify-between items-center font-mono">
-                <span className="text-slate-400">Theoretical 1.0 GHz Max:</span>
-                <span className="text-emerald-400 font-bold">{theoreticalMaxCakes} cakes</span>
+                <span className="text-slate-600">Theoretical 1.0 GHz Max:</span>
+                <span className="text-emerald-600 font-bold">{theoreticalMaxCakes} cakes</span>
               </div>
-              <div className="border-t border-slate-800 pt-2 text-left text-xs text-slate-400">
+              <div className="border-t border-pink-200 pt-2 text-left text-xs text-slate-600">
                 {cakes < theoreticalMaxCakes * 0.5 ? (
                   <p>
                     Overclocking burned through your energy reserves before production could scale efficiently!
@@ -331,7 +327,7 @@ export default function FactoryDashboard() {
 
             <button
               onClick={resetSimulation}
-              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-rose-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-black text-sm tracking-wide shadow-lg shadow-pink-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               REPLACE BATTERY & RESTART
             </button>
@@ -341,4 +337,3 @@ export default function FactoryDashboard() {
     </main>
   );
 }
-
