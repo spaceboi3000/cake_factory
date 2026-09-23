@@ -53,6 +53,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
           PKG#${pkg}
         </span>
       `;
+      cakeEl.style.transform = `translate3d(${i * CAKE_SPACING}px, 80%, 0)`;
       trackEl.appendChild(cakeEl);
       cakesList.push({
         el: cakeEl,
@@ -79,7 +80,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
         for (let i = 0; i < cakesList.length; i++) {
           const c = cakesList[i];
           c.x -= pxPerSec * dt;
-          c.el.style.transform = `translateX(${c.x}px)`;
+          c.el.style.transform = `translate3d(${c.x}px, 80%, 0)`;
         }
 
         for (let i = 0; i < cakesList.length; i++) {
@@ -90,7 +91,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               if (cakesList[j].x > maxX) maxX = cakesList[j].x;
             }
             c.x = maxX + CAKE_SPACING;
-            c.el.style.transform = `translateX(${c.x}px)`;
+            c.el.style.transform = `translate3d(${c.x}px, 80%, 0)`;
             c.pkg = nextPkgNumber++;
             c.emojiEl.textContent = cakeEmojis[c.pkg % 3];
             c.badgeEl.textContent = `PKG#${c.pkg}`;
@@ -233,8 +234,8 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
         <div className="w-full flex flex-col justify-end relative z-20">
 
           {/* Original Moving Cakes: Clean, Non-Layered Cakes from First Version */}
-          <div className="relative h-28 overflow-hidden pointer-events-none w-full">
-            <div ref={trackRef} className="w-full h-full relative" />
+          <div className="relative h-28 pointer-events-none w-full z-20">
+            <div ref={trackRef} className="w-full h-full relative z-20" />
           </div>
 
           {/* Conveyor Belt Surface (Dark Rubber Tread with 96px Repeat) */}
