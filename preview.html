@@ -314,20 +314,27 @@
           PKG#${pkg}
         </span>
       `;
-      cakeEl.style.transform = `translate3d(${i * CAKE_SPACING}px, 80%, 0)`;
+      const gridX = i * CAKE_SPACING;
+      cakeEl.style.transform = `translate3d(${gridX}px, 80%, 0)`;
       cakesTrackEl.appendChild(cakeEl);
       cakesList.push({
         el: cakeEl,
         emojiEl: cakeEl.querySelector('.cakeEmoji'),
         badgeEl: cakeEl.querySelector('.cakeBadge'),
-        x: i * CAKE_SPACING,
+        gridX: gridX,
         pkg: pkg,
       });
     }
 
     let lastAnimTime = performance.now();
-    let beltScrollOffset = 0;
-    let rollerRotationDeg = 0;
+    let stepPhase = 0;
+    let baseTreadOffset = 0;
+    let baseRollerDeg = 0;
+    const MOVE_FRACTION = 0.35; // 35% time advancing, 65% time stationary at station
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
 
     function renderConveyor(now) {
       const dt = Math.min(0.1, (now - lastAnimTime) / 1000);
@@ -335,35 +342,63 @@
 
       if (!isDead) {
         const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
-        const pxPerSec = CAKE_SPACING * effectiveSpeed;
+        // Step cadence directly tied to clock frequency (1.0 - 5.0 steps/sec)
+        stepPhase += dt * effectiveSpeed;
 
-        for (let i = 0; i < cakesList.length; i++) {
-          const c = cakesList[i];
-          c.x -= pxPerSec * dt;
-          c.el.style.transform = `translate3d(${c.x}px, 80%, 0)`;
-        }
+        while (stepPhase >= 1.0) {
+          stepPhase -= 1.0;
 
-        for (let i = 0; i < cakesList.length; i++) {
-          const c = cakesList[i];
-          if (c.x < -120) {
-            let maxX = -120;
-            for (let j = 0; j < cakesList.length; j++) {
-              if (cakesList[j].x > maxX) maxX = cakesList[j].x;
-            }
-            c.x = maxX + CAKE_SPACING;
-            c.el.style.transform = `translate3d(${c.x}px, 80%, 0)`;
-            c.pkg = nextPkgNumber++;
-            c.emojiEl.textContent = cakeEmojis[c.pkg % 3];
-            c.badgeEl.textContent = `PKG#${c.pkg}`;
+          // Advance grid positions for all cakes by one step
+          for (let i = 0; i < cakesList.length; i++) {
+            cakesList[i].gridX -= CAKE_SPACING;
           }
+
+          // Offscreen recycling on the far left (x < -100px)
+          for (let i = 0; i < cakesList.length; i++) {
+            const c = cakesList[i];
+            if (c.gridX < -100) {
+              let maxGridX = -100;
+              for (let j = 0; j < cakesList.length; j++) {
+                if (cakesList[j].gridX > maxGridX) maxGridX = cakesList[j].gridX;
+              }
+              c.gridX = maxGridX + CAKE_SPACING;
+              c.pkg = nextPkgNumber++;
+              c.emojiEl.textContent = cakeEmojis[c.pkg % 3];
+              c.badgeEl.textContent = `PKG#${c.pkg}`;
+            }
+          }
+
+          baseTreadOffset = (baseTreadOffset + CAKE_SPACING) % 96;
+          baseRollerDeg = (baseRollerDeg + (CAKE_SPACING * 360 / 96)) % 360;
         }
 
-        beltScrollOffset = (beltScrollOffset + pxPerSec * dt) % 96;
-        beltTreadEl.style.backgroundPosition = `-${beltScrollOffset}px 0`;
+        // Stepped motion: moves during [0, MOVE_FRACTION), then dwells stationary
+        let currentStepOffset = 0;
+        let currentEased = 0;
+        if (stepPhase < MOVE_FRACTION) {
+          const moveProgress = stepPhase / MOVE_FRACTION;
+          currentEased = easeInOutCubic(moveProgress);
+          currentStepOffset = currentEased * CAKE_SPACING;
+        } else {
+          currentEased = 1.0;
+          currentStepOffset = CAKE_SPACING;
+        }
 
-        rollerRotationDeg = (rollerRotationDeg + 360 * effectiveSpeed * dt) % 360;
+        // Position cakes
+        for (let i = 0; i < cakesList.length; i++) {
+          const c = cakesList[i];
+          const renderX = c.gridX - currentStepOffset;
+          c.el.style.transform = `translate3d(${renderX}px, 80%, 0)`;
+        }
+
+        // Position belt tread
+        const currentTread = (baseTreadOffset + currentStepOffset) % 96;
+        beltTreadEl.style.backgroundPosition = `-${currentTread}px 0`;
+
+        // Rotate rollers in sync with step motion
+        const currentRollerDeg = (baseRollerDeg + (CAKE_SPACING * 360 / 96) * currentEased) % 360;
         rollers.forEach((r) => {
-          r.style.transform = `rotate(${rollerRotationDeg}deg)`;
+          r.style.transform = `rotate(${currentRollerDeg}deg)`;
         });
       }
 
