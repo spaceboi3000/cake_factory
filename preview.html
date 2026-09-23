@@ -18,45 +18,60 @@
 <body class="bg-gradient-to-br from-[#ffe4e6] via-[#fef3c7]/30 to-[#f3e8ff] text-slate-800 antialiased p-4 md:p-8 min-h-screen flex flex-col items-center justify-start select-none font-sans">
   <div class="w-full max-w-5xl flex flex-col gap-10">
 
-    <!-- ================================================================= -->
-    <!-- SECTION 1: MASSIVE GAME SCREEN (REQUIRES SCROLLING DOWN TO VIEW) -->
-    <!-- ================================================================= -->
-    <section class="flex flex-col gap-5 min-h-[92vh] justify-between">
-
-      <!-- Top Header -->
-      <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-purple-200">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="p-1.5 bg-pink-100 rounded-xl shadow-inner border border-pink-200 text-2xl">🎂</span>
-            <h1 class="text-2xl md:text-3xl font-black tracking-tight text-purple-950 uppercase">
-              Overclocking Cake Factory
-            </h1>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-purple-700/80 mt-1">
-            Dynamic Voltage & Frequency Scaling (DVFS) Demonstration
-          </p>
+    <!-- Top Header -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-purple-200">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 bg-pink-100 rounded-xl shadow-inner border border-pink-200 text-2xl">🎂</span>
+          <h1 class="text-2xl md:text-3xl font-black tracking-tight text-purple-950 uppercase">
+            Overclocking Cake Factory
+          </h1>
         </div>
-
-        <!-- Hardware Connect Button -->
-        <div class="flex items-center gap-3">
-          <button id="btnConnect" class="flex items-center gap-2 text-xs md:text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-2xl transition-all shadow-lg shadow-purple-500/25 active:scale-95">
-            <span>🔌 Connect Pico</span>
-          </button>
-          <span id="picoBadge" class="hidden text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-400 px-3.5 py-1.5 rounded-2xl flex items-center gap-2 shadow-sm">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-            PICO CONNECTED (115200 BAUD)
-          </span>
-        </div>
-      </header>
-
-      <!-- Error Alert Box -->
-      <div id="errorAlert" class="hidden bg-rose-100 border-2 border-rose-300 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between shadow-sm">
-        <span id="errorMessage">⚠️ Error</span>
-        <button onclick="document.getElementById('errorAlert').classList.add('hidden')" class="text-rose-600 font-bold hover:underline">Dismiss</button>
+        <p class="text-xs md:text-sm font-medium text-purple-700/80 mt-1">
+          Dynamic Voltage & Frequency Scaling (DVFS) & Pipelining Demonstration
+        </p>
       </div>
 
-      <!-- Purble Place Stage Visual Assembly (Enlarged to 680px with Authentic In-Game Background) -->
-      <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
+      <!-- Hardware Connect Button -->
+      <div class="flex items-center gap-3">
+        <button id="btnConnect" class="flex items-center gap-2 text-xs md:text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-2xl transition-all shadow-lg shadow-purple-500/25 active:scale-95">
+          <span>🔌 Connect Pico</span>
+        </button>
+        <span id="picoBadge" class="hidden text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-400 px-3.5 py-1.5 rounded-2xl flex items-center gap-2 shadow-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+          PICO CONNECTED (115200 BAUD)
+        </span>
+      </div>
+    </header>
+
+    <!-- Top Window Tab Navigation -->
+    <div class="flex flex-wrap items-center gap-3">
+      <button id="tabWindow1" type="button" class="flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer">
+        🏭 WINDOW 1: DVFS & VLIW FACTORY
+      </button>
+      <button id="tabWindow2" type="button" class="flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer">
+        🔄 WINDOW 2: CPU PIPELINING FACTORY
+      </button>
+    </div>
+
+    <!-- Error Alert Box -->
+    <div id="errorAlert" class="hidden bg-rose-100 border-2 border-rose-300 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between shadow-sm">
+      <span id="errorMessage">⚠️ Error</span>
+      <button onclick="document.getElementById('errorAlert').classList.add('hidden')" class="text-rose-600 font-bold hover:underline">Dismiss</button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- WINDOW 1 CONTAINER: DVFS & VLIW FACTORY                           -->
+    <!-- ================================================================= -->
+    <div id="window1Container" class="flex flex-col gap-10">
+
+      <!-- ================================================================= -->
+      <!-- SECTION 1: MASSIVE GAME SCREEN (REQUIRES SCROLLING DOWN TO VIEW) -->
+      <!-- ================================================================= -->
+      <section class="flex flex-col gap-5 min-h-[92vh] justify-between">
+
+        <!-- Purble Place Stage Visual Assembly (Enlarged to 680px with Authentic In-Game Background) -->
+        <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
 
         <!-- Thermal & Dynamic Power Dissipation Header (Exact Gauge Names Kept) -->
         <div class="flex flex-col gap-2.5">
@@ -281,7 +296,206 @@
           <span class="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
         </div>
       </section>
-    </section>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- WINDOW 2 CONTAINER: CPU PIPELINING FACTORY                        -->
+    <!-- ================================================================= -->
+    <div id="window2Container" class="hidden flex flex-col gap-8">
+
+      <!-- Top Instrumentation & Pipelining Controls Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-5 shadow-xl">
+        <div class="flex items-center gap-3">
+          <button id="btnTogglePipeline" type="button" class="px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-indigo-600 text-white border-indigo-400 shadow-indigo-500/30 hover:bg-indigo-700">
+            <span class="text-base" id="pipeBtnIcon">🔄</span>
+            <span id="pipeBtnLabel">PIPELINING: OFF (1 MACHINE, 3 CYCLES/CAKE)</span>
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="bg-purple-100/80 border border-purple-300 px-3.5 py-1.5 rounded-xl font-mono text-xs flex items-center gap-1.5 text-purple-900 font-bold">
+            <span>CYCLE:</span>
+            <span id="pCycleCount" class="text-purple-700 font-black text-sm">#0</span>
+          </div>
+
+          <div class="bg-pink-100/80 border border-pink-300 px-3.5 py-1.5 rounded-xl font-mono text-xs flex items-center gap-1.5 text-pink-900 font-bold">
+            <span>TOTAL PRODUCED:</span>
+            <span id="pTotalProduced" class="text-pink-700 font-black text-sm">0 units</span>
+          </div>
+
+          <div class="bg-emerald-100/80 border border-emerald-300 px-3.5 py-1.5 rounded-xl font-mono text-xs flex items-center gap-1.5 text-emerald-900 font-bold">
+            <span>CPI:</span>
+            <span id="pCpi" class="text-emerald-700 font-black text-sm">3.00 (Unpipelined)</span>
+          </div>
+
+          <div class="bg-white border-2 border-purple-300 px-3.5 py-1.5 rounded-xl font-mono text-xs flex items-center gap-1.5 text-purple-900 font-bold shadow-sm">
+            <span>FREQ:</span>
+            <span id="pFreqBadge" class="text-purple-700 font-black">1.00 GHz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purble Place Stage Visual Assembly for Window 2 -->
+      <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
+        <div id="pipeBakeryStage" class="relative w-full h-[540px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
+
+          <!-- Top Zone: Overhead Machines Placement -->
+          <div class="w-full px-8 flex justify-between items-start z-10 select-none">
+            <div class="w-32"></div>
+
+            <!-- NON-PIPELINED ASSEMBLY: Single Machine with Dynamic Color Changes -->
+            <div id="pipeSingleMachine" class="flex flex-col items-center -mt-4">
+              <span id="pipeMachineBadge" class="text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse">
+                STAGE 1: BAKE (🔥 OVEN)
+              </span>
+              <div id="pipeMachineGlow" class="rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40">
+                <img src="sprites/dispenser_batter.png" alt="Unified Cake Maker" class="w-36 h-40 object-contain object-top filter drop-shadow-2xl">
+              </div>
+              <span id="pipeMachineDesc" class="text-[10px] font-mono font-bold text-purple-950 bg-white/90 px-2.5 py-0.5 rounded-full mt-1 border border-purple-300 shadow-sm">
+                Heating cake batter into sponge...
+              </span>
+            </div>
+
+            <!-- PIPELINED ASSEMBLY: 3 Dedicated Machines in Series -->
+            <div id="pipeThreeMachines" class="hidden flex gap-12 items-start -mt-4">
+              <!-- Machine 1: Bake -->
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-mono font-black text-amber-900 bg-amber-200/90 border border-amber-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
+                  STAGE 1: BAKE
+                </span>
+                <img src="sprites/dispenser_batter.png" alt="Bake Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
+              </div>
+              <!-- Machine 2: Frost -->
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-mono font-black text-pink-900 bg-pink-200/90 border border-pink-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
+                  STAGE 2: FROST
+                </span>
+                <img src="sprites/dispenser_icing.png" alt="Frosting Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
+              </div>
+              <!-- Machine 3: Box -->
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-mono font-black text-purple-900 bg-purple-200/90 border border-purple-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
+                  STAGE 3: BOX
+                </span>
+                <img src="sprites/dispenser_sprinkles.png" alt="Packaging Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
+              </div>
+            </div>
+
+            <div class="w-32"></div>
+          </div>
+
+          <!-- Conveyor Belt Assembly (Exact bottom of the stage) -->
+          <div class="w-full flex flex-col justify-end relative z-20">
+            <!-- Moving Cakes Track -->
+            <div class="relative h-28 pointer-events-none w-full z-20">
+              <div id="pipeCakesTrack" class="w-full h-full relative z-20"></div>
+            </div>
+
+            <!-- Conveyor Belt Tread -->
+            <div id="pipeBeltTread" class="w-full h-16 border-y-2 border-slate-700 relative z-10" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%;"></div>
+
+            <!-- Conveyor Rollers -->
+            <div id="pipeRollersContainer" class="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipelining Architecture Analysis Cards -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Pipeline Throughput Card -->
+        <div class="bg-white/85 backdrop-blur-sm border-2 border-indigo-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-indigo-100/50">
+          <span class="text-xs font-mono font-bold text-indigo-700 tracking-wider">PIPELINE THROUGHPUT</span>
+          <div class="my-4">
+            <span id="cardThroughputVal" class="text-5xl font-black tracking-tight text-slate-800 font-mono">0.33</span>
+            <span class="text-indigo-600 font-mono font-bold text-sm ml-2">cakes/cycle</span>
+          </div>
+          <div class="border-t border-indigo-100 pt-3 flex flex-col gap-1 text-xs font-mono">
+            <div class="flex justify-between">
+              <span class="text-slate-600">Peak Pipelined:</span>
+              <span class="text-emerald-600 font-bold">1.00 cake/cycle</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">Unpipelined:</span>
+              <span class="text-slate-500 font-bold">0.33 cake/cycle</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latency vs Throughput Card -->
+        <div class="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-purple-100/50">
+          <span class="text-xs font-mono font-bold text-purple-700 tracking-wider">LATENCY VS THROUGHPUT</span>
+          <div class="my-3 flex flex-col gap-2">
+            <div class="flex justify-between items-center bg-purple-50 p-2.5 rounded-xl border border-purple-200 text-xs font-mono">
+              <span class="text-purple-900 font-bold">Single Cake Latency:</span>
+              <span class="text-purple-700 font-black">3 clock cycles</span>
+            </div>
+            <div class="flex justify-between items-center bg-purple-50 p-2.5 rounded-xl border border-purple-200 text-xs font-mono">
+              <span class="text-purple-900 font-bold">Steady-State Rate:</span>
+              <span id="steadyStateRate" class="text-emerald-600 font-black">1 cake / 3 cycles</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 leading-snug border-t border-purple-100 pt-2">
+            Pipelining improves overall throughput without reducing single-cake execution latency.
+          </p>
+        </div>
+
+        <!-- Clock Frequency Control for Window 2 -->
+        <div class="bg-white/85 backdrop-blur-sm border-2 border-pink-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/50">
+          <div class="flex justify-between items-center text-xs font-mono">
+            <span class="text-pink-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
+            <span class="bg-pink-100 text-pink-700 font-bold px-2 py-0.5 rounded-lg text-[10px] border border-pink-200">SYNCHRONIZED</span>
+          </div>
+          <div class="my-3">
+            <span id="pFreqDisplay" class="text-4xl font-black font-mono text-purple-700">1.00</span>
+            <span class="text-slate-500 font-mono text-lg ml-2 font-bold">GHz</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <input id="sliderPipeFreq" type="range" min="1.0" max="5.0" step="0.05" value="1.00" class="w-full accent-purple-600 cursor-pointer">
+            <div class="flex justify-between text-[10px] font-mono text-slate-500 font-bold">
+              <span>1.0 GHz</span>
+              <span>3.0 GHz</span>
+              <span>5.0 GHz</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Educational Explanation: Instruction Pipelining in Microprocessors -->
+      <section class="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 text-xs text-slate-600 flex flex-col md:flex-row gap-6 items-start justify-between shadow-lg">
+        <div class="flex-1">
+          <h2 class="text-sm font-black text-purple-900 mb-1">
+            How does CPU Instruction Pipelining work?
+          </h2>
+          <p class="leading-relaxed">
+            Without pipelining, a single processor unit must execute every stage (<span class="text-amber-600 font-bold">Bake</span> &rarr; <span class="text-pink-600 font-bold">Frost</span> &rarr; <span class="text-purple-600 font-bold">Box</span>, analogous to <span class="font-mono text-slate-700 font-bold">Fetch</span> &rarr; <span class="font-mono text-slate-700 font-bold">Decode</span> &rarr; <span class="font-mono text-slate-700 font-bold">Execute</span>) before starting the next item, resulting in <span class="font-mono font-bold text-rose-600">CPI = 3.0</span>.
+          </p>
+          <p class="leading-relaxed mt-2">
+            With pipelining enabled, 3 separate hardware units operate in parallel. While cake #3 is being boxed, cake #2 is being frosted, and cake #1 is being baked. After an initial 3-cycle fill latency, <span class="font-bold text-emerald-600">one finished cake rolls off the conveyor belt every single clock cycle</span> (<span class="font-mono font-bold text-emerald-600">CPI = 1.0</span>, achieving a <span class="font-bold">3&times; speedup</span>).
+          </p>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto shadow-sm">
+          <span class="text-purple-600 font-bold">// PIPELINING METRICS</span>
+          <span class="text-slate-700 font-bold">Latency = k cycles (k = 3 stages)</span>
+          <span class="text-emerald-600 font-bold">Throughput = 1 item / cycle (Peak)</span>
+          <span class="text-indigo-600 font-bold">Speedup = (k · n) / (k + n - 1) &rarr; 3&times;</span>
+        </div>
+      </section>
+    </div>
 
   </div>
 
@@ -320,6 +534,31 @@
   </div>
 
   <script>
+    // -------------------------------------------------------------------------
+    // WINDOW TAB SWITCHING
+    // -------------------------------------------------------------------------
+    const tabWindow1 = document.getElementById('tabWindow1');
+    const tabWindow2 = document.getElementById('tabWindow2');
+    const window1Container = document.getElementById('window1Container');
+    const window2Container = document.getElementById('window2Container');
+
+    function setActiveWindow(tab) {
+      if (tab === 'dvfs') {
+        tabWindow1.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer';
+        tabWindow2.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
+        window1Container.classList.remove('hidden');
+        window2Container.classList.add('hidden');
+      } else {
+        tabWindow1.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
+        tabWindow2.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer';
+        window1Container.classList.add('hidden');
+        window2Container.classList.remove('hidden');
+      }
+    }
+
+    tabWindow1.addEventListener('click', () => setActiveWindow('dvfs'));
+    tabWindow2.addEventListener('click', () => setActiveWindow('pipelining'));
+
     // -------------------------------------------------------------------------
     // CONTINUOUS CONVEYOR BELT ENGINE (Cakes never change while on belt)
     // -------------------------------------------------------------------------
@@ -624,6 +863,13 @@
       stageSpeedBadgeEl.textContent = effectiveSpeed.toFixed(2) + ' GHz';
       sliderFreqEl.value = effectiveSpeed;
 
+      const pFreqBadgeEl = document.getElementById('pFreqBadge');
+      if (pFreqBadgeEl) pFreqBadgeEl.textContent = effectiveSpeed.toFixed(2) + ' GHz';
+      const pFreqDisplayEl = document.getElementById('pFreqDisplay');
+      if (pFreqDisplayEl) pFreqDisplayEl.textContent = effectiveSpeed.toFixed(2);
+      const sliderPipeFreqEl = document.getElementById('sliderPipeFreq');
+      if (sliderPipeFreqEl && document.activeElement !== sliderPipeFreqEl) sliderPipeFreqEl.value = effectiveSpeed;
+
       // Heat calculation: P ~ f^3 * lanes (1.0^3 = 1, 5.0^3 = 125)
       const minP = 1.0;
       const maxP = 125.0;
@@ -753,6 +999,286 @@
         }
       }
     });
+
+    // -------------------------------------------------------------------------
+    // WINDOW 2: CPU PIPELINING ENGINE
+    // -------------------------------------------------------------------------
+    const btnTogglePipeline = document.getElementById('btnTogglePipeline');
+    const pipeBtnIcon = document.getElementById('pipeBtnIcon');
+    const pipeBtnLabel = document.getElementById('pipeBtnLabel');
+    const pCycleCount = document.getElementById('pCycleCount');
+    const pTotalProduced = document.getElementById('pTotalProduced');
+    const pCpi = document.getElementById('pCpi');
+    const pipeSingleMachine = document.getElementById('pipeSingleMachine');
+    const pipeThreeMachines = document.getElementById('pipeThreeMachines');
+    const pipeMachineBadge = document.getElementById('pipeMachineBadge');
+    const pipeMachineGlow = document.getElementById('pipeMachineGlow');
+    const pipeMachineDesc = document.getElementById('pipeMachineDesc');
+    const cardThroughputVal = document.getElementById('cardThroughputVal');
+    const steadyStateRate = document.getElementById('steadyStateRate');
+    const pipeCakesTrack = document.getElementById('pipeCakesTrack');
+    const pipeBeltTread = document.getElementById('pipeBeltTread');
+    const pRollers = document.querySelectorAll('.p-roller');
+    const sliderPipeFreqEl = document.getElementById('sliderPipeFreq');
+
+    if (sliderPipeFreqEl) {
+      sliderPipeFreqEl.addEventListener('input', (e) => {
+        clockSpeed = parseFloat(e.target.value);
+        if (!isConnected) {
+          updateFrequency(clockSpeed);
+        }
+      });
+    }
+
+    let pipeEnabled = false;
+    let pipeCycleCounter = 0;
+    let pipeProducedCount = 0;
+    let pipeSingleStage = 0; // 0=Bake, 1=Frost, 2=Box
+    const PIPE_CAKE_SPACING = 160;
+    const PIPE_NUM_CAKES = 12;
+    let pipeNextPkg = 100;
+
+    function getPipeStageEmoji(stage) {
+      switch (stage) {
+        case 1: return '🍰'; // Baked sponge
+        case 2: return '🧁'; // Frosted cake
+        case 3: return '🎁'; // Boxed cake
+        default: return '🥣'; // Raw batter
+      }
+    }
+
+    const singleMachineThemes = [
+      {
+        label: 'STAGE 1: BAKE (🔥 OVEN)',
+        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse',
+        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
+        desc: 'Heating cake batter into sponge...',
+      },
+      {
+        label: 'STAGE 2: FROST (🧁 ICING)',
+        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-pink-500 text-white border-pink-300 shadow-pink-500/50 animate-pulse',
+        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
+        desc: 'Applying strawberry vanilla frosting...',
+      },
+      {
+        label: 'STAGE 3: BOX (📦 PACKAGING)',
+        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-purple-600 text-white border-purple-300 shadow-purple-500/50 animate-pulse',
+        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
+        desc: 'Boxing cake and sealing packaging...',
+      }
+    ];
+
+    function updateSingleMachineDisplay(stageIndex) {
+      const theme = singleMachineThemes[stageIndex];
+      pipeMachineBadge.className = theme.badgeClass;
+      pipeMachineBadge.textContent = theme.label;
+      pipeMachineGlow.className = theme.glowClass;
+      pipeMachineDesc.textContent = theme.desc;
+    }
+
+    // Initialize Window 2 cakes
+    pipeCakesTrack.innerHTML = '';
+    const pipeCakesList = [];
+
+    for (let i = 0; i < PIPE_NUM_CAKES; i++) {
+      const cakeEl = document.createElement('div');
+      cakeEl.className = 'w-28 flex flex-col items-center justify-end pb-1 absolute bottom-0 select-none';
+      const pkg = pipeNextPkg++;
+      cakeEl.innerHTML = `
+        <span class="pipeCakeEmoji text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
+          🥣
+        </span>
+        <span class="pipeCakeBadge text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/90 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+          PKG#${pkg}
+        </span>
+      `;
+      const gridX = i * PIPE_CAKE_SPACING;
+      cakeEl.style.transform = `translate3d(${gridX}px, 80%, 0)`;
+      pipeCakesTrack.appendChild(cakeEl);
+      pipeCakesList.push({
+        el: cakeEl,
+        emojiEl: cakeEl.querySelector('.pipeCakeEmoji'),
+        badgeEl: cakeEl.querySelector('.pipeCakeBadge'),
+        gridX: gridX,
+        pkg: pkg,
+        stage: 0,
+      });
+    }
+
+    let pipeLastAnimTime = performance.now();
+    let pipeStepPhase = 0;
+    let pipeBaseTreadOffset = 0;
+    let pipeBaseRollerDeg = 0;
+
+    btnTogglePipeline.addEventListener('click', () => {
+      pipeEnabled = !pipeEnabled;
+      pipeCycleCounter = 0;
+      pipeProducedCount = 0;
+      pipeSingleStage = 0;
+      pCycleCount.textContent = '#0';
+      pTotalProduced.textContent = '0 units';
+
+      if (pipeEnabled) {
+        btnTogglePipeline.className = 'px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30 hover:bg-emerald-700';
+        pipeBtnIcon.textContent = '⚡';
+        pipeBtnLabel.textContent = 'PIPELINING: ON (3 MACHINES, 1 CAKE/CYCLE)';
+        pCpi.textContent = '1.00 (Peak)';
+        pCpi.className = 'text-emerald-700 font-black text-sm';
+        cardThroughputVal.textContent = '1.00';
+        steadyStateRate.textContent = '1 cake / 1 cycle';
+        pipeSingleMachine.classList.add('hidden');
+        pipeThreeMachines.classList.remove('hidden');
+      } else {
+        btnTogglePipeline.className = 'px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-indigo-600 text-white border-indigo-400 shadow-indigo-500/30 hover:bg-indigo-700';
+        pipeBtnIcon.textContent = '🔄';
+        pipeBtnLabel.textContent = 'PIPELINING: OFF (1 MACHINE, 3 CYCLES/CAKE)';
+        pCpi.textContent = '3.00 (Unpipelined)';
+        pCpi.className = 'text-purple-700 font-black text-sm';
+        cardThroughputVal.textContent = '0.33';
+        steadyStateRate.textContent = '1 cake / 3 cycles';
+        pipeSingleMachine.classList.remove('hidden');
+        pipeThreeMachines.classList.add('hidden');
+        updateSingleMachineDisplay(0);
+      }
+
+      // Reset stages on all cakes
+      for (let i = 0; i < pipeCakesList.length; i++) {
+        pipeCakesList[i].stage = 0;
+        pipeCakesList[i].emojiEl.textContent = getPipeStageEmoji(0);
+      }
+    });
+
+    function renderPipeConveyor(now) {
+      const dt = Math.min(0.1, (now - pipeLastAnimTime) / 1000);
+      pipeLastAnimTime = now;
+
+      const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
+      pipeStepPhase += dt * effectiveSpeed;
+
+      while (pipeStepPhase >= 1.0) {
+        pipeStepPhase -= 1.0;
+        pipeCycleCounter++;
+        pCycleCount.textContent = `#${pipeCycleCounter}`;
+
+        if (pipeEnabled) {
+          // PIPELINED: Steps every single cycle!
+          for (let i = 0; i < pipeCakesList.length; i++) {
+            pipeCakesList[i].gridX -= PIPE_CAKE_SPACING;
+          }
+
+          // Update stages based on station position:
+          // 480px = Bake, 320px = Frost, 160px = Box
+          for (let i = 0; i < pipeCakesList.length; i++) {
+            const c = pipeCakesList[i];
+            if (c.gridX <= 480 && c.gridX > 320) {
+              c.stage = 1; // Baked
+            } else if (c.gridX <= 320 && c.gridX > 160) {
+              c.stage = 2; // Frosted
+            } else if (c.gridX <= 160) {
+              c.stage = 3; // Boxed
+            }
+            c.emojiEl.textContent = getPipeStageEmoji(c.stage);
+          }
+
+          // Offscreen recycling on left
+          for (let i = 0; i < pipeCakesList.length; i++) {
+            const c = pipeCakesList[i];
+            if (c.gridX < -100) {
+              let maxGridX = -100;
+              for (let j = 0; j < pipeCakesList.length; j++) {
+                if (pipeCakesList[j].gridX > maxGridX) maxGridX = pipeCakesList[j].gridX;
+              }
+              c.gridX = maxGridX + PIPE_CAKE_SPACING;
+              c.pkg = pipeNextPkg++;
+              c.stage = 0;
+              c.emojiEl.textContent = getPipeStageEmoji(0);
+              c.badgeEl.textContent = `PKG#${c.pkg}`;
+
+              pipeProducedCount++;
+              pTotalProduced.textContent = `${pipeProducedCount} units`;
+            }
+          }
+
+          pipeBaseTreadOffset = (pipeBaseTreadOffset + PIPE_CAKE_SPACING) % 96;
+          pipeBaseRollerDeg = (pipeBaseRollerDeg + (PIPE_CAKE_SPACING * 360 / 96)) % 360;
+        } else {
+          // NON-PIPELINED: 1 Machine takes 3 cycles per cake
+          pipeSingleStage = (pipeSingleStage + 1) % 3;
+          updateSingleMachineDisplay(pipeSingleStage);
+
+          // Find cake under the central universal machine (at ~320px)
+          const targetCake = pipeCakesList.find((c) => Math.abs(c.gridX - 320) < 40);
+          if (targetCake) {
+            targetCake.stage = pipeSingleStage === 0 ? 3 : pipeSingleStage;
+            targetCake.emojiEl.textContent = getPipeStageEmoji(targetCake.stage);
+          }
+
+          // Line ONLY moves when the 3-cycle sequence finishes (cycle 0)
+          if (pipeSingleStage === 0) {
+            for (let i = 0; i < pipeCakesList.length; i++) {
+              pipeCakesList[i].gridX -= PIPE_CAKE_SPACING;
+            }
+
+            for (let i = 0; i < pipeCakesList.length; i++) {
+              const c = pipeCakesList[i];
+              if (c.gridX < -100) {
+                let maxGridX = -100;
+                for (let j = 0; j < pipeCakesList.length; j++) {
+                  if (pipeCakesList[j].gridX > maxGridX) maxGridX = pipeCakesList[j].gridX;
+                }
+                c.gridX = maxGridX + PIPE_CAKE_SPACING;
+                c.pkg = pipeNextPkg++;
+                c.stage = 0;
+                c.emojiEl.textContent = getPipeStageEmoji(0);
+                c.badgeEl.textContent = `PKG#${c.pkg}`;
+
+                pipeProducedCount++;
+                pTotalProduced.textContent = `${pipeProducedCount} units`;
+              }
+            }
+
+            pipeBaseTreadOffset = (pipeBaseTreadOffset + PIPE_CAKE_SPACING) % 96;
+            pipeBaseRollerDeg = (pipeBaseRollerDeg + (PIPE_CAKE_SPACING * 360 / 96)) % 360;
+          }
+        }
+      }
+
+      // Stepped motion calculation
+      const isMovingCycle = pipeEnabled || pipeSingleStage === 0;
+      let currentStepOffset = 0;
+      let currentEased = 0;
+
+      if (isMovingCycle) {
+        if (pipeStepPhase < MOVE_FRACTION) {
+          const moveProgress = pipeStepPhase / MOVE_FRACTION;
+          currentEased = easeInOutCubic(moveProgress);
+          currentStepOffset = currentEased * PIPE_CAKE_SPACING;
+        } else {
+          currentEased = 1.0;
+          currentStepOffset = PIPE_CAKE_SPACING;
+        }
+      }
+
+      // Position cakes
+      for (let i = 0; i < pipeCakesList.length; i++) {
+        const c = pipeCakesList[i];
+        const renderX = c.gridX - currentStepOffset;
+        c.el.style.transform = `translate3d(${renderX}px, 80%, 0)`;
+      }
+
+      // Tread
+      const currentTread = (pipeBaseTreadOffset + currentStepOffset) % 96;
+      pipeBeltTread.style.backgroundPosition = `-${currentTread}px 0`;
+
+      // Rollers
+      const currentRollerDeg = (pipeBaseRollerDeg + (PIPE_CAKE_SPACING * 360 / 96) * currentEased) % 360;
+      pRollers.forEach((r) => {
+        r.style.transform = `rotate(${currentRollerDeg}deg)`;
+      });
+
+      requestAnimationFrame(renderPipeConveyor);
+    }
+    requestAnimationFrame(renderPipeConveyor);
 
     // Initial state
     updateFrequency(1.0);

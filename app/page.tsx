@@ -3,8 +3,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useFactorySimulation } from '../hooks/useFactorySimulation';
 import ConveyorBelt from '../components/ConveyorBelt';
+import PipeliningConveyor from '../components/PipeliningConveyor';
 
 export default function FactoryDashboard() {
+  // Navigation Window State
+  const [activeWindow, setActiveWindow] = useState<'dvfs' | 'pipelining'>('dvfs');
+
   // Serial, Clock Speed, and VLIW Computing States
   const [hardwareClockSpeed, setHardwareClockSpeed] = useState<number | null>(null);
   const [manualClockSpeed, setManualClockSpeed] = useState<number>(1.0);
@@ -157,6 +161,33 @@ export default function FactoryDashboard() {
             </div>
           </header>
 
+          {/* Window Tab Navigation */}
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setActiveWindow('dvfs')}
+              className={`px-5 py-2.5 rounded-2xl font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                activeWindow === 'dvfs'
+                  ? 'bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/30 scale-[1.02]'
+                  : 'bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100'
+              }`}
+            >
+              <span>🏭</span>
+              <span>WINDOW 1: DVFS & VLIW FACTORY</span>
+            </button>
+
+            <button
+              onClick={() => setActiveWindow('pipelining')}
+              className={`px-5 py-2.5 rounded-2xl font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                activeWindow === 'pipelining'
+                  ? 'bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/30 scale-[1.02]'
+                  : 'bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100'
+              }`}
+            >
+              <span>🔄</span>
+              <span>WINDOW 2: CPU PIPELINING FACTORY</span>
+            </button>
+          </div>
+
           {/* Error notification if Web Serial encounters an issue */}
           {serialError && (
             <div className="bg-rose-100 border-2 border-rose-300 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between shadow-sm">
@@ -167,15 +198,24 @@ export default function FactoryDashboard() {
             </div>
           )}
 
-          {/* The Large Purble Place Bakery Conveyor Component (Supports VLIW Dual Lane) */}
-          <ConveyorBelt
-            clockSpeed={effectiveClockSpeed}
-            powerHeat={powerHeat}
-            isDead={isDead}
-            onSetSpeed={(s) => setManualClockSpeed(s)}
-            vliwEnabled={vliwEnabled}
-            onToggleVliw={setVliwEnabled}
-          />
+          {/* Active Factory Window Component */}
+          {activeWindow === 'dvfs' ? (
+            /* Window 1: DVFS & VLIW Conveyor */
+            <ConveyorBelt
+              clockSpeed={effectiveClockSpeed}
+              powerHeat={powerHeat}
+              isDead={isDead}
+              onSetSpeed={(s) => setManualClockSpeed(s)}
+              vliwEnabled={vliwEnabled}
+              onToggleVliw={setVliwEnabled}
+            />
+          ) : (
+            /* Window 2: CPU Instruction Pipelining Conveyor */
+            <PipeliningConveyor
+              clockSpeed={effectiveClockSpeed}
+              onSetSpeed={(s) => setManualClockSpeed(s)}
+            />
+          )}
 
           {/* Scroll Down Hint Banner */}
           <div className="w-full flex items-center justify-center py-3 bg-purple-100/70 border-2 border-purple-200 rounded-2xl text-purple-800 text-xs font-bold font-mono tracking-wider shadow-sm animate-bounce">

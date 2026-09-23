@@ -91,6 +91,50 @@ class TestSimulationPhysics(unittest.TestCase):
         self.assertAlmostEqual(cakes_vliw_1ghz / cakes_scalar_2ghz, 4.0, places=1)
 
 
+    def test_non_pipelined_throughput(self):
+        """
+        Verify non-pipelined execution:
+        - 1 machine executes Bake -> Frost -> Box sequentially.
+        - Latency = 3 cycles per cake.
+        - Throughput = 1 cake every 3 cycles (CPI = 3.0).
+        """
+        def simulate_non_pipelined(cycles):
+            return cycles // 3
+
+        self.assertEqual(simulate_non_pipelined(1), 0)
+        self.assertEqual(simulate_non_pipelined(2), 0)
+        self.assertEqual(simulate_non_pipelined(3), 1)
+        self.assertEqual(simulate_non_pipelined(6), 2)
+        self.assertEqual(simulate_non_pipelined(30), 10)
+
+    def test_pipelined_throughput(self):
+        """
+        Verify 3-stage pipelined execution:
+        - First cake takes 3 cycles (pipeline fill latency).
+        - Subsequent cakes are produced 1 every cycle thereafter.
+        - Produces 10 cakes in 3 + (10 - 1) = 12 cycles (vs 30 cycles non-pipelined, ~2.5x speedup).
+        - As cycles -> infinity, throughput approaches 1.0 cake/cycle (3x speedup).
+        """
+        def simulate_pipelined(cycles):
+            if cycles < 3:
+                return 0
+            return 1 + (cycles - 3)
+
+        self.assertEqual(simulate_pipelined(1), 0)
+        self.assertEqual(simulate_pipelined(2), 0)
+        self.assertEqual(simulate_pipelined(3), 1)  # 1st cake emerges
+        self.assertEqual(simulate_pipelined(4), 2)  # 2nd cake emerges next cycle
+        self.assertEqual(simulate_pipelined(5), 3)  # 3rd cake emerges next cycle
+        self.assertEqual(simulate_pipelined(12), 10) # 10 cakes completed in 12 cycles
+
+        # 3x peak speedup demonstration
+        cycles_large = 300
+        non_pipelined_cakes = cycles_large // 3  # 100 cakes
+        pipelined_cakes = 1 + (cycles_large - 3)  # 298 cakes
+        speedup = pipelined_cakes / non_pipelined_cakes
+        self.assertAlmostEqual(speedup, 3.0, delta=0.05)
+
+
 if __name__ == "__main__":
     unittest.main()
 
