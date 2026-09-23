@@ -10,13 +10,14 @@ interface PipeliningConveyorProps {
 interface CakeItem {
   el: HTMLDivElement;
   badgeEl: HTMLSpanElement;
-  cakeLayerEl: HTMLImageElement;
-  frostingLayerEl: HTMLDivElement;
-  boxLayerEl: HTMLImageElement;
+  plateImgEl: HTMLImageElement;
+  cakeImgEl: HTMLImageElement;
+  glazedImgEl: HTMLImageElement;
+  boxedImgEl: HTMLImageElement;
   gridX: number; // offset relative to stage center (50%)
   pkg: number;
-  stage: number; // 0=plate, 1=has cake, 2=has frosting, 3=has box
-  fallingStage: number; // 0=none, 1=cake, 2=frosting, 3=box
+  stage: number; // 0=plate, 1=baked cake, 2=glazed cake, 3=boxed cake
+  fallingStage: number; // 0=none, 1=baked, 2=glazed, 3=boxed
 }
 
 export default function PipeliningConveyor({
@@ -26,7 +27,7 @@ export default function PipeliningConveyor({
   const [pipeliningEnabled, setPipeliningEnabled] = useState<boolean>(false);
   const [cycleCount, setCycleCount] = useState<number>(0);
   const [cakesCompleted, setCakesCompleted] = useState<number>(0);
-  const [singleMachineStage, setSingleMachineStage] = useState<number>(1); // 1=Cake, 2=Frosting, 0=Box
+  const [singleMachineStage, setSingleMachineStage] = useState<number>(1); // 1=Cake, 2=Glaze, 0=Box
 
   const trackRef = useRef<HTMLDivElement>(null);
   const beltRef = useRef<HTMLDivElement>(null);
@@ -63,26 +64,17 @@ export default function PipeliningConveyor({
           PKG#${pkg}
         </span>
         <div class="relative w-32 flex flex-col items-center justify-end" style="height: 105px;">
-          <!-- Box Layer (Stage 3) -->
-          <div class="boxLayer absolute bottom-1 z-30 transition-transform" style="display: none; transform: translateY(0);">
-            <img src="/sprites/cake_box.png" alt="Box" class="w-28 h-auto filter drop-shadow-xl" />
-          </div>
+          <!-- Stage 3: Boxed Cake -->
+          <img src="/sprites/cake_boxed.png" alt="Boxed Cake" class="cakeBoxedImg absolute bottom-0 w-32 h-auto filter drop-shadow-xl" style="display: none; transform: translateY(0);" />
 
-          <!-- Frosting Layer (Stage 2) -->
-          <div class="frostingLayer absolute bottom-6 z-20 flex flex-col items-center transition-transform" style="display: none; transform: translateY(0);">
-            <img src="/sprites/cake_topper_strawberry.png" alt="Topper" class="w-6 h-6 -mb-2 relative z-10 filter drop-shadow-sm" />
-            <img src="/sprites/cake_cream.png" alt="Frosting" class="w-24 h-auto filter drop-shadow-md" />
-          </div>
+          <!-- Stage 2: Glazed Cake -->
+          <img src="/sprites/cake_glazed.png" alt="Glazed Cake" class="cakeGlazedImg absolute bottom-0 w-32 h-auto filter drop-shadow-lg" style="display: none; transform: translateY(0);" />
 
-          <!-- Cake Sponge Layer (Stage 1) -->
-          <div class="cakeLayer absolute bottom-2 z-10 transition-transform" style="display: none; transform: translateY(0);">
-            <img src="/sprites/cake_bottom_layer.png" alt="Cake Sponge" class="w-26 h-auto filter drop-shadow-md" />
-          </div>
+          <!-- Stage 1: Baked Sponge Cake -->
+          <img src="/sprites/cake.png" alt="Baked Cake" class="cakeBakedImg absolute bottom-0 w-32 h-auto filter drop-shadow-md" style="display: none; transform: translateY(0);" />
 
-          <!-- Plate / Pan Layer (Base) -->
-          <div class="plateLayer absolute bottom-0 z-0">
-            <img src="/sprites/cake_plate.png" alt="Plate" class="w-28 h-auto filter drop-shadow-sm" />
-          </div>
+          <!-- Stage 0: Empty Plate Base -->
+          <img src="/sprites/plate.png" alt="Plate" class="cakePlateImg absolute bottom-0 w-32 h-auto filter drop-shadow-sm" style="display: block; transform: translateY(0);" />
         </div>
       `;
       cakeEl.style.transform = `translate3d(${initialGridX}px, 0, 0)`;
@@ -91,9 +83,10 @@ export default function PipeliningConveyor({
       const item: CakeItem = {
         el: cakeEl,
         badgeEl: cakeEl.querySelector('.cakeBadge')!,
-        cakeLayerEl: cakeEl.querySelector('.cakeLayer')!,
-        frostingLayerEl: cakeEl.querySelector('.frostingLayer')!,
-        boxLayerEl: cakeEl.querySelector('.boxLayer')!,
+        plateImgEl: cakeEl.querySelector('.cakePlateImg')!,
+        cakeImgEl: cakeEl.querySelector('.cakeBakedImg')!,
+        glazedImgEl: cakeEl.querySelector('.cakeGlazedImg')!,
+        boxedImgEl: cakeEl.querySelector('.cakeBoxedImg')!,
         gridX: initialGridX,
         pkg: pkg,
         stage: initialStage,
@@ -105,18 +98,19 @@ export default function PipeliningConveyor({
     }
 
     function updateCakeVisualState(item: CakeItem) {
-      item.cakeLayerEl.style.display = item.stage >= 1 ? 'block' : 'none';
-      item.frostingLayerEl.style.display = item.stage >= 2 ? 'flex' : 'none';
-      item.boxLayerEl.style.display = item.stage >= 3 ? 'block' : 'none';
+      item.plateImgEl.style.display = item.stage === 0 ? 'block' : 'none';
+      item.cakeImgEl.style.display = item.stage === 1 ? 'block' : 'none';
+      item.glazedImgEl.style.display = item.stage === 2 ? 'block' : 'none';
+      item.boxedImgEl.style.display = item.stage >= 3 ? 'block' : 'none';
 
       if (item.stage === 0) {
         item.badgeEl.textContent = `PKG#${item.pkg} (EMPTY)`;
         item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-slate-500 bg-white/90 px-2 py-0.5 rounded-full mb-1 border border-slate-300 shadow-sm';
       } else if (item.stage === 1) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (CAKE)`;
+        item.badgeEl.textContent = `PKG#${item.pkg} (BAKED)`;
         item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full mb-1 border border-amber-300 shadow-sm';
       } else if (item.stage === 2) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (FROSTED)`;
+        item.badgeEl.textContent = `PKG#${item.pkg} (GLAZED)`;
         item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-pink-800 bg-pink-100 px-2 py-0.5 rounded-full mb-1 border border-pink-300 shadow-sm';
       } else if (item.stage >= 3) {
         item.badgeEl.textContent = `PKG#${item.pkg} (BOXED)`;
@@ -196,21 +190,24 @@ export default function PipeliningConveyor({
             if (Math.abs(c.gridX - S1) < 20) {
               c.stage = 1;
               c.fallingStage = 1;
-              c.cakeLayerEl.style.display = 'block';
+              c.cakeImgEl.style.display = 'block';
+              c.plateImgEl.style.display = 'block';
               updateCakeVisualState(c);
             }
-            // Station 2: Frosting drops from Machine 2
+            // Station 2: Glaze drops from Machine 2
             else if (Math.abs(c.gridX - S2) < 20 && c.stage >= 1) {
               c.stage = 2;
               c.fallingStage = 2;
-              c.frostingLayerEl.style.display = 'flex';
+              c.glazedImgEl.style.display = 'block';
+              c.cakeImgEl.style.display = 'block';
               updateCakeVisualState(c);
             }
             // Station 3: Box drops from Machine 3
             else if (Math.abs(c.gridX - S3) < 20 && c.stage >= 2) {
               c.stage = 3;
               c.fallingStage = 3;
-              c.boxLayerEl.style.display = 'block';
+              c.boxedImgEl.style.display = 'block';
+              c.glazedImgEl.style.display = 'block';
               updateCakeVisualState(c);
             }
           }
@@ -232,22 +229,25 @@ export default function PipeliningConveyor({
           }
 
           if (nonPipelinedCycleCounter === 1) {
-            // Cycle 1: Cake drops from single machine
+            // Cycle 1: Baked cake drops from single machine
             targetCake.stage = 1;
             targetCake.fallingStage = 1;
-            targetCake.cakeLayerEl.style.display = 'block';
+            targetCake.cakeImgEl.style.display = 'block';
+            targetCake.plateImgEl.style.display = 'block';
             updateCakeVisualState(targetCake);
           } else if (nonPipelinedCycleCounter === 2) {
-            // Cycle 2: Frosting drops from single machine
+            // Cycle 2: Glazed cake drops from single machine
             targetCake.stage = 2;
             targetCake.fallingStage = 2;
-            targetCake.frostingLayerEl.style.display = 'flex';
+            targetCake.glazedImgEl.style.display = 'block';
+            targetCake.cakeImgEl.style.display = 'block';
             updateCakeVisualState(targetCake);
           } else if (nonPipelinedCycleCounter === 0) {
             // Cycle 3: Box drops, packaging complete!
             targetCake.stage = 3;
             targetCake.fallingStage = 3;
-            targetCake.boxLayerEl.style.display = 'block';
+            targetCake.boxedImgEl.style.display = 'block';
+            targetCake.glazedImgEl.style.display = 'block';
             updateCakeVisualState(targetCake);
 
             // Step the belt forward to deliver the boxed cake
@@ -306,9 +306,9 @@ export default function PipeliningConveyor({
         // Vertical drop animation directly from dispenser nozzles above
         if (c.fallingStage > 0) {
           let targetEl: HTMLElement | null = null;
-          if (c.fallingStage === 1) targetEl = c.cakeLayerEl;
-          else if (c.fallingStage === 2) targetEl = c.frostingLayerEl;
-          else if (c.fallingStage === 3) targetEl = c.boxLayerEl;
+          if (c.fallingStage === 1) targetEl = c.cakeImgEl;
+          else if (c.fallingStage === 2) targetEl = c.glazedImgEl;
+          else if (c.fallingStage === 3) targetEl = c.boxedImgEl;
 
           if (targetEl) {
             if (inDwellPhase) {
@@ -329,6 +329,7 @@ export default function PipeliningConveyor({
             } else {
               targetEl.style.transform = 'translateY(0px) scale(1)';
               c.fallingStage = 0;
+              updateCakeVisualState(c);
             }
           }
         }
@@ -359,24 +360,24 @@ export default function PipeliningConveyor({
     switch (singleMachineStage) {
       case 1: // Cake Stage
         return {
-          label: 'STAGE 1: CAKE (🔥 BAKE)',
+          label: 'STAGE 1: BAKE (🔥 CAKE)',
           badgeClass: 'bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50',
           glowClass: 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
-          desc: 'Dropping sponge cake into pan...',
+          desc: 'Baking golden sponge cake into pan...',
         };
-      case 2: // Frosting Stage
+      case 2: // Glaze Stage
         return {
-          label: 'STAGE 2: FROSTING (🧁 ICING)',
+          label: 'STAGE 2: GLAZE (🧁 FROSTING)',
           badgeClass: 'bg-pink-500 text-white border-pink-300 shadow-pink-500/50',
           glowClass: 'border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
-          desc: 'Dispensing strawberry vanilla frosting...',
+          desc: 'Applying strawberry glaze & cherry...',
         };
       case 0: // Box Stage
         return {
           label: 'STAGE 3: BOX (📦 PACKAGING)',
           badgeClass: 'bg-purple-600 text-white border-purple-300 shadow-purple-500/50',
           glowClass: 'border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
-          desc: 'Packaging finished cake in bakery box...',
+          desc: 'Packaging cake in bakery display box...',
         };
       default:
         return {
@@ -468,13 +469,13 @@ export default function PipeliningConveyor({
               />
             </div>
 
-            {/* Machine 2: Frosting (Center: 0px from center) */}
+            {/* Machine 2: Glaze (Center: 0px from center) */}
             <div
               className="absolute top-0 flex flex-col items-center pointer-events-auto"
               style={{ left: '50%', transform: 'translateX(-50%)', width: '130px' }}
             >
               <span className="text-[10px] font-mono font-black text-pink-900 bg-pink-200/95 border border-pink-400 px-2.5 py-0.5 rounded-lg mb-1 shadow-sm">
-                STAGE 2: FROSTING
+                STAGE 2: GLAZE
               </span>
               <img
                 src="/sprites/dispenser_icing.png"
@@ -489,7 +490,7 @@ export default function PipeliningConveyor({
               style={{ left: 'calc(50% + 190px)', transform: 'translateX(-50%)', width: '130px' }}
             >
               <span className="text-[10px] font-mono font-black text-amber-900 bg-amber-200/95 border border-amber-400 px-2.5 py-0.5 rounded-lg mb-1 shadow-sm">
-                STAGE 1: CAKE
+                STAGE 1: BAKE
               </span>
               <img
                 src="/sprites/dispenser_batter.png"
