@@ -337,79 +337,81 @@
 
       <!-- Purble Place Stage Visual Assembly for Window 2 -->
       <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
-        <div id="pipeBakeryStage" class="relative w-full h-[540px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
+        <div id="pipeBakeryStage" class="relative w-full h-[460px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
 
           <!-- Top Zone: Overhead Machines Placement -->
           <div class="w-full px-8 flex justify-between items-start z-10 select-none">
-            <div class="w-32"></div>
+            <div class="w-24"></div>
 
             <!-- NON-PIPELINED ASSEMBLY: Single Machine with Dynamic Color Changes -->
             <div id="pipeSingleMachine" class="flex flex-col items-center -mt-4">
               <span id="pipeMachineBadge" class="text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse">
-                STAGE 1: BAKE (🔥 OVEN)
+                STAGE 1: CAKE (🔥 BAKE)
               </span>
               <div id="pipeMachineGlow" class="rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40">
-                <img src="sprites/dispenser_batter.png" alt="Unified Cake Maker" class="w-36 h-40 object-contain object-top filter drop-shadow-2xl">
+                <img src="sprites/dispenser_batter.png" alt="Universal Cake Maker" class="w-36 h-40 object-contain object-top filter drop-shadow-2xl">
               </div>
               <span id="pipeMachineDesc" class="text-[10px] font-mono font-bold text-purple-950 bg-white/90 px-2.5 py-0.5 rounded-full mt-1 border border-purple-300 shadow-sm">
-                Heating cake batter into sponge...
+                Dropping sponge cake into pan...
               </span>
             </div>
 
-            <!-- PIPELINED ASSEMBLY: 3 Dedicated Machines in Series -->
-            <div id="pipeThreeMachines" class="hidden flex gap-12 items-start -mt-4">
-              <!-- Machine 1: Bake -->
-              <div class="flex flex-col items-center">
-                <span class="text-[10px] font-mono font-black text-amber-900 bg-amber-200/90 border border-amber-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
-                  STAGE 1: BAKE
-                </span>
-                <img src="sprites/dispenser_batter.png" alt="Bake Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
-              </div>
-              <!-- Machine 2: Frost -->
-              <div class="flex flex-col items-center">
-                <span class="text-[10px] font-mono font-black text-pink-900 bg-pink-200/90 border border-pink-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
-                  STAGE 2: FROST
-                </span>
-                <img src="sprites/dispenser_icing.png" alt="Frosting Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
-              </div>
-              <!-- Machine 3: Box -->
+            <!-- PIPELINED ASSEMBLY: 3 Dedicated Machines in Series (Right to Left: Cake -> Frosting -> Box) -->
+            <div id="pipeThreeMachines" class="hidden flex gap-14 items-start -mt-4">
+              <!-- Machine 3: Box (Left - Stage 3) -->
               <div class="flex flex-col items-center">
                 <span class="text-[10px] font-mono font-black text-purple-900 bg-purple-200/90 border border-purple-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
                   STAGE 3: BOX
                 </span>
                 <img src="sprites/dispenser_sprinkles.png" alt="Packaging Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
               </div>
+
+              <!-- Machine 2: Frosting (Center - Stage 2) -->
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-mono font-black text-pink-900 bg-pink-200/90 border border-pink-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
+                  STAGE 2: FROSTING
+                </span>
+                <img src="sprites/dispenser_icing.png" alt="Frosting Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
+              </div>
+
+              <!-- Machine 1: Cake (Right - Stage 1) -->
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-mono font-black text-amber-900 bg-amber-200/90 border border-amber-400 px-2 py-0.5 rounded-lg mb-1 shadow-sm">
+                  STAGE 1: CAKE
+                </span>
+                <img src="sprites/dispenser_batter.png" alt="Cake Machine" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
+              </div>
             </div>
 
-            <div class="w-32"></div>
+            <div class="w-24"></div>
           </div>
 
-          <!-- Conveyor Belt Assembly (Exact bottom of the stage) -->
-          <div class="w-full flex flex-col justify-end relative z-20">
+          <!-- Elevated Conveyor Belt Assembly (Moved Higher Up via pb-12) -->
+          <div class="w-full flex flex-col justify-end relative z-20 pb-12">
             <!-- Moving Cakes Track -->
             <div class="relative h-28 pointer-events-none w-full z-20">
               <div id="pipeCakesTrack" class="w-full h-full relative z-20"></div>
             </div>
 
             <!-- Conveyor Belt Tread -->
-            <div id="pipeBeltTread" class="w-full h-16 border-y-2 border-slate-700 relative z-10" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%;"></div>
+            <div id="pipeBeltTread" class="w-full h-14 border-y-2 border-slate-700 relative z-10 shadow-lg" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%;"></div>
 
             <!-- Conveyor Rollers -->
-            <div id="pipeRollersContainer" class="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
-              <div class="p-roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+            <div id="pipeRollersContainer" class="h-7 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6 shadow-md">
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="p-roller w-4 h-4 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
             </div>
           </div>
         </div>
@@ -1033,38 +1035,28 @@
     let pipeEnabled = false;
     let pipeCycleCounter = 0;
     let pipeProducedCount = 0;
-    let pipeSingleStage = 0; // 0=Bake, 1=Frost, 2=Box
-    const PIPE_CAKE_SPACING = 160;
-    const PIPE_NUM_CAKES = 12;
-    let pipeNextPkg = 100;
-
-    function getPipeStageEmoji(stage) {
-      switch (stage) {
-        case 1: return '🍰'; // Baked sponge
-        case 2: return '🧁'; // Frosted cake
-        case 3: return '🎁'; // Boxed cake
-        default: return '🥣'; // Raw batter
-      }
-    }
+    let pipeSingleStage = 0; // 0=Ready, 1=Cake, 2=Frosting, 0(3)=Box
+    const PIPE_CAKE_SPACING = 180;
+    let pipeNextPkg = 101;
 
     const singleMachineThemes = [
-      {
-        label: 'STAGE 1: BAKE (🔥 OVEN)',
-        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse',
-        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
-        desc: 'Heating cake batter into sponge...',
-      },
-      {
-        label: 'STAGE 2: FROST (🧁 ICING)',
-        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-pink-500 text-white border-pink-300 shadow-pink-500/50 animate-pulse',
-        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
-        desc: 'Applying strawberry vanilla frosting...',
-      },
       {
         label: 'STAGE 3: BOX (📦 PACKAGING)',
         badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-purple-600 text-white border-purple-300 shadow-purple-500/50 animate-pulse',
         glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
-        desc: 'Boxing cake and sealing packaging...',
+        desc: 'Packaging finished cake in bakery box...',
+      },
+      {
+        label: 'STAGE 1: CAKE (🔥 BAKE)',
+        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse',
+        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
+        desc: 'Dropping sponge cake into pan...',
+      },
+      {
+        label: 'STAGE 2: FROSTING (🧁 ICING)',
+        badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-pink-500 text-white border-pink-300 shadow-pink-500/50 animate-pulse',
+        glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
+        desc: 'Dispensing strawberry vanilla frosting...',
       }
     ];
 
@@ -1076,47 +1068,98 @@
       pipeMachineDesc.textContent = theme.desc;
     }
 
-    // Initialize Window 2 cakes
-    pipeCakesTrack.innerHTML = '';
-    const pipeCakesList = [];
-
-    for (let i = 0; i < PIPE_NUM_CAKES; i++) {
+    // Factory helper to create an empty plate cake entity
+    function createPipeCakeItem(pkg, initialStage = 0, initialGridX = 0) {
       const cakeEl = document.createElement('div');
-      cakeEl.className = 'w-28 flex flex-col items-center justify-end pb-1 absolute bottom-0 select-none';
-      const pkg = pipeNextPkg++;
+      cakeEl.className = 'w-36 flex flex-col items-center justify-end pb-1 absolute bottom-0 select-none pointer-events-none';
       cakeEl.innerHTML = `
-        <span class="pipeCakeEmoji text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
-          🥣
-        </span>
-        <span class="pipeCakeBadge text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/90 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+        <span class="cakeBadge text-[9px] font-mono font-black text-purple-900 bg-white/95 px-2.5 py-0.5 rounded-full mb-1 shadow-sm border border-purple-200">
           PKG#${pkg}
         </span>
+        <div class="relative w-32 flex flex-col items-center justify-end" style="height: 110px;">
+          <!-- Box Layer (Stage 3) -->
+          <div class="boxLayer absolute bottom-1 z-30 transition-transform" style="display: none; transform: translateY(0);">
+            <img src="sprites/cake_box.png" alt="Box" class="w-28 h-auto filter drop-shadow-xl" />
+          </div>
+
+          <!-- Frosting Layer (Stage 2) -->
+          <div class="frostingLayer absolute bottom-6 z-20 flex flex-col items-center transition-transform" style="display: none; transform: translateY(0);">
+            <img src="sprites/cake_topper_strawberry.png" alt="Topper" class="w-6 h-6 -mb-2 relative z-10 filter drop-shadow-sm" />
+            <img src="sprites/cake_cream.png" alt="Frosting" class="w-24 h-auto filter drop-shadow-md" />
+          </div>
+
+          <!-- Cake Sponge Layer (Stage 1) -->
+          <div class="cakeLayer absolute bottom-2 z-10 transition-transform" style="display: none; transform: translateY(0);">
+            <img src="sprites/cake_bottom_layer.png" alt="Cake Sponge" class="w-26 h-auto filter drop-shadow-md" />
+          </div>
+
+          <!-- Plate / Pan Layer (Base) -->
+          <div class="plateLayer absolute bottom-0 z-0">
+            <img src="sprites/cake_plate.png" alt="Plate" class="w-28 h-auto filter drop-shadow-sm" />
+          </div>
+        </div>
       `;
-      const gridX = i * PIPE_CAKE_SPACING;
-      cakeEl.style.transform = `translate3d(${gridX}px, 80%, 0)`;
+      cakeEl.style.transform = `translate3d(${initialGridX}px, 0, 0)`;
       pipeCakesTrack.appendChild(cakeEl);
-      pipeCakesList.push({
+
+      const item = {
         el: cakeEl,
-        emojiEl: cakeEl.querySelector('.pipeCakeEmoji'),
-        badgeEl: cakeEl.querySelector('.pipeCakeBadge'),
-        gridX: gridX,
+        badgeEl: cakeEl.querySelector('.cakeBadge'),
+        cakeLayerEl: cakeEl.querySelector('.cakeLayer'),
+        frostingLayerEl: cakeEl.querySelector('.frostingLayer'),
+        boxLayerEl: cakeEl.querySelector('.boxLayer'),
+        gridX: initialGridX,
         pkg: pkg,
-        stage: 0,
-      });
+        stage: initialStage,
+        fallingStage: 0,
+      };
+
+      updatePipeCakeVisual(item);
+      return item;
     }
+
+    function updatePipeCakeVisual(item) {
+      item.cakeLayerEl.style.display = item.stage >= 1 ? 'block' : 'none';
+      item.frostingLayerEl.style.display = item.stage >= 2 ? 'flex' : 'none';
+      item.boxLayerEl.style.display = item.stage >= 3 ? 'block' : 'none';
+
+      if (item.stage === 0) {
+        item.badgeEl.textContent = `PKG#${item.pkg} (EMPTY)`;
+        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-slate-500 bg-white/90 px-2 py-0.5 rounded-full mb-1 border border-slate-300 shadow-sm';
+      } else if (item.stage === 1) {
+        item.badgeEl.textContent = `PKG#${item.pkg} (CAKE)`;
+        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full mb-1 border border-amber-300 shadow-sm';
+      } else if (item.stage === 2) {
+        item.badgeEl.textContent = `PKG#${item.pkg} (FROSTED)`;
+        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-pink-800 bg-pink-100 px-2 py-0.5 rounded-full mb-1 border border-pink-300 shadow-sm';
+      } else if (item.stage >= 3) {
+        item.badgeEl.textContent = `PKG#${item.pkg} (BOXED)`;
+        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-black text-purple-900 bg-purple-100 px-2 py-0.5 rounded-full mb-1 border border-purple-300 shadow-sm';
+      }
+    }
+
+    // Belt starts completely EMPTY!
+    pipeCakesTrack.innerHTML = '';
+    let pipeCakesList = [];
 
     let pipeLastAnimTime = performance.now();
     let pipeStepPhase = 0;
     let pipeBaseTreadOffset = 0;
     let pipeBaseRollerDeg = 0;
+    let nonPipelinedCycleCounter = 0;
 
     btnTogglePipeline.addEventListener('click', () => {
       pipeEnabled = !pipeEnabled;
       pipeCycleCounter = 0;
       pipeProducedCount = 0;
       pipeSingleStage = 0;
+      nonPipelinedCycleCounter = 0;
       pCycleCount.textContent = '#0';
       pTotalProduced.textContent = '0 units';
+
+      // Reset track so it starts empty
+      pipeCakesTrack.innerHTML = '';
+      pipeCakesList = [];
 
       if (pipeEnabled) {
         btnTogglePipeline.className = 'px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30 hover:bg-emerald-700';
@@ -1138,19 +1181,20 @@
         steadyStateRate.textContent = '1 cake / 3 cycles';
         pipeSingleMachine.classList.remove('hidden');
         pipeThreeMachines.classList.add('hidden');
-        updateSingleMachineDisplay(0);
-      }
-
-      // Reset stages on all cakes
-      for (let i = 0; i < pipeCakesList.length; i++) {
-        pipeCakesList[i].stage = 0;
-        pipeCakesList[i].emojiEl.textContent = getPipeStageEmoji(0);
+        updateSingleMachineDisplay(1);
       }
     });
 
     function renderPipeConveyor(now) {
       const dt = Math.min(0.1, (now - pipeLastAnimTime) / 1000);
       pipeLastAnimTime = now;
+
+      const trackWidth = pipeCakesTrack.clientWidth || 960;
+      const center = trackWidth / 2;
+      const station1X = center + PIPE_CAKE_SPACING; // Machine 1 (Cake)
+      const station2X = center;                     // Machine 2 (Frosting) / Single Machine
+      const station3X = center - PIPE_CAKE_SPACING; // Machine 3 (Box)
+      const exitX = center - PIPE_CAKE_SPACING * 2; // Delivery exit
 
       const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
       pipeStepPhase += dt * effectiveSpeed;
@@ -1166,36 +1210,48 @@
             pipeCakesList[i].gridX -= PIPE_CAKE_SPACING;
           }
 
-          // Update stages based on station position:
-          // 480px = Bake, 320px = Frost, 160px = Box
-          for (let i = 0; i < pipeCakesList.length; i++) {
+          // Check for completed cakes at exit
+          for (let i = pipeCakesList.length - 1; i >= 0; i--) {
             const c = pipeCakesList[i];
-            if (c.gridX <= 480 && c.gridX > 320) {
-              c.stage = 1; // Baked
-            } else if (c.gridX <= 320 && c.gridX > 160) {
-              c.stage = 2; // Frosted
-            } else if (c.gridX <= 160) {
-              c.stage = 3; // Boxed
+            if (c.gridX <= exitX) {
+              if (c.stage >= 3) {
+                pipeProducedCount++;
+                pTotalProduced.textContent = `${pipeProducedCount} units`;
+              }
             }
-            c.emojiEl.textContent = getPipeStageEmoji(c.stage);
+            if (c.gridX < exitX - 100) {
+              c.el.remove();
+              pipeCakesList.splice(i, 1);
+            }
           }
 
-          // Offscreen recycling on left
+          // Introduce a new empty plate at Station 1 for this cycle
+          const newCake = createPipeCakeItem(pipeNextPkg++, 0, station1X);
+          pipeCakesList.push(newCake);
+
+          // Trigger falling animations at each active machine station!
           for (let i = 0; i < pipeCakesList.length; i++) {
             const c = pipeCakesList[i];
-            if (c.gridX < -100) {
-              let maxGridX = -100;
-              for (let j = 0; j < pipeCakesList.length; j++) {
-                if (pipeCakesList[j].gridX > maxGridX) maxGridX = pipeCakesList[j].gridX;
-              }
-              c.gridX = maxGridX + PIPE_CAKE_SPACING;
-              c.pkg = pipeNextPkg++;
-              c.stage = 0;
-              c.emojiEl.textContent = getPipeStageEmoji(0);
-              c.badgeEl.textContent = `PKG#${c.pkg}`;
-
-              pipeProducedCount++;
-              pTotalProduced.textContent = `${pipeProducedCount} units`;
+            // Station 1: Cake drops from Machine 1
+            if (Math.abs(c.gridX - station1X) < 20) {
+              c.stage = 1;
+              c.fallingStage = 1;
+              c.cakeLayerEl.style.display = 'block';
+              updatePipeCakeVisual(c);
+            }
+            // Station 2: Frosting drops from Machine 2
+            else if (Math.abs(c.gridX - station2X) < 20 && c.stage >= 1) {
+              c.stage = 2;
+              c.fallingStage = 2;
+              c.frostingLayerEl.style.display = 'flex';
+              updatePipeCakeVisual(c);
+            }
+            // Station 3: Box drops from Machine 3
+            else if (Math.abs(c.gridX - station3X) < 20 && c.stage >= 2) {
+              c.stage = 3;
+              c.fallingStage = 3;
+              c.boxLayerEl.style.display = 'block';
+              updatePipeCakeVisual(c);
             }
           }
 
@@ -1203,37 +1259,50 @@
           pipeBaseRollerDeg = (pipeBaseRollerDeg + (PIPE_CAKE_SPACING * 360 / 96)) % 360;
         } else {
           // NON-PIPELINED: 1 Machine takes 3 cycles per cake
-          pipeSingleStage = (pipeSingleStage + 1) % 3;
-          updateSingleMachineDisplay(pipeSingleStage);
+          nonPipelinedCycleCounter = (nonPipelinedCycleCounter + 1) % 3;
+          updateSingleMachineDisplay(nonPipelinedCycleCounter);
 
-          // Find cake under the central universal machine (at ~320px)
-          const targetCake = pipeCakesList.find((c) => Math.abs(c.gridX - 320) < 40);
-          if (targetCake) {
-            targetCake.stage = pipeSingleStage === 0 ? 3 : pipeSingleStage;
-            targetCake.emojiEl.textContent = getPipeStageEmoji(targetCake.stage);
+          // Find or create cake at the central machine station (station2X)
+          let targetCake = pipeCakesList.find((c) => Math.abs(c.gridX - station2X) < 30);
+          if (!targetCake) {
+            targetCake = createPipeCakeItem(pipeNextPkg++, 0, station2X);
+            pipeCakesList.push(targetCake);
           }
 
-          // Line ONLY moves when the 3-cycle sequence finishes (cycle 0)
-          if (pipeSingleStage === 0) {
+          if (nonPipelinedCycleCounter === 1) {
+            // Cycle 1: Cake drops
+            targetCake.stage = 1;
+            targetCake.fallingStage = 1;
+            targetCake.cakeLayerEl.style.display = 'block';
+            updatePipeCakeVisual(targetCake);
+          } else if (nonPipelinedCycleCounter === 2) {
+            // Cycle 2: Frosting drops
+            targetCake.stage = 2;
+            targetCake.fallingStage = 2;
+            targetCake.frostingLayerEl.style.display = 'flex';
+            updatePipeCakeVisual(targetCake);
+          } else if (nonPipelinedCycleCounter === 0) {
+            // Cycle 3: Box drops, packaging complete!
+            targetCake.stage = 3;
+            targetCake.fallingStage = 3;
+            targetCake.boxLayerEl.style.display = 'block';
+            updatePipeCakeVisual(targetCake);
+
+            // Step the belt forward to deliver the boxed cake
             for (let i = 0; i < pipeCakesList.length; i++) {
               pipeCakesList[i].gridX -= PIPE_CAKE_SPACING;
             }
 
-            for (let i = 0; i < pipeCakesList.length; i++) {
+            // Remove cakes offscreen
+            for (let i = pipeCakesList.length - 1; i >= 0; i--) {
               const c = pipeCakesList[i];
-              if (c.gridX < -100) {
-                let maxGridX = -100;
-                for (let j = 0; j < pipeCakesList.length; j++) {
-                  if (pipeCakesList[j].gridX > maxGridX) maxGridX = pipeCakesList[j].gridX;
-                }
-                c.gridX = maxGridX + PIPE_CAKE_SPACING;
-                c.pkg = pipeNextPkg++;
-                c.stage = 0;
-                c.emojiEl.textContent = getPipeStageEmoji(0);
-                c.badgeEl.textContent = `PKG#${c.pkg}`;
-
+              if (c.gridX <= exitX && c.stage >= 3) {
                 pipeProducedCount++;
                 pTotalProduced.textContent = `${pipeProducedCount} units`;
+              }
+              if (c.gridX < exitX - 100) {
+                c.el.remove();
+                pipeCakesList.splice(i, 1);
               }
             }
 
@@ -1244,7 +1313,7 @@
       }
 
       // Stepped motion calculation
-      const isMovingCycle = pipeEnabled || pipeSingleStage === 0;
+      const isMovingCycle = pipeEnabled || nonPipelinedCycleCounter === 0;
       let currentStepOffset = 0;
       let currentEased = 0;
 
@@ -1259,18 +1328,55 @@
         }
       }
 
-      // Position cakes
+      // =======================================================================
+      // FALLING ANIMATIONS (From overhead machines during dwell phase)
+      // =======================================================================
+      const inDwellPhase = pipeStepPhase >= MOVE_FRACTION && pipeStepPhase < 0.95;
+      const dwellNormalized = inDwellPhase ? (pipeStepPhase - MOVE_FRACTION) / (0.95 - MOVE_FRACTION) : 1.0;
+
       for (let i = 0; i < pipeCakesList.length; i++) {
         const c = pipeCakesList[i];
+
+        // Horizontal position along the conveyor
         const renderX = c.gridX - currentStepOffset;
-        c.el.style.transform = `translate3d(${renderX}px, 80%, 0)`;
+        c.el.style.transform = `translate3d(${renderX}px, 0, 0)`;
+
+        // Vertical drop animation
+        if (c.fallingStage > 0) {
+          let targetEl = null;
+          if (c.fallingStage === 1) targetEl = c.cakeLayerEl;
+          else if (c.fallingStage === 2) targetEl = c.frostingLayerEl;
+          else if (c.fallingStage === 3) targetEl = c.boxLayerEl;
+
+          if (targetEl) {
+            if (inDwellPhase) {
+              if (dwellNormalized < 0.65) {
+                // Falling rapidly with gravity acceleration
+                const dropProgress = dwellNormalized / 0.65;
+                const dropY = -115 * (1 - dropProgress * dropProgress);
+                const scale = 0.92 + 0.08 * dropProgress;
+                targetEl.style.transform = `translateY(${dropY}px) scale(${scale})`;
+              } else {
+                // Landed with tactile squash and bounce
+                const bounceProgress = (dwellNormalized - 0.65) / 0.35;
+                const bounceY = -6 * Math.sin(bounceProgress * Math.PI);
+                const scaleX = 1 + 0.06 * Math.sin(bounceProgress * Math.PI);
+                const scaleY = 1 - 0.06 * Math.sin(bounceProgress * Math.PI);
+                targetEl.style.transform = `translateY(${bounceY}px) scale(${scaleX}, ${scaleY})`;
+              }
+            } else {
+              targetEl.style.transform = 'translateY(0px) scale(1)';
+              c.fallingStage = 0;
+            }
+          }
+        }
       }
 
-      // Tread
+      // Render belt tread
       const currentTread = (pipeBaseTreadOffset + currentStepOffset) % 96;
       pipeBeltTread.style.backgroundPosition = `-${currentTread}px 0`;
 
-      // Rollers
+      // Render rollers
       const currentRollerDeg = (pipeBaseRollerDeg + (PIPE_CAKE_SPACING * 360 / 96) * currentEased) % 360;
       pRollers.forEach((r) => {
         r.style.transform = `rotate(${currentRollerDeg}deg)`;
