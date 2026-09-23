@@ -6,15 +6,15 @@
   <title>⚡ Overclocking Cake Factory - Authentic Purble Place Edition</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    /* Exact 128px seamless translation matching 128px cake station width */
+    /* Exact 96px seamless translation matching 96px cake station width */
     @keyframes cakeScroll {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-128px); }
+      100% { transform: translateX(-96px); }
     }
     /* Seamless background-position scrolling */
     @keyframes beltScroll {
       0% { background-position: 0 0; }
-      100% { background-position: -128px 0; }
+      100% { background-position: -96px 0; }
     }
     @keyframes spinRoller {
       0% { transform: rotate(0deg); }
@@ -88,8 +88,8 @@
           </div>
         </div>
 
-        <!-- Purble Place Large Stage View (680px Height with Authentic In-Game Background) -->
-        <div class="relative w-full h-[680px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center" style="background-image: url('sprites/purble_background.png');">
+        <!-- Purble Place Large Stage View (Authentic In-Game Background) -->
+        <div class="relative w-full h-[540px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center" style="background-image: url('sprites/purble_background.png');">
 
           <!-- Top Zone: Order Screen & Overhead Dispensers -->
           <div class="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
@@ -131,70 +131,35 @@
             </div>
           </div>
 
-          <!-- Middle & Lower Stage: Conveyor Track & Console -->
+          <!-- Conveyor Belt Assembly (Exact bottom of the stage - nothing below) -->
           <div class="w-full flex flex-col justify-end relative z-20">
 
-            <!-- Moving Cakes Layer: 128px Repeat Period -->
-            <div class="relative h-44 overflow-hidden pointer-events-none w-full">
-              <div id="cakesTrack" class="flex items-end w-[300%] absolute left-0 bottom-1" style="animation: cakeScroll 1.5s linear infinite;">
-                <!-- 20 authentic Purble Place cakes -->
-                <template id="cakeTemplate">
-                  <div class="flex-shrink-0 w-32 flex flex-col items-center justify-end pb-0.5">
-                    <div class="flex flex-col items-center filter drop-shadow-lg select-none transform transition-transform">
-                      <img class="topperImg w-10 h-10 object-contain -mb-1.5 z-10 filter drop-shadow-sm" src="sprites/cake_topper_smiley.png" alt="Topper">
-                      <img class="w-22 h-9 object-contain -mb-1" src="sprites/cake_top_layer.png" alt="Top Layer">
-                      <img class="w-24 h-5 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
-                      <img class="w-26 h-9 object-contain -mb-1" src="sprites/cake_middle_layer.png" alt="Middle Layer">
-                      <img class="w-26 h-5 object-contain -mb-1" src="sprites/cake_cream.png" alt="Cream">
-                      <img class="w-28 h-10 object-contain" src="sprites/cake_bottom_layer.png" alt="Bottom Layer">
-                    </div>
-                    <img class="w-28 h-8 object-contain mt-0.5 filter drop-shadow-sm" src="sprites/cake_plate.png" alt="Cake Plate">
-                  </div>
-                </template>
-              </div>
-
-              <!-- Trash Chute on Right Edge -->
-              <div class="absolute right-4 bottom-0 z-30 pointer-events-auto flex flex-col items-center">
-                <img src="sprites/trash_can.png" alt="Trash Chute" class="w-24 h-40 object-contain filter drop-shadow-2xl">
-              </div>
+            <!-- Original Moving Cakes: Clean, Non-Layered Cakes from First Version -->
+            <div class="relative h-28 overflow-hidden pointer-events-none w-full">
+              <div id="cakesTrack" class="flex items-end w-[300%] absolute left-0 bottom-0" style="animation: cakeScroll 1.5s linear infinite;"></div>
             </div>
 
-            <!-- Conveyor Belt Surface (Repeating 128px Tread) -->
-            <div id="beltTread" class="w-full h-16 border-y-2 border-slate-600 relative z-10" style="background-image: url('sprites/conveyor_belt.png'), repeating-linear-gradient(90deg, #475569 0px, #475569 64px, #64748b 64px, #64748b 128px); background-size: 128px 100%; animation: beltScroll 1.5s linear infinite;"></div>
+            <!-- Conveyor Belt Surface (Dark Rubber Tread with 96px Repeat) -->
+            <div id="beltTread" class="w-full h-16 border-y-2 border-slate-700 relative z-10" style="background-image: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px); background-size: 96px 100%; animation: beltScroll 1.5s linear infinite;"></div>
 
-            <!-- Mechanical Rollers -->
-            <div class="h-8 w-full bg-gradient-to-b from-slate-300 to-slate-400 border-b border-slate-400 flex justify-between items-center px-4">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
-              <img class="roller w-6 h-6 object-contain shadow-sm" src="sprites/conveyor_roller.png" alt="Roller" style="animation: spinRoller 1.5s linear infinite;">
+            <!-- Conveyor Mechanical Rollers / Cylinders (Re-added, rotating directly under the belt) -->
+            <div class="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+              <div class="roller w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md" style="animation: spinRoller 1.5s linear infinite;"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
             </div>
 
-            <!-- Purble Place Authentic Control Console Lower Area -->
-            <div class="w-full bg-[#f5f3ff]/95 border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div class="flex items-center gap-2">
-                <img src="sprites/console_panel.png" alt="Console Panel" class="max-h-24 max-w-full object-contain filter drop-shadow-md rounded-xl">
-              </div>
-
-              <!-- Push Buttons (Green 1.0 GHz & Purple 5.0 GHz) -->
-              <div class="flex items-center gap-5 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-md">
-                <button type="button" id="btnPreset1G" class="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform" title="Set 1.0 GHz Baseline">
-                  <img src="sprites/button_green.png" alt="Green Button" class="w-16 h-16 object-contain filter drop-shadow-md">
-                  <span class="text-[10px] font-mono font-bold text-emerald-700 mt-1">1.0 GHz</span>
-                </button>
-                <button type="button" id="btnPreset5G" class="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform" title="Set 5.0 GHz Turbo Overclock">
-                  <img src="sprites/button_purple.png" alt="Purple Button" class="w-16 h-16 object-contain filter drop-shadow-md">
-                  <span class="text-[10px] font-mono font-bold text-purple-700 mt-1">5.0 GHz</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Purble Place Retro Black & White Checkered Floor -->
-            <div class="w-full h-10 border-t-2 border-slate-600" style="background-image: repeating-conic-gradient(#1e293b 0% 25%, #f8fafc 0% 50%); background-size: 36px 36px;"></div>
           </div>
         </div>
       </div>
@@ -270,9 +235,9 @@
           <!-- Manual Slider -->
           <div class="flex flex-col gap-1">
             <div class="flex justify-between text-[11px] font-mono text-slate-500 font-bold">
-              <span>1.0 GHz</span>
+              <button type="button" id="btnPreset1G" class="hover:text-purple-700 underline cursor-pointer">1.0 GHz (Min)</button>
               <span>3.0 GHz</span>
-              <span>5.0 GHz</span>
+              <button type="button" id="btnPreset5G" class="hover:text-purple-700 underline cursor-pointer">5.0 GHz (Max)</button>
             </div>
             <input id="sliderFreq" type="range" min="1.0" max="5.0" step="0.05" value="1.00" class="w-full accent-purple-600 cursor-pointer">
           </div>
@@ -340,14 +305,21 @@
   </div>
 
   <script>
-    // Populate the 20 cakes in the conveyor track
+    // Populate the 24 original version 1 cakes in the conveyor track
     const cakesTrackEl = document.getElementById('cakesTrack');
-    const cakeTemplate = document.getElementById('cakeTemplate');
-    for (let i = 0; i < 20; i++) {
-      const clone = cakeTemplate.content.cloneNode(true);
-      const topperImg = clone.querySelector('.topperImg');
-      topperImg.src = (i % 2 === 0) ? 'sprites/cake_topper_smiley.png' : 'sprites/cake_topper_strawberry.png';
-      cakesTrackEl.appendChild(clone);
+    const cakeEmojis = ['🎂', '🧁', '🍰'];
+    for (let i = 0; i < 24; i++) {
+      const cakeDiv = document.createElement('div');
+      cakeDiv.className = 'flex-shrink-0 w-24 flex flex-col items-center justify-end pb-1.5';
+      cakeDiv.innerHTML = `
+        <span class="text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
+          ${cakeEmojis[i % 3]}
+        </span>
+        <span class="text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+          PKG#${100 + (i % 12)}
+        </span>
+      `;
+      cakesTrackEl.appendChild(cakeDiv);
     }
 
     // -------------------------------------------------------------------------

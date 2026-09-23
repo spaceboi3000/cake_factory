@@ -65,25 +65,24 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
         </div>
       </div>
 
-      {/* Massive Purble Place Bakery Stage (680px Height with Authentic In-Game Background) */}
+      {/* Bakery Stage: Clean top dispensers, conveyor belt, and rotating cylinders (Nothing below) */}
       <div
-        className="relative w-full h-[680px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center"
+        className="relative w-full h-[520px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center"
         style={{ backgroundImage: `url('/sprites/purble_background.png')` }}
       >
-        {/* Top Zone: Authentic Order Screen & Overhead Dispensers */}
+        {/* Top Zone: Overhead Dispensers & Order Screen */}
         <div className="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
           {/* Order Screen (TV Monitor) */}
           <div className="flex flex-col items-center">
             <img
               src="/sprites/order_tv.png"
-              alt="Order TV Screen"
+              alt="Order TV"
               className="w-36 h-28 object-contain filter drop-shadow-lg"
             />
           </div>
 
-          {/* Overhead Dispensers Rack */}
+          {/* Overhead Dispensers */}
           <div className="flex gap-8 items-start">
-            {/* Batter Dispenser */}
             <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_batter.png"
@@ -92,7 +91,6 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               />
             </div>
 
-            {/* Icing Dispenser */}
             <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_icing.png"
@@ -101,7 +99,6 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               />
             </div>
 
-            {/* Sprinkle Dispenser */}
             <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_sprinkles.png"
@@ -111,14 +108,14 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
             </div>
           </div>
 
-          {/* Current Speed Badge */}
+          {/* Current Frequency Pill */}
           <div className="bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
             <span className="text-[10px] font-mono font-bold text-purple-800">FREQUENCY</span>
             <span className="text-xl font-black font-mono text-purple-900">{clockSpeed.toFixed(2)} GHz</span>
           </div>
         </div>
 
-        {/* Thermal Throttling Warning Overlay (Exact Name Kept) */}
+        {/* Thermal Throttling Warning Overlay */}
         {powerHeat > 80 && !isDead && (
           <div className="absolute inset-0 bg-rose-500/25 backdrop-blur-[1px] pointer-events-none z-30 animate-pulse flex items-center justify-center">
             <div className="bg-rose-600/95 text-white border-2 border-white px-8 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
@@ -130,13 +127,13 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
           </div>
         )}
 
-        {/* Middle & Lower Stage: Conveyor Track & Console */}
+        {/* Conveyor Belt Assembly (Exact bottom of the stage - nothing below) */}
         <div className="w-full flex flex-col justify-end relative z-20">
 
-          {/* Moving Cakes Layer: 128px Repeat Period */}
-          <div className="relative h-44 overflow-hidden pointer-events-none w-full">
+          {/* Original Moving Cakes: Clean, Non-Layered Cakes from First Version */}
+          <div className="relative h-28 overflow-hidden pointer-events-none w-full">
             <div
-              className="flex items-end w-[300%] absolute left-0 bottom-1"
+              className="flex items-end w-[300%] absolute left-0 bottom-0"
               style={{
                 animationName: 'cakeScroll',
                 animationDuration: `${animationDurationSeconds}s`,
@@ -145,74 +142,25 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
                 animationPlayState: isDead ? 'paused' : 'running',
               }}
             >
-              {[...Array(20)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-32 flex flex-col items-center justify-end pb-0.5">
-                  {/* Layered Purble Place Cake Built with Authentic Sprites */}
-                  <div className="flex flex-col items-center filter drop-shadow-lg select-none transform transition-transform">
-                    {/* Topper: Authentic Smiley or Cherry */}
-                    <img
-                      src={i % 2 === 0 ? '/sprites/cake_topper_smiley.png' : '/sprites/cake_topper_strawberry.png'}
-                      alt="Cake Topper"
-                      className="w-10 h-10 object-contain -mb-1.5 z-10 filter drop-shadow-sm"
-                    />
-                    {/* Top Layer */}
-                    <img
-                      src="/sprites/cake_top_layer.png"
-                      alt="Top Layer"
-                      className="w-22 h-9 object-contain -mb-1"
-                    />
-                    {/* Cream Layer */}
-                    <img
-                      src="/sprites/cake_cream.png"
-                      alt="Cream Layer"
-                      className="w-24 h-5 object-contain -mb-1"
-                    />
-                    {/* Middle Layer */}
-                    <img
-                      src="/sprites/cake_middle_layer.png"
-                      alt="Middle Layer"
-                      className="w-26 h-9 object-contain -mb-1"
-                    />
-                    {/* Cream Layer */}
-                    <img
-                      src="/sprites/cake_cream.png"
-                      alt="Cream Layer"
-                      className="w-26 h-5 object-contain -mb-1"
-                    />
-                    {/* Bottom Layer */}
-                    <img
-                      src="/sprites/cake_bottom_layer.png"
-                      alt="Bottom Layer"
-                      className="w-28 h-10 object-contain"
-                    />
-                  </div>
-
-                  {/* Scalloped Cake Doily / Plate */}
-                  <img
-                    src="/sprites/cake_plate.png"
-                    alt="Cake Plate"
-                    className="w-28 h-8 object-contain mt-0.5 filter drop-shadow-sm"
-                  />
+              {[...Array(24)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-24 flex flex-col items-center justify-end pb-1.5">
+                  <span className="text-4xl md:text-5xl filter drop-shadow-lg select-none transform transition-transform hover:scale-110">
+                    {i % 3 === 0 ? '🎂' : i % 3 === 1 ? '🧁' : '🍰'}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-600 font-bold mt-1 bg-white/85 px-2 py-0.5 rounded-full shadow-sm border border-slate-200">
+                    PKG#{100 + (i % 12)}
+                  </span>
                 </div>
               ))}
             </div>
-
-            {/* Authentic Trash Chute on Right Edge */}
-            <div className="absolute right-4 bottom-0 z-30 pointer-events-auto flex flex-col items-center">
-              <img
-                src="/sprites/trash_can.png"
-                alt="Trash Chute"
-                className="w-24 h-40 object-contain filter drop-shadow-2xl"
-              />
-            </div>
           </div>
 
-          {/* Conveyor Belt Surface (Repeating Authentic 128px Tread) */}
+          {/* Conveyor Belt Surface (Dark Rubber Tread with 96px Repeat) */}
           <div
-            className="w-full h-16 border-y-2 border-slate-600 relative z-10"
+            className="w-full h-16 border-y-2 border-slate-700 relative z-10"
             style={{
-              backgroundImage: `url('/sprites/conveyor_belt.png'), repeating-linear-gradient(90deg, #475569 0px, #475569 64px, #64748b 64px, #64748b 128px)`,
-              backgroundSize: '128px 100%',
+              backgroundImage: `repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 48px, #334155 48px, #334155 96px)`,
+              backgroundSize: '96px 100%',
               animationName: 'beltScroll',
               animationDuration: `${animationDurationSeconds}s`,
               animationTimingFunction: 'linear',
@@ -221,14 +169,12 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
             }}
           />
 
-          {/* Mechanical Rollers */}
-          <div className="h-8 w-full bg-gradient-to-b from-slate-300 to-slate-400 border-b border-slate-400 flex justify-between items-center px-4">
-            {[...Array(12)].map((_, i) => (
-              <img
+          {/* Conveyor Mechanical Cylinders / Rollers (Re-added, rotating directly under the belt) */}
+          <div className="h-8 w-full bg-slate-800 border-t-2 border-slate-700 flex justify-between items-center px-6">
+            {[...Array(14)].map((_, i) => (
+              <div
                 key={i}
-                src="/sprites/conveyor_roller.png"
-                alt="Roller"
-                className="w-6 h-6 object-contain shadow-sm"
+                className="w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"
                 style={{
                   animationName: 'spinRoller',
                   animationDuration: `${animationDurationSeconds}s`,
@@ -236,72 +182,23 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
                   animationIterationCount: 'infinite',
                   animationPlayState: isDead ? 'paused' : 'running',
                 }}
-              />
+              >
+                <div className="w-1.5 h-1.5 bg-slate-900 rounded-full" />
+              </div>
             ))}
           </div>
 
-          {/* Purble Place Authentic Control Console Lower Area */}
-          <div className="w-full bg-[#f5f3ff]/95 border-t-4 border-[#c084fc] p-3 flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Authentic Console Panel Graphic */}
-            <div className="flex items-center gap-2">
-              <img
-                src="/sprites/console_panel.png"
-                alt="Console Panel"
-                className="max-h-24 max-w-full object-contain filter drop-shadow-md rounded-xl"
-              />
-            </div>
-
-            {/* Authentic 3D Push Buttons (Green 1.0 GHz & Purple 5.0 GHz) */}
-            <div className="flex items-center gap-5 bg-white/80 p-2.5 rounded-2xl border-2 border-purple-200 shadow-md">
-              <button
-                type="button"
-                onClick={() => onSetSpeed && onSetSpeed(1.0)}
-                className="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform"
-                title="Click for 1.0 GHz Baseline"
-              >
-                <img
-                  src="/sprites/button_green.png"
-                  alt="Green Button"
-                  className="w-16 h-16 object-contain filter drop-shadow-md"
-                />
-                <span className="text-[10px] font-mono font-bold text-emerald-700 mt-1">1.0 GHz</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onSetSpeed && onSetSpeed(5.0)}
-                className="flex flex-col items-center hover:scale-105 active:scale-95 transition-transform"
-                title="Click for 5.0 GHz Turbo"
-              >
-                <img
-                  src="/sprites/button_purple.png"
-                  alt="Purple Button"
-                  className="w-16 h-16 object-contain filter drop-shadow-md"
-                />
-                <span className="text-[10px] font-mono font-bold text-purple-700 mt-1">5.0 GHz</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Purble Place Retro Black & White Checkered Kitchen Floor */}
-          <div
-            className="w-full h-10 border-t-2 border-slate-600"
-            style={{
-              backgroundImage: `repeating-conic-gradient(#1e293b 0% 25%, #f8fafc 0% 50%)`,
-              backgroundSize: '36px 36px',
-            }}
-          />
         </div>
       </div>
 
-      {/* Embedded Dynamic CSS Keyframes: Exact 128px seamless loops */}
+      {/* Embedded Dynamic CSS Keyframes: Exact 96px seamless loops */}
       <style jsx>{`
         @keyframes cakeScroll {
           0% {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-128px);
+            transform: translateX(-96px);
           }
         }
         @keyframes beltScroll {
@@ -309,7 +206,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
             background-position: 0 0;
           }
           100% {
-            background-position: -128px 0;
+            background-position: -96px 0;
           }
         }
         @keyframes spinRoller {
