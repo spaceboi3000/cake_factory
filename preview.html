@@ -77,31 +77,29 @@
         <!-- Purble Place Large Stage View (Authentic In-Game Background) -->
         <div class="relative w-full h-[540px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center" style="background-image: url('sprites/purble_background.png');">
 
-          <!-- Top Zone: Order Screen & Overhead Dispensers -->
-          <div class="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
-            <!-- Order Screen (TV Monitor) -->
-            <div class="flex flex-col items-center">
-              <img src="sprites/order_tv.png" alt="Order TV" class="w-36 h-28 object-contain filter drop-shadow-lg">
-            </div>
+          <!-- Top Zone: Overhead Dispensers (Touching Top) & Frequency Badge -->
+          <div class="w-full px-8 flex justify-between items-start z-10 select-none">
+            <!-- Left area: empty space showing the authentic TV monitor painted on the wall -->
+            <div class="w-36"></div>
 
-            <!-- Overhead Dispensers Rack -->
-            <div class="flex gap-8 items-start">
+            <!-- Overhead Dispensers Rack (Touching Top Border) -->
+            <div class="flex gap-8 items-start -mt-4">
               <!-- Batter Dispenser -->
               <div class="flex flex-col items-center hover:scale-105 transition-transform">
-                <img src="sprites/dispenser_batter.png" alt="Batter Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
+                <img src="sprites/dispenser_batter.png" alt="Batter Dispenser" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
               </div>
               <!-- Icing Dispenser -->
               <div class="flex flex-col items-center hover:scale-105 transition-transform">
-                <img src="sprites/dispenser_icing.png" alt="Icing Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
+                <img src="sprites/dispenser_icing.png" alt="Icing Dispenser" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
               </div>
               <!-- Sprinkle Dispenser -->
               <div class="flex flex-col items-center hover:scale-105 transition-transform">
-                <img src="sprites/dispenser_sprinkles.png" alt="Sprinkle Dispenser" class="w-32 h-40 object-contain filter drop-shadow-xl">
+                <img src="sprites/dispenser_sprinkles.png" alt="Sprinkle Dispenser" class="w-32 h-40 object-contain object-top filter drop-shadow-xl">
               </div>
             </div>
 
             <!-- Current Speed Pill -->
-            <div class="bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
+            <div class="mt-4 bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
               <span class="text-[10px] font-mono font-bold text-purple-800">FREQUENCY</span>
               <span id="stageSpeedBadge" class="text-xl font-black font-mono text-purple-900">1.00 GHz</span>
             </div>

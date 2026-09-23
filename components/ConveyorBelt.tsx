@@ -173,24 +173,18 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
         className="relative w-full h-[520px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center"
         style={{ backgroundImage: `url('/sprites/purble_background.png')` }}
       >
-        {/* Top Zone: Overhead Dispensers & Order Screen */}
-        <div className="w-full pt-4 px-8 flex justify-between items-start z-10 select-none">
-          {/* Order Screen (TV Monitor) */}
-          <div className="flex flex-col items-center">
-            <img
-              src="/sprites/order_tv.png"
-              alt="Order TV"
-              className="w-36 h-28 object-contain filter drop-shadow-lg"
-            />
-          </div>
+        {/* Top Zone: Overhead Dispensers (Touching Top) & Frequency Badge */}
+        <div className="w-full px-8 flex justify-between items-start z-10 select-none">
+          {/* Left area: empty space showing the authentic TV monitor painted on the wall */}
+          <div className="w-36" />
 
-          {/* Overhead Dispensers */}
-          <div className="flex gap-8 items-start">
+          {/* Overhead Dispensers Rack (Touching Top Border) */}
+          <div className="flex gap-8 items-start -mt-4">
             <div className="flex flex-col items-center hover:scale-105 transition-transform">
               <img
                 src="/sprites/dispenser_batter.png"
                 alt="Batter Dispenser"
-                className="w-32 h-40 object-contain filter drop-shadow-xl"
+                className="w-32 h-40 object-contain object-top filter drop-shadow-xl"
               />
             </div>
 
@@ -198,7 +192,7 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               <img
                 src="/sprites/dispenser_icing.png"
                 alt="Icing Dispenser"
-                className="w-32 h-40 object-contain filter drop-shadow-xl"
+                className="w-32 h-40 object-contain object-top filter drop-shadow-xl"
               />
             </div>
 
@@ -206,13 +200,13 @@ export default function ConveyorBelt({ clockSpeed, powerHeat, isDead, onSetSpeed
               <img
                 src="/sprites/dispenser_sprinkles.png"
                 alt="Sprinkle Dispenser"
-                className="w-32 h-40 object-contain filter drop-shadow-xl"
+                className="w-32 h-40 object-contain object-top filter drop-shadow-xl"
               />
             </div>
           </div>
 
           {/* Current Frequency Pill */}
-          <div className="bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
+          <div className="mt-4 bg-white/85 backdrop-blur-sm border-2 border-purple-300 rounded-2xl px-4 py-2 flex flex-col items-center shadow-lg">
             <span className="text-[10px] font-mono font-bold text-purple-800">FREQUENCY</span>
             <span className="text-xl font-black font-mono text-purple-900">{clockSpeed.toFixed(2)} GHz</span>
           </div>
