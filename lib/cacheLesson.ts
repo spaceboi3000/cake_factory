@@ -4,10 +4,11 @@ import {
 } from './cacheSimulation';
 
 // Ingredient IDs belong to the simulation, never to orders or visible labels.
-export const TOPPINGS: Record<Ingredient, { name: string; icon: string }> = {
+export const TOPPINGS: Record<Ingredient | 'D', { name: string; icon: string }> = {
   A: { name: 'Strawberry', icon: '🍓' },
   B: { name: 'Chocolate', icon: '🍫' },
   C: { name: 'Vanilla', icon: '🌼' },
+  D: { name: 'Blueberry', icon: '🫐' },
 };
 
 export interface CacheLesson {
