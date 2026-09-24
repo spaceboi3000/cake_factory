@@ -8,6 +8,11 @@ import {
   advancePipelineClock, advancePipelineCycle, createPipelineClock, createPipelineState,
   type PipelineMode,
 } from '../lib/pipelineSimulation';
+import {
+  advanceSpatialCacheCycle, createSpatialCacheState, runSpatialCacheTrace, spatialCacheReducer,
+  SPATIAL_BOTH_ORDERS, SPATIAL_MIXED_ORDERS, SPATIAL_NEIGHBOR_ORDERS, SPATIAL_TEMPORAL_ORDERS,
+} from '../lib/spatialCacheSimulation';
+import { createSpatialCacheLesson, spatialCacheLessonReducer } from '../lib/spatialCacheLesson';
 
 function finishLesson(lesson: CacheLesson): CacheLesson {
   while (lesson.simulation.status !== 'complete') lesson = cacheLessonReducer(lesson, { type: 'step' });
@@ -191,6 +196,87 @@ test('run/pause/step/reset and locked orders use the actual UI reducer', () => {
   assert.deepEqual(state, createCacheState(orders));
   assert.equal(cacheReducer(state, { type: 'tick' }), state, 'queued timer after reset is ignored');
   assert.equal(cacheReducer(state, { type: 'step' }).cycles, 1);
+});
+
+test('Level 2 miss fetches both adjacent items together after three full waits; next pair evicts both', () => {
+  let state = createSpatialCacheState(['A', 'C']);
+  for (let cycle = 1; cycle <= 4; cycle++) {
+    state = advanceSpatialCacheCycle(state);
+    assert.deepEqual(state.shelf, cycle < 3 ? null : ['A', 'B']);
+    assert.equal(state.cakes, cycle === 4 ? 1 : 0);
+    if (cycle <= 3) assert.equal(state.lastCycle?.kind, 'wait');
+    if (cycle === 3) assert.deepEqual(state.lastCycle?.arriving, ['A', 'B']);
+  }
+  for (let cycle = 5; cycle <= 8; cycle++) {
+    state = advanceSpatialCacheCycle(state);
+    if (cycle === 7) {
+      assert.deepEqual(state.lastCycle?.arriving, ['C', 'D']);
+      assert.deepEqual(state.lastCycle?.evicted, ['A', 'B']);
+      assert.deepEqual(state.shelf, ['C', 'D'], 'the old pair leaves together when the new pair arrives');
+    }
+  }
+  assert.deepEqual(state.shelf, ['C', 'D']);
+  assert.deepEqual(state.accesses.map(access => access.hit), [false, false]);
+  assert.equal(state.misses, 2, 'one pantry trip per pair fetch');
+  assert.equal(state.cycles, 8);
+});
+
+test('Level 2 shows same-item and brought-along-neighbor hit explanations', () => {
+  const state = runSpatialCacheTrace(['A', 'A', 'B', 'B']);
+  assert.deepEqual(state.accesses.map(access => [access.hit, access.explanation]), [
+    [false, null], [true, 'same item again'], [true, 'neighbor brought along'], [true, 'same item again'],
+  ]);
+  assert.equal(state.misses, 1);
+  assert.equal(state.hits, 3);
+  assert.equal(state.cycles, 7);
+});
+
+test('Level 2 reference traces produce the specified same-work results', () => {
+  const traces = [
+    [SPATIAL_MIXED_ORDERS, 8, 0, 32],
+    [SPATIAL_TEMPORAL_ORDERS, 4, 4, 20],
+    [SPATIAL_NEIGHBOR_ORDERS, 4, 4, 20],
+    [SPATIAL_BOTH_ORDERS, 2, 6, 14],
+  ] as const;
+  for (const [orders, misses, hits, cycles] of traces) {
+    const result = runSpatialCacheTrace(orders);
+    assert.equal(result.cakes, 8);
+    assert.equal(result.misses, misses);
+    assert.equal(result.hits, hits);
+    assert.equal(result.cycles, cycles);
+    assert.equal(result.status, 'complete');
+  }
+  const both = runSpatialCacheTrace(SPATIAL_BOTH_ORDERS);
+  assert.deepEqual(both.accesses.slice(0, 4).map(access => [access.hit, access.explanation]), [
+    [false, null], [true, 'same item again'], [true, 'neighbor brought along'], [true, 'same item again'],
+  ]);
+});
+
+test('Level 2 pause, step, reset, lesson reveal and hint practice use independent state', () => {
+  let lesson = createSpatialCacheLesson();
+  assert.equal(lesson.hasAttempt, false);
+  assert.equal(lesson.hintRevealed, false);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'step' });
+  assert.equal(lesson.simulation.cycles, 1);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'run' });
+  lesson = spatialCacheLessonReducer(lesson, { type: 'tick' });
+  lesson = spatialCacheLessonReducer(lesson, { type: 'pause' });
+  const paused = lesson.simulation;
+  assert.equal(spatialCacheLessonReducer(lesson, { type: 'tick' }).simulation, paused);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'step' });
+  assert.equal(lesson.simulation.cycles, 3);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'reset' });
+  assert.equal(lesson.simulation.cycles, 0);
+  assert.equal(lesson.simulation.shelf, null);
+  assert.equal(lesson.hintRevealed, false);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'revealHint' });
+  lesson = spatialCacheLessonReducer(lesson, { type: 'tryExample' });
+  assert.deepEqual(lesson.simulation.orders, SPATIAL_BOTH_ORDERS);
+  assert.equal(lesson.hintPractice, true);
+  lesson = spatialCacheLessonReducer(lesson, { type: 'reset' });
+  assert.equal(lesson.hintRevealed, true);
+  assert.equal(lesson.simulation.shelf, null);
+  assert.deepEqual(spatialCacheReducer(createSpatialCacheState(), { type: 'tick' }), createSpatialCacheState());
 });
 
 for (const mode of ['sequential', 'pipeline'] as const) {

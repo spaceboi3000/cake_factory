@@ -60,7 +60,7 @@ try {
     }
   }
   async function click(text) {
-    await evaluate(`(() => { const b = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === ${JSON.stringify(text)} || b.textContent.includes(${JSON.stringify(text)})); if (!b || b.disabled) throw new Error('Button unavailable: ' + ${JSON.stringify(text)}); b.click(); })()`);
+    await evaluate(`(() => { const b = [...document.querySelectorAll('button')].find(b => b.offsetParent !== null && (b.textContent.trim() === ${JSON.stringify(text)} || b.textContent.includes(${JSON.stringify(text)}))); if (!b || b.disabled) throw new Error('Button unavailable: ' + ${JSON.stringify(text)}); b.click(); })()`);
     await sleep(50);
   }
   const metric = id => evaluate(`document.querySelector('[data-testid="${id}"]')?.textContent`);
@@ -116,7 +116,7 @@ try {
   }
   await assertHintHidden();
   assert.equal(await evaluate(`document.querySelector('.cache-game').textContent.includes('Need a hint?')`), false);
-  assert.equal(await evaluate(`document.getElementById('cache-challenge').textContent`), 'Six cakes, two of each topping. Can you make fewer pantry trips?');
+  assert.equal(await evaluate(`document.getElementById('cache-challenge').textContent`), 'Six cake orders, two of each topping. Can you make fewer pantry trips?');
   const orderNames = () => evaluate(`[...document.querySelectorAll('[data-testid="cache-orders"] button')].map(b => b.getAttribute('aria-label'))`);
   const initialNames = await orderNames();
   for (const topping of ['Strawberry', 'Chocolate', 'Vanilla']) assert.equal(initialNames.filter(name => name.includes(topping)).length, 2);
@@ -223,6 +223,62 @@ try {
   assert.equal(await metric('cache-shelf'), '——');
   assert.ok(await metric('cache-hint'));
   console.log('PASS: protected discovery, persistent hint access, assisted score labels and mouse self-arrangement auto-reveal');
+
+  await click('Level 2 · Pantry pairs');
+  const spatialMetric = id => evaluate(`document.querySelector('[data-testid="${id}"]')?.textContent`);
+  assert.equal(await spatialMetric('spatial-cycles'), '0');
+  assert.equal(await spatialMetric('spatial-shelf'), '——');
+  assert.equal(await timers(600), 0, 'switching levels stops the Level 1 timer');
+  assert.equal(await evaluate(`document.querySelector('[data-testid="spatial-level"] p').textContent.includes('Level 2')`), true);
+  const spatialOrders = () => evaluate(`[...document.querySelectorAll('[data-testid="spatial-orders"] button')].map(b => b.getAttribute('aria-label'))`);
+  const initialSpatialOrders = await spatialOrders();
+  assert.equal(initialSpatialOrders.length, 8);
+  for (const topping of ['Strawberry', 'Chocolate', 'Vanilla', 'Blueberry']) assert.equal(initialSpatialOrders.filter(name => name.includes(topping)).length, 2);
+  assert.equal(await evaluate(`document.querySelector('[data-testid="spatial-comparison"]') === null`), true, 'Level 2 examples start hidden');
+  for (let cycle = 1; cycle <= 32; cycle++) {
+    await click('Step one cycle');
+    if (cycle === 3) assert.match(await spatialMetric('spatial-shelf'), /🍓.*🍫/);
+    if (cycle === 7) assert.match(await spatialMetric('spatial-feedback'), /arrive together; .*leave together/);
+  }
+  assert.equal(await spatialMetric('spatial-cakes'), '8 / 8');
+  assert.equal(await spatialMetric('spatial-misses'), '8');
+  assert.equal(await spatialMetric('spatial-hits'), '0');
+  assert.equal(await spatialMetric('spatial-cycles'), '32');
+  assert.match(await spatialMetric('spatial-comparison'), /Interleaved challenge[\s\S]*8[\s\S]*0[\s\S]*32[\s\S]*Same-item reuse[\s\S]*4[\s\S]*4[\s\S]*20[\s\S]*Neighbor use[\s\S]*4[\s\S]*4[\s\S]*20[\s\S]*Both kinds of reuse[\s\S]*2[\s\S]*6[\s\S]*14/);
+  assert.match(await spatialMetric('spatial-feedback'), /All eight cakes are ready/);
+  await click('Reset');
+  await click('Need a hint?');
+  assert.match(await spatialMetric('spatial-comparison'), /Both kinds of reuse/);
+  await click('Try the “both kinds” example');
+  await click('Run');
+  assert.equal(await timers(600), 1, 'Level 2 has one timer while active');
+  await until(`Number(document.querySelector('[data-testid="spatial-cycles"]').textContent) >= 1`);
+  await click('Pause');
+  assert.equal(await timers(600), 0);
+  await click('Step one cycle');
+  await click('Resume');
+  await until(`document.querySelector('[data-testid="spatial-status"]').textContent === 'Round complete'`);
+  assert.equal(await spatialMetric('spatial-cycles'), '14');
+  assert.match(await spatialMetric('spatial-result'), /Hint example score · not your solution/);
+  await click('Reset');
+  await viewport(390, 844, true);
+  await screenshot('spatial-mobile');
+  const spatialWidth = await evaluate(`({ width: innerWidth, scroll: document.documentElement.scrollWidth })`);
+  assert.equal(spatialWidth.width, spatialWidth.scroll, 'Level 2 fits a narrow mobile viewport');
+  assert.equal(await evaluate(`[...document.querySelectorAll('[data-testid="spatial-orders"] button')].every(el => el.scrollWidth <= el.clientWidth)`), true, 'Level 2 names fit mobile order cards');
+  await viewport(1440);
+  await click('Run');
+  await click('Level 1 · Two jars');
+  assert.equal(await timers(600), 0, 'switching away stops Level 2 timer');
+  assert.equal(await metric('cache-cycles'), '0');
+  assert.equal(await metric('cache-shelf'), '——');
+  await click('Level 2 · Pantry pairs');
+  assert.equal(await spatialMetric('spatial-cycles'), '0', 'returning to Level 2 starts a fresh round');
+  assert.equal(await spatialMetric('spatial-shelf'), '——');
+  assert.equal(await timers(600), 0);
+  await click('Level 1 · Two jars');
+  console.log('PASS: Level 2 pair fetch/eviction, four trace comparisons, hint practice and level timer cleanup');
+
   await click('Run');
   await click('WINDOW 2');
   assert.equal(await timers(600), 0);
