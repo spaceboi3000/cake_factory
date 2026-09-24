@@ -1983,8 +1983,8 @@
           pipeEntities.set(cake.id, entity);
         }
 
-        // Horizontal & Vertical position: cake lowered by ~70% of its height (61px, 10% higher than before) onto conveyor surface
-        const CAKE_Y_OFFSET = 61;
+        // Horizontal & Vertical position: cake raised by another 10% of height (52px offset)
+        const CAKE_Y_OFFSET = 52;
         const stationPos = getStationPos(cake.sMid, cake.sFrom, cake.sTo, pipePhase);
         const x = stationPos * STATION_SPACING;
         entity.el.style.transform = `translate3d(${x}px, ${CAKE_Y_OFFSET}px, 0)`;
@@ -2024,7 +2024,7 @@
           if (p < 0.60) {
             // Rapid fall with gravity acceleration
             const q = p / 0.60;
-            const dropY = -140 * (1 - q * q);
+            const dropY = -131 * (1 - q * q);
             const scale = 0.92 + 0.08 * q;
 
             // Base stage remains stationary on belt

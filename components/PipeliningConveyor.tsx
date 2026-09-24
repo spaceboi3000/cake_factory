@@ -208,8 +208,8 @@ export default function PipeliningConveyor({
           entities.set(cake.id, entity);
         }
 
-        // Horizontal & Vertical position: cake lowered by ~70% of its height (61px, 10% higher than before) onto conveyor surface
-        const CAKE_Y_OFFSET = 61;
+        // Horizontal & Vertical position: cake raised by another 10% of height (52px offset)
+        const CAKE_Y_OFFSET = 52;
         const stationPos = reducedMotion.matches
           ? cake.sMid
           : getStationPos(cake.sMid, cake.sFrom, cake.sTo, u);
@@ -252,7 +252,7 @@ export default function PipeliningConveyor({
           if (p < 0.60) {
             // Rapid fall from overhead machine nozzle with gravity acceleration
             const q = p / 0.60;
-            const dropY = -140 * (1 - q * q);
+            const dropY = -131 * (1 - q * q);
             const scale = 0.92 + 0.08 * q;
 
             // Base stage remains stationary on belt
