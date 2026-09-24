@@ -135,6 +135,123 @@ class TestSimulationPhysics(unittest.TestCase):
         self.assertAlmostEqual(speedup, 3.0, delta=0.05)
 
 
+
+class TestPipelineVisualQueue(unittest.TestCase):
+    def get_active_pipeline_cakes(self, mode, current_cycle):
+        cakes = []
+        if current_cycle < 1:
+            return cakes
+
+        if mode == 'pipeline':
+            for age in range(1, min(7, current_cycle) + 1):
+                cake_id = 100 + current_cycle - age + 1
+                if age == 1:
+                    cakes.append({'id': cake_id, 'baseStage': 0, 'fallingStage': 1, 'sFrom': 2, 'sMid': 1, 'sTo': 0, 'isStalled': False})
+                elif age == 2:
+                    cakes.append({'id': cake_id, 'baseStage': 1, 'fallingStage': 2, 'sFrom': 1, 'sMid': 0, 'sTo': -1, 'isStalled': False})
+                elif age == 3:
+                    cakes.append({'id': cake_id, 'baseStage': 2, 'fallingStage': 3, 'sFrom': 0, 'sMid': -1, 'sTo': -2, 'isStalled': False})
+                elif age == 4:
+                    cakes.append({'id': cake_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -1, 'sMid': -2, 'sTo:': -3, 'isStalled': False})
+                elif age == 5:
+                    cakes.append({'id': cake_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -2, 'sMid': -3, 'sTo:': -4, 'isStalled': False})
+                elif age == 6:
+                    cakes.append({'id': cake_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -3, 'sMid': -4, 'sTo:': -5, 'isStalled': False})
+                elif age == 7:
+                    cakes.append({'id': cake_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -4, 'sMid': -5, 'sTo:': -6, 'isStalled': False})
+
+            for k in range(1, 4):
+                inc_id = 100 + current_cycle + k
+                s_mid = 1 + k
+                cakes.append({'id': inc_id, 'baseStage': 0, 'fallingStage': 0, 'sFrom': s_mid + 1, 'sMid': s_mid, 'sTo': s_mid - 1, 'isStalled': False})
+        else:
+            cake_idx = (current_cycle - 1) // 3
+            active_id = 101 + cake_idx
+            step = ((current_cycle - 1) % 3) + 1
+
+            if step == 1:
+                cakes.append({'id': active_id, 'baseStage': 0, 'fallingStage': 1, 'sFrom': 1, 'sMid': 0, 'sTo': 0, 'isStalled': False})
+            elif step == 2:
+                cakes.append({'id': active_id, 'baseStage': 1, 'fallingStage': 2, 'sFrom': 0, 'sMid': 0, 'sTo': 0, 'isStalled': False})
+            elif step == 3:
+                cakes.append({'id': active_id, 'baseStage': 2, 'fallingStage': 3, 'sFrom': 0, 'sMid': 0, 'sTo': 0, 'isStalled': False})
+
+            # Incoming plates filling lane before machine
+            for k in range(1, 6):
+                incoming_id = active_id + k
+                if step == 1:
+                    cakes.append({'id': incoming_id, 'baseStage': 0, 'fallingStage': 0, 'sFrom': k + 1, 'sMid': k, 'sTo': k, 'isStalled': False})
+                else:
+                    cakes.append({'id': incoming_id, 'baseStage': 0, 'fallingStage': 0, 'sFrom': k, 'sMid': k, 'sTo': k, 'isStalled': (k == 1)})
+
+            # Outgoing boxed cakes continuing until edge of screen
+            for j in range(1, 6):
+                past_id = active_id - j
+                if past_id >= 101:
+                    if step == 1:
+                        cakes.append({'id': past_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -(j - 1), 'sMid': -j, 'sTo': -j, 'isStalled': False})
+                    else:
+                        cakes.append({'id': past_id, 'baseStage': 3, 'fallingStage': 0, 'sFrom': -j, 'sMid': -j, 'sTo': -j, 'isStalled': False})
+
+        return cakes
+
+    def test_incoming_plates_fill_lane(self):
+        """In sequential mode, verify plates continuously fill stations 1 to 5 without disappearing."""
+        for cycle in range(1, 20):
+            cakes = self.get_active_pipeline_cakes('sequential', cycle)
+            incoming_stations = [c['sMid'] for c in cakes if c['baseStage'] == 0 and c['fallingStage'] == 0]
+            self.assertEqual(incoming_stations, [1, 2, 3, 4, 5], f"Cycle {cycle} incoming stations mismatch")
+
+    def test_boxed_cakes_continuous_delivery(self):
+        """In sequential mode, boxed cakes must persist across steps 1, 2, 3 and advance to screen edge."""
+        # Cycle 4 is step 1 of Cake 102; Cake 101 is moving to -1
+        c4 = self.get_active_pipeline_cakes('sequential', 4)
+        c4_101 = [c for c in c4 if c['id'] == 101][0]
+        self.assertEqual(c4_101['sFrom'], 0)
+        self.assertEqual(c4_101['sMid'], -1)
+
+        # Cycle 5 is step 2 of Cake 102; Cake 101 MUST NOT disappear, must remain at -1
+        c5 = self.get_active_pipeline_cakes('sequential', 5)
+        c5_101 = [c for c in c5 if c['id'] == 101]
+        self.assertTrue(len(c5_101) == 1, "Cake 101 vanished during step 2!")
+        self.assertEqual(c5_101[0]['sMid'], -1)
+
+        # Cycle 6 is step 3 of Cake 102; Cake 101 must remain at -1
+        c6 = self.get_active_pipeline_cakes('sequential', 6)
+        c6_101 = [c for c in c6 if c['id'] == 101]
+        self.assertTrue(len(c6_101) == 1, "Cake 101 vanished during step 3!")
+        self.assertEqual(c6_101[0]['sMid'], -1)
+
+        # Cycle 7 is step 1 of Cake 103; Cake 101 advances from -1 to -2, Cake 102 advances from 0 to -1
+        c7 = self.get_active_pipeline_cakes('sequential', 7)
+        c7_101 = [c for c in c7 if c['id'] == 101][0]
+        c7_102 = [c for c in c7 if c['id'] == 102][0]
+        self.assertEqual(c7_101['sMid'], -2)
+        self.assertEqual(c7_102['sMid'], -1)
+
+    def test_line_stalling_badges(self):
+        """Plate at station 1 must show isStalled=True only during steps 2 and 3."""
+        # Step 1: cycle 1, 4, 7 -> not stalled
+        for cycle in [1, 4, 7, 10]:
+            cakes = self.get_active_pipeline_cakes('sequential', cycle)
+            s1_plates = [c for c in cakes if c['sMid'] == 1 and c['baseStage'] == 0]
+            self.assertFalse(s1_plates[0]['isStalled'])
+
+        # Step 2 & 3: cycle 2, 3, 5, 6 -> stalled
+        for cycle in [2, 3, 5, 6]:
+            cakes = self.get_active_pipeline_cakes('sequential', cycle)
+            s1_plates = [c for c in cakes if c['sMid'] == 1 and c['baseStage'] == 0]
+            self.assertTrue(s1_plates[0]['isStalled'])
+
+    def test_no_duplicate_cake_ids(self):
+        """Ensure no duplicate cake IDs exist in any frame."""
+        for mode in ['sequential', 'pipeline']:
+            for cycle in range(1, 30):
+                cakes = self.get_active_pipeline_cakes(mode, cycle)
+                ids = [c['id'] for c in cakes]
+                self.assertEqual(len(ids), len(set(ids)), f"Duplicate IDs in {mode} cycle {cycle}: {ids}")
+
+
 if __name__ == "__main__":
     unittest.main()
 

@@ -42,7 +42,7 @@ export function advancePipelineCycle(state: PipelineState): PipelineState {
   return {
     ...state, cycles: state.cycles + 1, nextId,
     produced: state.produced + completedThisCycle.length,
-    cakes: cakes.filter(cake => cake.position >= -3), completedThisCycle,
+    cakes: cakes.filter(cake => cake.position >= -5), completedThisCycle,
   };
 }
 
@@ -77,7 +77,9 @@ export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number)
   if (currentCycle < 1) return cakes;
 
   if (mode === 'pipeline') {
-    for (let age = 1; age <= Math.min(5, currentCycle); age++) {
+    // Pipelined mode: 3 dedicated dispenser stations (Bake @ +1, Glaze @ 0, Box @ -1)
+    // Boxed cakes continue along the delivery conveyor until the edge of the screen (up to station -5)
+    for (let age = 1; age <= Math.min(7, currentCycle); age++) {
       const id = 100 + currentCycle - age + 1;
       if (age === 1) {
         cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 2, sMid: 1, sTo: 0 });
@@ -89,27 +91,101 @@ export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number)
         cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
       } else if (age === 5) {
         cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+      } else if (age === 6) {
+        cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -3, sMid: -4, sTo: -5 });
+      } else if (age === 7) {
+        cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -4, sMid: -5, sTo: -6 });
       }
     }
-  } else {
-    const id = 101 + Math.floor((currentCycle - 1) / 3);
-    const step = ((currentCycle - 1) % 3) + 1;
-    if (step === 1) {
-      cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0, isStalled: false });
-    } else if (step === 2) {
-      // Step 2 (Glaze): Active cake stays under machine, and the line STALLS (next plate waits at station 1)
-      cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
-      cakes.push({ id: id + 1, baseStage: 0, fallingStage: 0, sFrom: 1, sMid: 1, sTo: 1, isStalled: true });
-    } else if (step === 3) {
-      // Step 3 (Boxing): Cake stays stationary under machine while box drops; line remains STALLED
-      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
-      cakes.push({ id: id + 1, baseStage: 0, fallingStage: 0, sFrom: 1, sMid: 1, sTo: 1, isStalled: true });
+    // Incoming plates feeding the pipeline conveyor from the right (up to station +4)
+    for (let k = 1; k <= 3; k++) {
+      const incId = 100 + currentCycle + k;
+      const sMid = 1 + k;
+      cakes.push({
+        id: incId,
+        baseStage: 0,
+        fallingStage: 0,
+        sFrom: sMid + 1,
+        sMid: sMid,
+        sTo: sMid - 1,
+        isStalled: false,
+      });
     }
-    if (currentCycle > 3) {
-      const prevId = id - 1;
+  } else {
+    // Non-pipelined sequential mode:
+    // Single machine at Station 0. Multi-cycle execution:
+    // Step 1: Bake (line moves, plate glides from station 1 to 0)
+    // Step 2: Glaze (line STALLS, belt stopped, cake stays at station 0)
+    // Step 3: Box (line STALLS, belt stopped, cake stays at station 0, box drops)
+    const cakeIdx = Math.floor((currentCycle - 1) / 3);
+    const activeId = 101 + cakeIdx;
+    const step = ((currentCycle - 1) % 3) + 1;
+
+    // 1. Active cake undergoing processing under the single machine
+    if (step === 1) {
+      cakes.push({ id: activeId, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0, isStalled: false });
+    } else if (step === 2) {
+      cakes.push({ id: activeId, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
+    } else if (step === 3) {
+      cakes.push({ id: activeId, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
+    }
+
+    // 2. Incoming plates lane: fill up the conveyor before the machine (stations 1 to 5)
+    for (let k = 1; k <= 5; k++) {
+      const incomingId = activeId + k;
       if (step === 1) {
-        // Step 1: previous boxed cake moves out of machine to delivery exit
-        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: 0, sMid: -1, sTo: -2, isStalled: false });
+        // Line moves during setup time (u < 0.25): each plate glides 1 station forward
+        cakes.push({
+          id: incomingId,
+          baseStage: 0,
+          fallingStage: 0,
+          sFrom: k + 1,
+          sMid: k,
+          sTo: k,
+          isStalled: false,
+        });
+      } else {
+        // Steps 2 & 3: LINE IS STALLED! Zero belt motion. Plates wait in line.
+        // Plate at Station 1 is held directly at machine gate with pulsing STALLED badge.
+        cakes.push({
+          id: incomingId,
+          baseStage: 0,
+          fallingStage: 0,
+          sFrom: k,
+          sMid: k,
+          sTo: k,
+          isStalled: k === 1,
+        });
+      }
+    }
+
+    // 3. Outgoing boxed cakes lane: continue across belt until the edge of the screen (stations -1 down to -5)
+    for (let j = 1; j <= 5; j++) {
+      const pastId = activeId - j;
+      if (pastId >= 101) {
+        if (step === 1) {
+          // Line moves during setup time (u < 0.25): boxed cakes advance by 1 station to the left
+          cakes.push({
+            id: pastId,
+            baseStage: 3,
+            fallingStage: 0,
+            sFrom: -(j - 1),
+            sMid: -j,
+            sTo: -j,
+            isStalled: false,
+          });
+        } else {
+          // Steps 2 & 3: Line is stalled; boxed cakes rest stationary on conveyor belt
+          cakes.push({
+            id: pastId,
+            baseStage: 3,
+            fallingStage: 0,
+            sFrom: -j,
+            sMid: -j,
+            sTo: -j,
+            isStalled: false,
+          });
+        }
       }
     }
   }
