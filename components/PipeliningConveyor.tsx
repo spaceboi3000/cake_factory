@@ -542,46 +542,6 @@ export default function PipeliningConveyor({
         ) : (
           /* NON-PIPELINED MODE: 1 Single Machine that Changes Colors Every Step */
           <div className="w-full absolute top-0 left-0 h-40 pointer-events-none z-10 select-none">
-            {/* Dedicated Text Box on the Side */}
-            <div className="absolute top-3 left-4 md:left-6 pointer-events-auto z-20 w-64 bg-white/95 backdrop-blur-md border-2 border-purple-300 rounded-2xl p-3 shadow-xl flex flex-col gap-2">
-              <div className="flex items-center justify-between border-b border-purple-100 pb-1.5">
-                <span className="text-[10px] font-mono font-black text-purple-900 flex items-center gap-1.5">
-                  <span>⚙️</span> SINGLE MACHINE CONTROLLER
-                </span>
-                <span className={`text-[9px] font-mono font-black px-2 py-0.5 rounded-lg border ${machineTheme.stepBadge}`}>
-                  {machineTheme.step}
-                </span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className={`text-xs font-mono font-black tracking-wide ${machineTheme.titleColor}`}>
-                  {machineTheme.title}
-                </span>
-                <p className="text-[11px] font-medium text-slate-700 leading-snug">
-                  {machineTheme.desc}
-                </p>
-              </div>
-              <div className="bg-purple-50/80 rounded-xl p-2 border border-purple-200 text-[10px] font-mono text-purple-900 flex flex-col gap-0.5">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Line Status:</span>
-                  <span className={`font-black text-[9px] px-2 py-0.5 rounded border ${machineTheme.lineStatusColor}`}>
-                    {machineTheme.lineStatus}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Operation:</span>
-                  <span className={`font-bold ${machineTheme.opColor}`}>{machineTheme.opText}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Execution:</span>
-                  <span className="font-bold text-slate-700">Multi-Cycle Latency</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">CPI (Latency):</span>
-                  <span className="font-bold text-indigo-700">3.00 cycles / cake</span>
-                </div>
-              </div>
-            </div>
-
             {/* Single Machine (Center) */}
             <div
               className="absolute top-0 flex flex-col items-center pointer-events-auto"
@@ -647,6 +607,49 @@ export default function PipeliningConveyor({
         </div>
       </div>
       </div>
+
+      {/* Dedicated Single Machine Controller Dashboard under the screen */}
+      {!pipeliningEnabled && (
+        <div className="w-full bg-white/95 backdrop-blur-md border-2 border-purple-300 rounded-2xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 transition-all duration-300">
+          <div className="flex flex-col gap-1.5 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-black text-purple-900 flex items-center gap-1.5">
+                <span>⚙️</span> SINGLE MACHINE CONTROLLER
+              </span>
+              <span className={`text-[10px] font-mono font-black px-2.5 py-0.5 rounded-lg border ${machineTheme.stepBadge}`}>
+                {machineTheme.step}
+              </span>
+            </div>
+            <span className={`text-sm font-mono font-black tracking-wide ${machineTheme.titleColor}`}>
+              {machineTheme.title}
+            </span>
+            <p className="text-xs font-medium text-slate-700">
+              {machineTheme.desc}
+            </p>
+          </div>
+
+          <div className="bg-purple-50/80 rounded-xl p-3 border border-purple-200 text-xs font-mono text-purple-900 flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-6">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-500 font-bold">Line Status</span>
+              <span className={`font-black text-[10px] px-2 py-0.5 rounded border inline-block mt-0.5 ${machineTheme.lineStatusColor}`}>
+                {machineTheme.lineStatus}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-500 font-bold">Operation</span>
+              <span className={`font-bold mt-0.5 ${machineTheme.opColor}`}>{machineTheme.opText}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-500 font-bold">Execution</span>
+              <span className="font-bold text-slate-700 mt-0.5">Multi-Cycle Latency</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-500 font-bold">CPI (Latency)</span>
+              <span className="font-bold text-indigo-700 mt-0.5">3.00 cycles / cake</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
