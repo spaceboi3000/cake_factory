@@ -98,14 +98,17 @@ export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number)
     } else if (step === 2) {
       cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0 });
     } else if (step === 3) {
-      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: -1 });
+      // Step 3 (Boxing): Cake stays stationary under machine while the box appears over it!
+      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0 });
     }
     if (currentCycle > 3) {
       const prevId = id - 1;
       if (step === 1) {
-        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+        // Step 1 of next cake: previous boxed cake moves out of machine towards delivery
+        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: 0, sMid: -1, sTo: -1 });
       } else if (step === 2) {
-        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+        // Step 2 of next cake: delivers to exit
+        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -2 });
       }
     }
   }

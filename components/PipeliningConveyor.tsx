@@ -25,29 +25,39 @@ interface CakeEntity {
 
 function getStationPos(sMid: number, sFrom: number, sTo: number, u: number): number {
   if (u < 0.25) {
-    const prog = 0.5 + u / 0.50;
+    if (sFrom === sMid) return sMid;
+    const prog = u / 0.25;
     const w = (1 - Math.cos(Math.PI * prog)) / 2;
     return sFrom + (sMid - sFrom) * w;
-  } else if (u <= 0.75) {
-    return sMid;
-  } else {
-    const prog = (u - 0.75) / 0.50;
+  }
+  return sMid;
+}
+
+function getBeltTravel(mode: 'pipeline' | 'sequential', cycle: number, u: number): number {
+  if (mode === 'pipeline') {
+    const prog = Math.min(1, u / 0.25);
     const w = (1 - Math.cos(Math.PI * prog)) / 2;
-    return sMid + (sTo - sMid) * w;
+    return (cycle - 1) + w;
+  } else {
+    const cakeIdx = Math.floor((cycle - 1) / 3);
+    const step = ((cycle - 1) % 3) + 1;
+    let baseTravel = cakeIdx * 2;
+    if (cakeIdx > 0 && step >= 2) {
+      baseTravel += 1;
+    }
+    const isMoving = step === 1 || (cakeIdx > 0 && step === 2);
+    if (isMoving) {
+      const prog = Math.min(1, u / 0.25);
+      const w = (1 - Math.cos(Math.PI * prog)) / 2;
+      return baseTravel + w;
+    } else {
+      if (step === 2 && cakeIdx === 0) return 1;
+      if (step === 3) return baseTravel + (cakeIdx > 0 ? 1 : 1);
+      return baseTravel;
+    }
   }
 }
 
-function getBeltTravel(cycle: number, u: number): number {
-  if (u < 0.25) {
-    const w = (1 - Math.cos(Math.PI * (0.5 + u / 0.50))) / 2;
-    return (cycle - 1) + w;
-  } else if (u <= 0.75) {
-    return cycle;
-  } else {
-    const w = (1 - Math.cos(Math.PI * (u - 0.75) / 0.50)) / 2;
-    return cycle + w;
-  }
-}
 
 export default function PipeliningConveyor({
   clockSpeed,
@@ -229,7 +239,7 @@ export default function PipeliningConveyor({
 
       // Conveyor tread & rollers synchronized to movement phases
       if (!reducedMotion.matches) {
-        const travel = getBeltTravel(activeCycle, u) * spacing;
+        const travel = getBeltTravel(pipeliningEnabled ? 'pipeline' : 'sequential', activeCycle, u) * spacing;
         belt!.style.backgroundPosition = '-' + (travel % 96) + 'px 0';
         rollers!.forEach(roller => { roller.style.transform = 'rotate(' + (travel * 360 / 96 % 360) + 'deg)'; });
       }
@@ -268,31 +278,55 @@ export default function PipeliningConveyor({
     switch (singleMachineStage) {
       case 1: // Cake Stage
         return {
+          step: 'STEP 1 / 3',
+          stepBadge: 'bg-amber-100 text-amber-900 border-amber-300',
+          title: '🔥 STAGE 1: BAKE (SPONGE)',
+          titleColor: 'text-amber-700',
           label: 'STAGE 1: BAKE (🔥 CAKE)',
           badgeClass: 'bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50',
           glowClass: 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
-          desc: 'Baking golden sponge cake into pan...',
+          desc: 'Baking golden sponge cake onto plate...',
+          opText: '1 of 3 (Bake)',
+          opColor: 'text-amber-700',
         };
       case 2: // Glaze Stage
         return {
+          step: 'STEP 2 / 3',
+          stepBadge: 'bg-pink-100 text-pink-900 border-pink-300',
+          title: '🧁 STAGE 2: GLAZE (FROSTING)',
+          titleColor: 'text-pink-700',
           label: 'STAGE 2: GLAZE (🧁 FROSTING)',
           badgeClass: 'bg-pink-500 text-white border-pink-300 shadow-pink-500/50',
           glowClass: 'border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
-          desc: 'Applying strawberry glaze & cherry...',
+          desc: 'Applying strawberry glaze, sprinkles & cherry...',
+          opText: '2 of 3 (Glaze)',
+          opColor: 'text-pink-700',
         };
       case 0: // Box Stage
         return {
+          step: 'STEP 3 / 3',
+          stepBadge: 'bg-purple-100 text-purple-900 border-purple-300',
+          title: '📦 STAGE 3: BOX (PACKAGING)',
+          titleColor: 'text-purple-700',
           label: 'STAGE 3: BOX (📦 PACKAGING)',
           badgeClass: 'bg-purple-600 text-white border-purple-300 shadow-purple-500/50',
           glowClass: 'border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
-          desc: 'Packaging cake in bakery display box...',
+          desc: 'Packaging cake in display box before moving out...',
+          opText: '3 of 3 (Box Complete)',
+          opColor: 'text-purple-700',
         };
       default:
         return {
+          step: 'READY',
+          stepBadge: 'bg-slate-100 text-slate-700 border-slate-300',
+          title: 'READY',
+          titleColor: 'text-slate-700',
           label: 'READY',
           badgeClass: 'bg-slate-500 text-white',
           glowClass: '',
           desc: 'Ready for next cake...',
+          opText: 'Waiting for plate...',
+          opColor: 'text-slate-600',
         };
     }
   };
@@ -425,6 +459,41 @@ export default function PipeliningConveyor({
         ) : (
           /* NON-PIPELINED MODE: 1 Single Machine that Changes Colors Every Step */
           <div className="w-full absolute top-0 left-0 h-40 pointer-events-none z-10 select-none">
+            {/* Dedicated Text Box on the Side */}
+            <div className="absolute top-3 left-4 md:left-6 pointer-events-auto z-20 w-64 bg-white/95 backdrop-blur-md border-2 border-purple-300 rounded-2xl p-3 shadow-xl flex flex-col gap-2">
+              <div className="flex items-center justify-between border-b border-purple-100 pb-1.5">
+                <span className="text-[10px] font-mono font-black text-purple-900 flex items-center gap-1.5">
+                  <span>⚙️</span> SINGLE MACHINE CONTROLLER
+                </span>
+                <span className={`text-[9px] font-mono font-black px-2 py-0.5 rounded-lg border ${machineTheme.stepBadge}`}>
+                  {machineTheme.step}
+                </span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className={`text-xs font-mono font-black tracking-wide ${machineTheme.titleColor}`}>
+                  {machineTheme.title}
+                </span>
+                <p className="text-[11px] font-medium text-slate-700 leading-snug">
+                  {machineTheme.desc}
+                </p>
+              </div>
+              <div className="bg-purple-50/80 rounded-xl p-2 border border-purple-200 text-[10px] font-mono text-purple-900 flex flex-col gap-0.5">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Operation:</span>
+                  <span className={`font-bold ${machineTheme.opColor}`}>{machineTheme.opText}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Execution:</span>
+                  <span className="font-bold text-slate-700">Multi-Cycle Latency</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">CPI (Latency):</span>
+                  <span className="font-bold text-indigo-700">3.00 cycles / cake</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Single Machine (Center) */}
             <div
               className="absolute top-0 flex flex-col items-center pointer-events-auto"
               style={{ left: '50%', transform: 'translateX(-50%)', width: '150px' }}
@@ -443,9 +512,6 @@ export default function PipeliningConveyor({
                   className="w-36 h-36 object-contain object-top filter drop-shadow-2xl"
                 />
               </div>
-              <span className="text-[10px] font-mono font-bold text-purple-950 bg-white/95 px-2.5 py-0.5 rounded-full mt-1 border border-purple-300 shadow-sm">
-                {machineTheme.desc}
-              </span>
             </div>
           </div>
         )}

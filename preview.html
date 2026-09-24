@@ -341,7 +341,41 @@
 
           <!-- TOP ZONE: Overhead Machines Placement (Centered using exact station offsets) -->
           <div class="w-full absolute top-0 left-0 h-40 pointer-events-none z-10 select-none">
-            <!-- NON-PIPELINED ASSEMBLY: Single Machine with Dynamic Color Changes (Center: 0px) -->
+            <!-- NON-PIPELINED ASSEMBLY: Dedicated Text Box on the Side -->
+            <div id="pipeSideTextBox" class="absolute top-3 left-4 md:left-6 pointer-events-auto z-20 w-64 bg-white/95 backdrop-blur-md border-2 border-purple-300 rounded-2xl p-3 shadow-xl flex flex-col gap-2">
+              <div class="flex items-center justify-between border-b border-purple-100 pb-1.5">
+                <span class="text-[10px] font-mono font-black text-purple-900 flex items-center gap-1.5">
+                  <span>⚙️</span> SINGLE MACHINE CONTROLLER
+                </span>
+                <span id="sideStepBadge" class="text-[9px] font-mono font-black px-2 py-0.5 rounded-lg border bg-amber-100 text-amber-900 border-amber-300">
+                  STEP 1 / 3
+                </span>
+              </div>
+              <div class="flex flex-col gap-0.5">
+                <span id="sideStageTitle" class="text-xs font-mono font-black tracking-wide text-amber-700">
+                  🔥 STAGE 1: BAKE (SPONGE)
+                </span>
+                <p id="sideStageDesc" class="text-[11px] font-medium text-slate-700 leading-snug">
+                  Baking golden sponge cake onto plate pan...
+                </p>
+              </div>
+              <div class="bg-purple-50/80 rounded-xl p-2 border border-purple-200 text-[10px] font-mono text-purple-900 flex flex-col gap-0.5">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Operation:</span>
+                  <span id="sideOpText" class="font-bold text-amber-700">1 of 3 (Bake)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Execution:</span>
+                  <span class="font-bold text-slate-700">Multi-Cycle Latency</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">CPI (Latency):</span>
+                  <span class="font-bold text-indigo-700">3.00 cycles / cake</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Single Machine with Dynamic Color Changes (Center: 0px) -->
             <div id="pipeSingleMachine" class="absolute top-0 flex flex-col items-center pointer-events-auto" style="left: 50%; transform: translateX(-50%); width: 150px;">
               <span id="pipeMachineBadge" class="text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse">
                 STAGE 1: BAKE (🔥 CAKE)
@@ -349,9 +383,6 @@
               <div id="pipeMachineGlow" class="rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40">
                 <img src="sprites/dispenser_batter.png" alt="Universal Cake Maker" class="w-36 h-36 object-contain object-top filter drop-shadow-2xl">
               </div>
-              <span id="pipeMachineDesc" class="text-[10px] font-mono font-bold text-purple-950 bg-white/95 px-2.5 py-0.5 rounded-full mt-1 border border-purple-300 shadow-sm">
-                Baking golden sponge cake into pan...
-              </span>
             </div>
 
             <!-- PIPELINED ASSEMBLY: 3 Dedicated Machines in Series (Right to Left: Cake -> Frosting -> Box) -->
@@ -1044,56 +1075,104 @@
 
     const singleMachineThemes = [
       {
+        step: 'STEP 3 / 3',
+        stepBadge: 'bg-purple-100 text-purple-900 border-purple-300',
+        title: '📦 STAGE 3: BOX (PACKAGING)',
+        titleColor: 'text-purple-700',
         label: 'STAGE 3: BOX (📦 PACKAGING)',
         badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-purple-600 text-white border-purple-300 shadow-purple-500/50 animate-pulse',
         glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
-        desc: 'Packaging cake in bakery display box...',
+        desc: 'Packaging cake in display box before moving out...',
+        opText: '3 of 3 (Box Complete)',
+        opColor: 'text-purple-700',
       },
       {
+        step: 'STEP 1 / 3',
+        stepBadge: 'bg-amber-100 text-amber-900 border-amber-300',
+        title: '🔥 STAGE 1: BAKE (SPONGE)',
+        titleColor: 'text-amber-700',
         label: 'STAGE 1: BAKE (🔥 CAKE)',
         badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50 animate-pulse',
         glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
-        desc: 'Baking golden sponge cake into pan...',
+        desc: 'Baking golden sponge cake onto plate pan...',
+        opText: '1 of 3 (Bake)',
+        opColor: 'text-amber-700',
       },
       {
+        step: 'STEP 2 / 3',
+        stepBadge: 'bg-pink-100 text-pink-900 border-pink-300',
+        title: '🧁 STAGE 2: GLAZE (FROSTING)',
+        titleColor: 'text-pink-700',
         label: 'STAGE 2: GLAZE (🧁 FROSTING)',
         badgeClass: 'text-[11px] font-mono font-black px-3 py-1 rounded-xl mb-1 border-2 shadow-lg transition-all duration-300 bg-pink-500 text-white border-pink-300 shadow-pink-500/50 animate-pulse',
         glowClass: 'rounded-3xl p-1 transition-all duration-500 flex flex-col items-center border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
-        desc: 'Applying strawberry glaze & cherry...',
+        desc: 'Applying strawberry glaze, sprinkles & cherry...',
+        opText: '2 of 3 (Glaze)',
+        opColor: 'text-pink-700',
       }
     ];
+
+    const pipeSideTextBox = document.getElementById('pipeSideTextBox');
+    const sideStepBadge = document.getElementById('sideStepBadge');
+    const sideStageTitle = document.getElementById('sideStageTitle');
+    const sideStageDesc = document.getElementById('sideStageDesc');
+    const sideOpText = document.getElementById('sideOpText');
 
     function updateSingleMachineDisplay(stageIndex) {
       const theme = singleMachineThemes[stageIndex];
       pipeMachineBadge.className = theme.badgeClass;
       pipeMachineBadge.textContent = theme.label;
       pipeMachineGlow.className = theme.glowClass;
-      pipeMachineDesc.textContent = theme.desc;
+
+      if (sideStepBadge) {
+        sideStepBadge.textContent = theme.step;
+        sideStepBadge.className = `text-[9px] font-mono font-black px-2 py-0.5 rounded-lg border ${theme.stepBadge}`;
+      }
+      if (sideStageTitle) {
+        sideStageTitle.textContent = theme.title;
+        sideStageTitle.className = `text-xs font-mono font-black tracking-wide ${theme.titleColor}`;
+      }
+      if (sideStageDesc) {
+        sideStageDesc.textContent = theme.desc;
+      }
+      if (sideOpText) {
+        sideOpText.textContent = theme.opText;
+        sideOpText.className = `font-bold ${theme.opColor}`;
+      }
     }
 
     function getStationPos(sMid, sFrom, sTo, u) {
       if (u < 0.25) {
-        const prog = 0.5 + u / 0.50;
+        if (sFrom === sMid) return sMid;
+        const prog = u / 0.25;
         const w = (1 - Math.cos(Math.PI * prog)) / 2;
         return sFrom + (sMid - sFrom) * w;
-      } else if (u <= 0.75) {
-        return sMid;
-      } else {
-        const prog = (u - 0.75) / 0.50;
-        const w = (1 - Math.cos(Math.PI * prog)) / 2;
-        return sMid + (sTo - sMid) * w;
       }
+      return sMid;
     }
 
-    function getBeltTravel(cycle, u) {
-      if (u < 0.25) {
-        const w = (1 - Math.cos(Math.PI * (0.5 + u / 0.50))) / 2;
+    function getBeltTravel(mode, cycle, u) {
+      if (mode === 'pipeline') {
+        const prog = Math.min(1, u / 0.25);
+        const w = (1 - Math.cos(Math.PI * prog)) / 2;
         return (cycle - 1) + w;
-      } else if (u <= 0.75) {
-        return cycle;
       } else {
-        const w = (1 - Math.cos(Math.PI * (u - 0.75) / 0.50)) / 2;
-        return cycle + w;
+        const cakeIdx = Math.floor((cycle - 1) / 3);
+        const step = ((cycle - 1) % 3) + 1;
+        let baseTravel = cakeIdx * 2;
+        if (cakeIdx > 0 && step >= 2) {
+          baseTravel += 1;
+        }
+        const isMoving = step === 1 || (cakeIdx > 0 && step === 2);
+        if (isMoving) {
+          const prog = Math.min(1, u / 0.25);
+          const w = (1 - Math.cos(Math.PI * prog)) / 2;
+          return baseTravel + w;
+        } else {
+          if (step === 2 && cakeIdx === 0) return 1;
+          if (step === 3) return baseTravel + (cakeIdx > 0 ? 1 : 1);
+          return baseTravel;
+        }
       }
     }
 
@@ -1105,15 +1184,15 @@
         for (let age = 1; age <= Math.min(5, currentCycle); age++) {
           const id = 100 + currentCycle - age + 1;
           if (age === 1) {
-            cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 2, sMid: 1, sTo: 0 });
+            cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 2, sMid: 1, sTo: 1 });
           } else if (age === 2) {
-            cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 1, sMid: 0, sTo: -1 });
+            cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 1, sMid: 0, sTo: 0 });
           } else if (age === 3) {
-            cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: -1, sTo: -2 });
+            cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: -1, sTo: -1 });
           } else if (age === 4) {
-            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -2 });
           } else if (age === 5) {
-            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -3 });
           }
         }
       } else {
@@ -1124,14 +1203,17 @@
         } else if (step === 2) {
           cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0 });
         } else if (step === 3) {
-          cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: -1 });
+          // Step 3 (Boxing): Cake stays stationary under machine while the box appears over it!
+          cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0 });
         }
         if (currentCycle > 3) {
           const prevId = id - 1;
           if (step === 1) {
-            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+            // Step 1 of next cake: previous boxed cake moves out of machine towards delivery
+            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: 0, sMid: -1, sTo: -1 });
           } else if (step === 2) {
-            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+            // Step 2 of next cake: delivers to exit
+            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -2 });
           }
         }
       }
@@ -1174,6 +1256,7 @@
         cardThroughputVal.textContent = '1.00';
         steadyStateRate.textContent = '1 cake / 1 cycle';
         pipeSingleMachine.classList.add('hidden');
+        if (pipeSideTextBox) pipeSideTextBox.classList.add('hidden');
         pipeThreeMachines.classList.remove('hidden');
       } else {
         btnTogglePipeline.className = 'px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-indigo-600 text-white border-indigo-400 shadow-indigo-500/30 hover:bg-indigo-700';
@@ -1184,6 +1267,7 @@
         cardThroughputVal.textContent = '0.33';
         steadyStateRate.textContent = '1 cake / 3 cycles';
         pipeSingleMachine.classList.remove('hidden');
+        if (pipeSideTextBox) pipeSideTextBox.classList.remove('hidden');
         pipeThreeMachines.classList.add('hidden');
         updateSingleMachineDisplay(1);
       }
@@ -1330,7 +1414,7 @@
       }
 
       // Conveyor tread & rollers
-      const travel = getBeltTravel(activeCycle, pipePhase) * STATION_SPACING;
+      const travel = getBeltTravel(pipeEnabled ? 'pipeline' : 'sequential', activeCycle, pipePhase) * STATION_SPACING;
       pipeBeltTread.style.backgroundPosition = `-${travel % 96}px 0`;
       const deg = (travel * 360 / 96) % 360;
       pRollers.forEach(r => {
