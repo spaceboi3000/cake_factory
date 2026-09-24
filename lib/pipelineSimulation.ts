@@ -69,6 +69,7 @@ export interface ActivePipelineCake {
   sFrom: number;         // Station moving from
   sMid: number;          // Station during pulse
   sTo: number;           // Station moving to
+  isStalled?: boolean;   // True when line is stalled
 }
 
 export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number): ActivePipelineCake[] {
@@ -94,21 +95,21 @@ export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number)
     const id = 101 + Math.floor((currentCycle - 1) / 3);
     const step = ((currentCycle - 1) % 3) + 1;
     if (step === 1) {
-      cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0 });
+      cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0, isStalled: false });
     } else if (step === 2) {
-      cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0 });
+      // Step 2 (Glaze): Active cake stays under machine, and the line STALLS (next plate waits at station 1)
+      cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
+      cakes.push({ id: id + 1, baseStage: 0, fallingStage: 0, sFrom: 1, sMid: 1, sTo: 1, isStalled: true });
     } else if (step === 3) {
-      // Step 3 (Boxing): Cake stays stationary under machine while the box appears over it!
-      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0 });
+      // Step 3 (Boxing): Cake stays stationary under machine while box drops; line remains STALLED
+      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: 0, isStalled: false });
+      cakes.push({ id: id + 1, baseStage: 0, fallingStage: 0, sFrom: 1, sMid: 1, sTo: 1, isStalled: true });
     }
     if (currentCycle > 3) {
       const prevId = id - 1;
       if (step === 1) {
-        // Step 1 of next cake: previous boxed cake moves out of machine towards delivery
-        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: 0, sMid: -1, sTo: -1 });
-      } else if (step === 2) {
-        // Step 2 of next cake: delivers to exit
-        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -2 });
+        // Step 1: previous boxed cake moves out of machine to delivery exit
+        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: 0, sMid: -1, sTo: -2, isStalled: false });
       }
     }
   }

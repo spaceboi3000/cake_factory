@@ -44,19 +44,14 @@ function getBeltTravel(mode: 'pipeline' | 'sequential', cycle: number, u: number
   } else {
     const cakeIdx = Math.floor((cycle - 1) / 3);
     const step = ((cycle - 1) % 3) + 1;
-    let baseTravel = cakeIdx * 2;
-    if (cakeIdx > 0 && step >= 2) {
-      baseTravel += 1;
-    }
-    const isMoving = step === 1 || (cakeIdx > 0 && step === 2);
-    if (isMoving) {
+    if (step === 1) {
+      // Step 1: line moves during setup time (u < 0.25)
       const prog = Math.min(1, u / 0.25);
       const w = (1 - Math.cos(Math.PI * prog)) / 2;
-      return baseTravel + w;
+      return cakeIdx + w;
     } else {
-      if (step === 2 && cakeIdx === 0) return 1;
-      if (step === 3) return baseTravel + (cakeIdx > 0 ? 1 : 1);
-      return baseTravel;
+      // Steps 2 & 3: LINE IS STALLED! Zero conveyor belt motion.
+      return cakeIdx + 1;
     }
   }
 }
@@ -213,18 +208,28 @@ export default function PipeliningConveyor({
           entities.set(cake.id, entity);
         }
 
-        // Horizontal position based on 3-phase clock cycle
+        // Horizontal & Vertical position: cake lowered by 80% of its height (~70px) onto conveyor surface
+        const CAKE_Y_OFFSET = 70;
         const stationPos = reducedMotion.matches
           ? cake.sMid
           : getStationPos(cake.sMid, cake.sFrom, cake.sTo, u);
         const x = stationPos * spacing;
-        entity.el.style.transform = 'translate3d(' + x + 'px, 0, 0)';
+        entity.el.style.transform = 'translate3d(' + x + 'px, ' + CAKE_Y_OFFSET + 'px, 0)';
 
         // 3-Phase vertical layers and pulse animations
         const stageImgs = [entity.plateImg, entity.cakePlateImg, entity.glazedImg, entity.boxedImg];
         const fallingImgs = [null, entity.fallingCakeImg, entity.fallingFrostingImg, entity.fallingBoxImg];
 
-        if (cake.fallingStage === 0 || reducedMotion.matches) {
+        if (cake.isStalled) {
+          // Stalled cake waiting outside machine while single machine is busy
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
+            img.style.display = idx === cake.baseStage ? 'block' : 'none';
+            img.style.transform = 'translateY(0px) scale(1)';
+          });
+          entity.badge.textContent = 'PKG#' + cake.id + ' (🛑 STALLED)';
+          entity.badge.className = 'text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm bg-red-100 text-red-800 border-red-400 animate-pulse';
+        } else if (cake.fallingStage === 0 || reducedMotion.matches) {
           fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
           stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.baseStage ? 'block' : 'none';
@@ -245,9 +250,9 @@ export default function PipeliningConveyor({
           // Phase 2: The "Pulse" - Dwells stationary under machine
           const p = (u - 0.25) / 0.50;
           if (p < 0.60) {
-            // Rapid fall from machine nozzle with gravity acceleration
+            // Rapid fall from overhead machine nozzle with gravity acceleration
             const q = p / 0.60;
-            const dropY = -100 * (1 - q * q);
+            const dropY = -150 * (1 - q * q);
             const scale = 0.92 + 0.08 * q;
 
             // Base stage remains stationary on belt
@@ -349,41 +354,47 @@ export default function PipeliningConveyor({
       case 1: // Cake Stage
         return {
           step: 'STEP 1 / 3',
-          stepBadge: 'bg-amber-100 text-amber-900 border-amber-300',
+          stepBadge: 'bg-emerald-100 text-emerald-900 border-emerald-300',
           title: '🔥 STAGE 1: BAKE (SPONGE)',
           titleColor: 'text-amber-700',
           label: 'STAGE 1: BAKE (🔥 CAKE)',
           badgeClass: 'bg-amber-500 text-amber-950 border-amber-300 shadow-amber-500/50',
           glowClass: 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.7)] ring-4 ring-amber-400/40',
-          desc: 'Baking golden sponge cake onto plate...',
+          desc: 'Line advances: empty plate enters machine for baking.',
           opText: '1 of 3 (Bake)',
           opColor: 'text-amber-700',
+          lineStatus: '🟢 ACTIVE (DISPATCH)',
+          lineStatusColor: 'text-emerald-700 bg-emerald-100 border-emerald-300',
         };
       case 2: // Glaze Stage
         return {
           step: 'STEP 2 / 3',
-          stepBadge: 'bg-pink-100 text-pink-900 border-pink-300',
+          stepBadge: 'bg-red-100 text-red-900 border-red-300 animate-pulse',
           title: '🧁 STAGE 2: GLAZE (FROSTING)',
           titleColor: 'text-pink-700',
           label: 'STAGE 2: GLAZE (🧁 FROSTING)',
           badgeClass: 'bg-pink-500 text-white border-pink-300 shadow-pink-500/50',
           glowClass: 'border-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.7)] ring-4 ring-pink-400/40',
-          desc: 'Applying strawberry glaze, sprinkles & cherry...',
+          desc: 'Machine glazing cake. Production line stalled (input blocked).',
           opText: '2 of 3 (Glaze)',
           opColor: 'text-pink-700',
+          lineStatus: '🛑 STALLED (WAITING 2/3)',
+          lineStatusColor: 'text-red-700 bg-red-100 border-red-300 animate-pulse',
         };
       case 0: // Box Stage
         return {
           step: 'STEP 3 / 3',
-          stepBadge: 'bg-purple-100 text-purple-900 border-purple-300',
+          stepBadge: 'bg-red-100 text-red-900 border-red-300 animate-pulse',
           title: '📦 STAGE 3: BOX (PACKAGING)',
           titleColor: 'text-purple-700',
           label: 'STAGE 3: BOX (📦 PACKAGING)',
           badgeClass: 'bg-purple-600 text-white border-purple-300 shadow-purple-500/50',
           glowClass: 'border-purple-400 shadow-[0_0_35px_rgba(168,85,247,0.7)] ring-4 ring-purple-400/40',
-          desc: 'Packaging cake in display box before moving out...',
+          desc: 'Machine packaging cake. Production line stalled (input blocked).',
           opText: '3 of 3 (Box Complete)',
           opColor: 'text-purple-700',
+          lineStatus: '🛑 STALLED (WAITING 3/3)',
+          lineStatusColor: 'text-red-700 bg-red-100 border-red-300 animate-pulse',
         };
       default:
         return {
@@ -397,6 +408,8 @@ export default function PipeliningConveyor({
           desc: 'Ready for next cake...',
           opText: 'Waiting for plate...',
           opColor: 'text-slate-600',
+          lineStatus: '⚪ IDLE',
+          lineStatusColor: 'text-slate-600 bg-slate-100 border-slate-300',
         };
     }
   };
@@ -548,6 +561,12 @@ export default function PipeliningConveyor({
                 </p>
               </div>
               <div className="bg-purple-50/80 rounded-xl p-2 border border-purple-200 text-[10px] font-mono text-purple-900 flex flex-col gap-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500">Line Status:</span>
+                  <span className={`font-black text-[9px] px-2 py-0.5 rounded border ${machineTheme.lineStatusColor}`}>
+                    {machineTheme.lineStatus}
+                  </span>
+                </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Operation:</span>
                   <span className={`font-bold ${machineTheme.opColor}`}>{machineTheme.opText}</span>
