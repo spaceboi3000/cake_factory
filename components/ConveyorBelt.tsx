@@ -206,7 +206,7 @@ export default function ConveyorBelt({
 
         // Position Lane 1 belt tread
         const currentTread = (baseTreadOffset + currentStepOffset) % 96;
-        beltEl.style.backgroundPosition = `-${currentTread}px 0`;
+        beltEl!.style.backgroundPosition = `-${currentTread}px 0`;
 
         // Rotate Lane 1 rollers
         const currentRollerDeg = (baseRollerDeg + (CAKE_SPACING * 360 / 96) * currentEased) % 360;

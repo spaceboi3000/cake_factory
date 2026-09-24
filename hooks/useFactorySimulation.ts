@@ -26,7 +26,7 @@ const BASE_DRAIN = 0.05;
 const MIN_CLOCK = 1.0;
 const MAX_CLOCK = 5.0;
 
-export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boolean = false): FactorySimulationState {
+export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boolean = false, active: boolean = true): FactorySimulationState {
   const [cakes, setCakes] = useState<number>(0);
   const [battery, setBattery] = useState<number>(INITIAL_BATTERY);
   const [isDead, setIsDead] = useState<boolean>(false);
@@ -63,7 +63,7 @@ export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boole
 
   // Main simulation tick loop
   useEffect(() => {
-    if (isDead) return;
+    if (isDead || !active) return;
 
     const intervalId = setInterval(() => {
       const currentSpeed = clockSpeedRef.current;
@@ -88,7 +88,7 @@ export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boole
     }, TICK_RATE_MS);
 
     return () => clearInterval(intervalId);
-  }, [isDead]);
+  }, [isDead, active]);
 
   const resetSimulation = useCallback(() => {
     setCakes(0);
@@ -105,4 +105,3 @@ export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boole
     resetSimulation,
   };
 }
-

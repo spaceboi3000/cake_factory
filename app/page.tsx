@@ -4,10 +4,11 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useFactorySimulation } from '../hooks/useFactorySimulation';
 import ConveyorBelt from '../components/ConveyorBelt';
 import PipeliningConveyor from '../components/PipeliningConveyor';
+import CacheBakery from '../components/CacheBakery';
 
 export default function FactoryDashboard() {
   // Navigation Window State
-  const [activeWindow, setActiveWindow] = useState<'dvfs' | 'pipelining'>('dvfs');
+  const [activeWindow, setActiveWindow] = useState<'dvfs' | 'pipelining' | 'cache'>('dvfs');
 
   // Serial, Clock Speed, and VLIW Computing States
   const [hardwareClockSpeed, setHardwareClockSpeed] = useState<number | null>(null);
@@ -32,7 +33,7 @@ export default function FactoryDashboard() {
     powerHeat,
     theoreticalMaxCakes,
     resetSimulation,
-  } = useFactorySimulation(effectiveClockSpeed, vliwEnabled);
+  } = useFactorySimulation(effectiveClockSpeed, vliwEnabled, activeWindow === 'dvfs');
 
   // -------------------------------------------------------------------------
   // WEB SERIAL API BRIDGE (Non-blocking Line-Buffered Reader)
@@ -131,12 +132,14 @@ export default function FactoryDashboard() {
                 <span>⚡ OVERCLOCKING CAKE FACTORY</span>
               </h1>
               <p className="text-sm font-medium text-purple-700/80 mt-1">
-                Dynamic Voltage & Frequency Scaling (DVFS) Demonstration
+                {activeWindow === 'dvfs' ? 'Dynamic Voltage & Frequency Scaling (DVFS) Demonstration'
+                  : activeWindow === 'pipelining' ? 'Three-stage pipeline · overlap the work'
+                  : 'The Baker’s Fast Shelf · same work, fewer waits'}
               </p>
             </div>
 
             {/* Web Serial Hardware Connection Controller */}
-            <div className="flex items-center gap-3">
+            {activeWindow !== 'cache' && <div className="flex items-center gap-3">
               {isConnected ? (
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-2 text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-400 px-3.5 py-2 rounded-2xl shadow-sm">
@@ -158,7 +161,7 @@ export default function FactoryDashboard() {
                   <span>🔌 Connect Pico</span>
                 </button>
               )}
-            </div>
+            </div>}
           </header>
 
           {/* Window Tab Navigation */}
@@ -186,10 +189,21 @@ export default function FactoryDashboard() {
               <span>🔄</span>
               <span>WINDOW 2: CPU PIPELINING FACTORY</span>
             </button>
+            <button
+              onClick={() => setActiveWindow('cache')}
+              className={`px-5 py-2.5 rounded-2xl font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                activeWindow === 'cache'
+                  ? 'bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/30 scale-[1.02]'
+                  : 'bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100'
+              }`}
+            >
+              <span>👩‍🍳</span>
+              <span>WINDOW 3: THE BAKER’S FAST SHELF</span>
+            </button>
           </div>
 
           {/* Error notification if Web Serial encounters an issue */}
-          {serialError && (
+          {serialError && activeWindow !== 'cache' && (
             <div className="bg-rose-100 border-2 border-rose-300 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between shadow-sm">
               <span>⚠️ {serialError}</span>
               <button onClick={() => setSerialError(null)} className="text-rose-600 font-bold hover:underline">
@@ -209,22 +223,23 @@ export default function FactoryDashboard() {
               vliwEnabled={vliwEnabled}
               onToggleVliw={setVliwEnabled}
             />
-          ) : (
+          ) : activeWindow === 'pipelining' ? (
             /* Window 2: CPU Instruction Pipelining Conveyor */
             <PipeliningConveyor
               clockSpeed={effectiveClockSpeed}
               onSetSpeed={(s) => setManualClockSpeed(s)}
+              hardwareControlled={isConnected}
             />
-          )}
+          ) : <CacheBakery />}
 
           {/* Scroll Down Hint Banner */}
-          <div className="w-full flex items-center justify-center py-3 bg-purple-100/70 border-2 border-purple-200 rounded-2xl text-purple-800 text-xs font-bold font-mono tracking-wider shadow-sm animate-bounce">
+          {activeWindow === 'dvfs' && <div className="w-full flex items-center justify-center py-3 bg-purple-100/70 border-2 border-purple-200 rounded-2xl text-purple-800 text-xs font-bold font-mono tracking-wider shadow-sm animate-bounce">
             ⬇️ SCROLL DOWN TO VIEW POWER CELL, DVFS GAUGES & EQUATIONS ⬇️
-          </div>
+          </div>}
         </section>
 
         {/* SECTION 2: METRICS DASHBOARD (REQUIRING SCROLLING DOWN) */}
-        <section className="flex flex-col gap-8 pt-6 border-t-4 border-purple-200">
+        {activeWindow === 'dvfs' && <section className="flex flex-col gap-8 pt-6 border-t-4 border-purple-200">
           <div className="flex items-center gap-3">
             <span className="text-2xl">📊</span>
             <h2 className="text-2xl font-black text-purple-950 uppercase tracking-tight">
@@ -347,11 +362,11 @@ export default function FactoryDashboard() {
               <span className="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
             </div>
           </section>
-        </section>
+        </section>}
       </div>
 
       {/* Game Over Modal Overlay (Exact Names Kept) */}
-      {isDead && (
+      {isDead && activeWindow === 'dvfs' && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white border-4 border-rose-300 rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center gap-6">
             <div className="w-20 h-20 rounded-3xl bg-pink-100 border-2 border-pink-300 flex items-center justify-center text-4xl shadow-md">
