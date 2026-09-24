@@ -41,6 +41,18 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in **Google Chrome, Microsoft Edge, or Opera** (browsers supporting the Web Serial API).
 
+### The three windows
+
+- Window 1: DVFS and two lanes. Its battery and production pause while another window is selected; Pico/manual frequency controls continue to work on return.
+- Window 2: sequential or three-stage processing. A cake is produced when stage three finishes, before delivery travel ends. The first cake takes three cycles in both modes; subsequent completions are every three cycles sequentially or every cycle in the pipeline. Switching modes resets the belt and counters. Display speed can be controlled locally or by the Pico.
+- Window 3: **The Baker’s Fast Shelf**. Tap two order cards to swap them (keyboard: Tab, then Enter/Space), or choose Mixed/Grouped orders, then Run. Pause/Resume and Step one cycle allow close inspection. Each miss is three waiting cycles plus one baking cycle; a hit is one baking cycle. The two-slot fully associative shelf uses LRU and retains ingredients after use. Mixed orders finish six cakes in 24 cycles; grouped orders finish six in 15. Reset retains your order and empties the shelf. Leaving the tab stops its timer; returning starts a fresh mixed round. Optional “How it works” explains temporal locality and the model assumptions.
+
+### Simulation checks
+
+Run `npm test` for focused TypeScript simulation tests, using the same transition functions as the browser. The runner uses the existing TypeScript dependency and Node’s built-in test runner, compiles into an isolated temporary directory, then removes that directory. Tests cover cache access/completion traces, LRU, pause/step/reset, pipeline completion/delivery, display speeds and mode resets. Run `npm run build` for production/type checks. The older Python formula tests do not validate these browser models.
+
+Optional browser checks: with `npm run dev` running, use `node scripts/check-browser.mjs` (Node 22+ and local Chrome; set `CHROME_PATH` or `APP_URL` if needed). This checks real rendered counters, keyboard/touch swaps, timers under Strict Mode, tab isolation and reduced-motion feedback, and saves desktop/mobile screenshots to a printed temporary directory. It uses local Chrome’s debugging protocol without adding dependencies. Physical Pico hardware still needs an on-device check.
+
 ---
 
 ## 🎮 How to Play
@@ -54,4 +66,3 @@ Open [http://localhost:3000](http://localhost:3000) in **Google Chrome, Microsof
 3. **Observation:**
    - **At 1.0 GHz (Baseline):** The factory runs cool with minimal battery drain ($\sim 0.5\%/\text{sec}$), reaching the maximum possible total score ($\sim 200$ cakes).
    - **At 5.0 GHz (Max Overclock):** Cakes appear 5× faster, but dynamic power spikes by $(5/1)^3 = 125\times$ ($\sim 62.5\%/\text{sec}$ drain), depleting the battery in under 2 seconds!
-

@@ -17,3 +17,8 @@
   animation: fadeIn 0.25s ease-out forwards;
 }
 
+.cache-game button:focus-visible,
+.cache-game summary:focus-visible {
+  outline: 4px solid #6b21a8;
+  outline-offset: 4px;
+}
