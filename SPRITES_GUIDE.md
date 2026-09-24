@@ -23,6 +23,13 @@ All game graphics have been split into modular placeholder sprites located in [`
 | **`conveyor_roller.png`** | $48 \times 48\text{ px}$ | Mechanical spinning roller wheel under the belt |
 | **`console_panel.png`** | $640 \times 180\text{ px}$ | Purble Place console with cake pan, batter, and icing buttons |
 | **`trash_can.png`** | $100 \times 180\text{ px}$ | Metal disposal trash chute on the right side of the conveyor |
+| **`plate.png`** | $592 \times 212\text{ px}$ | Empty white ceramic plate that arrives first on the conveyor belt |
+| **`cake.png`** | $729 \times 342\text{ px}$ | Sponge cake layer that drops from the overhead Bake machine nozzle |
+| **`cake_plate.png`** | $348 \times 254\text{ px}$ | Golden sponge cake resting on plate (Stage 1 completed item) |
+| **`frosting.png`** | $505 \times 494\text{ px}$ | Strawberry frosting droplet with rainbow sprinkles dropping from Glaze machine |
+| **`cake_glazed.png`** | $343 \times 231\text{ px}$ | Glazed cake with strawberry frosting, sprinkles & cherry on plate (Stage 2 completed item) |
+| **`box.png`** | $342 \times 221\text{ px}$ | Clear translucent bakery display box dropping from Packaging machine |
+| **`cake_boxed.png`** | $342 \times 207\text{ px}$ | Finished glazed cake packaged inside the display box (Stage 3 completed item) |
 | **`button_green.png`** | $72 \times 72\text{ px}$ | Chunky green push button (sets speed to 1.0 GHz) |
 | **`button_purple.png`** | $72 \times 72\text{ px}$ | Chunky purple turbo push button (sets speed to 5.0 GHz) |
 

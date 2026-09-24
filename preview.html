@@ -52,6 +52,9 @@
       <button id="tabWindow2" type="button" class="flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer">
         🔄 WINDOW 2: CPU PIPELINING FACTORY
       </button>
+      <button id="tabWindow3" type="button" class="flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer">
+        👩‍🍳 WINDOW 3: THE BAKER’S FAST SHELF
+      </button>
     </div>
 
     <!-- Error Alert Box -->
@@ -534,6 +537,507 @@
       </section>
     </div>
 
+    <!-- ================================================================= -->
+    <!-- WINDOW 3 CONTAINER: THE BAKER’S FAST SHELF (CACHE BAKERY)         -->
+    <!-- ================================================================= -->
+    <div id="window3Container" class="hidden flex flex-col gap-6">
+
+      <!-- Level Selection Navigation -->
+      <nav class="flex flex-wrap items-center gap-3">
+        <button id="btnLevel1" type="button" class="py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all shadow-md bg-purple-700 text-white border-purple-500 shadow-purple-500/25 cursor-pointer">
+          🍰 Level 1 · Two Jars (Temporal Locality)
+        </button>
+        <button id="btnLevel2" type="button" class="py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all bg-white/90 text-purple-900 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer">
+          📦 Level 2 · Pantry Pairs (Spatial Locality)
+        </button>
+      </nav>
+
+      <!-- =============================================================== -->
+      <!-- LEVEL 1: TEMPORAL LOCALITY (TWO JARS)                           -->
+      <!-- =============================================================== -->
+      <div id="cacheLevel1" class="flex flex-col gap-4 rounded-3xl border-4 border-purple-200 bg-pink-50 p-4 md:p-6 shadow-2xl">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="min-w-0 sm:flex-1">
+            <p class="text-xs md:text-sm font-bold uppercase tracking-wider text-purple-700">Window 3 · Six cakes, one baker</p>
+            <h2 class="text-2xl md:text-3xl font-black text-purple-950">The Baker’s Fast Shelf</h2>
+            <p class="mt-1 text-sm md:text-base text-purple-900">Six cake orders, two of each topping. Can you make fewer pantry trips?</p>
+          </div>
+          <span id="c1StatusBadge" class="rounded-xl border-2 border-purple-200 bg-white px-3 py-2 font-bold text-purple-900 text-xs font-mono shadow-sm">
+            Ready to arrange
+          </span>
+        </div>
+
+        <div class="grid items-start gap-4 lg:grid-cols-[0.85fr_1.15fr]">
+          <!-- Left Column: Orders & Controls -->
+          <div class="flex min-w-0 flex-col gap-3">
+            <div class="rounded-2xl border-2 border-purple-200 bg-white/90 p-4 shadow-sm">
+              <p id="c1OrderHelp" class="mb-3 text-xs md:text-sm font-semibold text-purple-950">
+                Tap two orders to swap, then press Run.
+              </p>
+              <div id="c1OrdersGrid" class="grid grid-cols-3 gap-2">
+                <!-- Dynamically populated 6 orders -->
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button id="btnC1RestoreMixed" type="button" class="min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-3 py-1.5 font-bold text-purple-900 text-xs shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Restore mixed orders
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button id="btnC1Run" type="button" class="min-h-12 rounded-2xl border-2 border-purple-700 bg-purple-700 px-4 py-2 font-bold text-white shadow-md hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Run
+              </button>
+              <button id="btnC1Pause" type="button" disabled class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Pause
+              </button>
+              <button id="btnC1Step" type="button" class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Step one cycle
+              </button>
+              <button id="btnC1Reset" type="button" class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Metrics & Visual Stage -->
+          <div class="flex min-w-0 flex-col gap-4">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Cakes baked</span>
+                <strong id="c1MetricCakes" class="text-2xl md:text-3xl font-mono tabular-nums">0 / 6</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Elapsed cycles</span>
+                <strong id="c1MetricCycles" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Pantry trips</span>
+                <strong id="c1MetricMisses" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Found on shelf</span>
+                <strong id="c1MetricHits" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+            </div>
+
+            <!-- Visual Stage -->
+            <div class="rounded-2xl border-4 border-purple-300 bg-cover bg-center p-3 shadow-inner"
+              style="background-image: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('sprites/purble_background.png');">
+              <div class="grid items-end gap-3 md:grid-cols-[1fr_1.4fr]">
+                <!-- Large Pantry -->
+                <div id="c1PantryBox" class="rounded-t-3xl border-4 border-amber-800 bg-amber-100 p-2.5 shadow-lg transition-all duration-300">
+                  <h3 class="text-center text-lg md:text-xl font-black text-amber-950">Large pantry</h3>
+                  <p class="mb-2 text-center text-xs font-semibold text-amber-950">3 wait cycles per trip</p>
+                  <div class="grid grid-cols-3 gap-1 border-b-8 border-amber-800 pb-2">
+                    <div class="rounded-t-xl border-2 px-1 py-2 text-center text-2xl md:text-3xl bg-pink-100 border-pink-400 text-pink-950">🍓</div>
+                    <div class="rounded-t-xl border-2 px-1 py-2 text-center text-2xl md:text-3xl bg-orange-100 border-amber-800 text-amber-950">🍫</div>
+                    <div class="rounded-t-xl border-2 px-1 py-2 text-center text-2xl md:text-3xl bg-yellow-50 border-yellow-400 text-yellow-950">🌼</div>
+                  </div>
+                  <div class="mt-3 flex justify-center gap-2">
+                    <span id="c1Wait1" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">1</span>
+                    <span id="c1Wait2" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">2</span>
+                    <span id="c1Wait3" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">3</span>
+                  </div>
+                </div>
+
+                <!-- Fast Shelf & Baker Plate -->
+                <div class="flex min-w-0 items-end justify-center gap-2 rounded-2xl bg-white/90 p-2.5 shadow-sm border border-purple-100">
+                  <div class="w-28 shrink-0 text-center xl:w-32">
+                    <h3 class="text-base md:text-lg font-black text-purple-950">Fast shelf</h3>
+                    <p class="text-xs text-purple-900">Only two slots</p>
+                    <div class="mt-2 grid grid-cols-2 gap-2 border-b-8 border-purple-900 pb-1">
+                      <div id="c1ShelfSlot0" class="flex h-16 md:h-20 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500">
+                        —
+                      </div>
+                      <div id="c1ShelfSlot1" class="flex h-16 md:h-20 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500">
+                        —
+                      </div>
+                    </div>
+                    <p class="mt-1.5 text-[10px] md:text-xs font-semibold text-purple-800">Jars stay after baking</p>
+                  </div>
+                  <div class="min-w-0 flex-1 text-center text-purple-950">
+                    <span id="c1BakerIcon" class="block text-4xl md:text-5xl transition-all">👩‍🍳</span>
+                    <strong id="c1BakerStatus" class="mt-1 block text-xs md:text-sm">Ready to bake</strong>
+                    <div id="c1CakePlateContainer" class="relative mx-auto h-16 w-14 md:h-20 md:w-16 mt-1 flex items-center justify-center">
+                      <img id="c1PlateImg" src="sprites/plate.png" alt="Cake plate" class="mx-auto h-full w-full object-contain" />
+                      <span id="c1CakeTopping" class="hidden absolute right-1 top-[24%] -translate-y-1/2 text-lg md:text-xl leading-none drop-shadow-sm">🍓</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Feedback Status Banner -->
+              <div id="c1FeedbackBox" class="mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm transition-colors">
+                <span id="c1FeedbackSub" class="block text-xs md:text-sm font-mono">The shelf starts empty.</span>
+                <span id="c1FeedbackMain" class="block">Ready to bake!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Card -->
+        <div id="c1ResultCard" class="hidden rounded-2xl border-2 border-emerald-400 bg-emerald-50 p-4 text-emerald-950 shadow-sm animate-fadeIn">
+          <h3 class="text-lg md:text-xl font-black">Your round score</h3>
+          <p id="c1ResultScore" class="mt-1 text-base md:text-lg font-bold">6 cakes · 0 pantry trips · 0 cycles</p>
+          <p class="mt-1 text-xs md:text-sm text-emerald-800">Reset to try another order, or explore the hint comparison below.</p>
+        </div>
+
+        <!-- Optional Hint & Comparison -->
+        <aside class="rounded-2xl border-2 border-purple-300 bg-white p-4 text-purple-950 shadow-sm">
+          <div id="c1HintCollapsed">
+            <button id="btnC1RevealHint" type="button" class="min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm cursor-pointer">
+              💡 Need a hint?
+            </button>
+          </div>
+          <div id="c1HintExpanded" class="hidden">
+            <h3 class="text-base md:text-lg font-black text-purple-950">Hint: Put matching toppings together</h3>
+            <button id="btnC1UseHint" type="button" class="mt-3 min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm">
+              Try hint example (A A B B C C)
+            </button>
+            <div class="mt-4 overflow-x-auto">
+              <table class="w-full text-left text-xs md:text-sm">
+                <caption class="mb-2 text-left font-bold text-purple-800">Hint comparison · same baker, shelf, and clock</caption>
+                <thead>
+                  <tr class="border-b-2 border-purple-200">
+                    <th scope="col" class="p-2">Baking Order</th>
+                    <th scope="col" class="p-2">Cakes</th>
+                    <th scope="col" class="p-2">Trips (Misses)</th>
+                    <th scope="col" class="p-2">Cycles</th>
+                  </tr>
+                </thead>
+                <tbody id="c1ComparisonTableBody">
+                  <tr class="border-b border-purple-100">
+                    <th scope="row" class="p-2 font-semibold">
+                      Mixed orders
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1.5 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1.5 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1.5 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1.5 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1.5 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1.5 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono">6</td>
+                    <td class="p-2 font-mono text-rose-600 font-bold">6</td>
+                    <td class="p-2 font-mono text-rose-600 font-bold">24</td>
+                  </tr>
+                  <tr class="border-b border-purple-100 bg-emerald-50/50">
+                    <th scope="row" class="p-2 font-semibold">
+                      Hint example (Grouped)
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1.5 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1.5 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1.5 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1.5 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1.5 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1.5 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono">6</td>
+                    <td class="p-2 font-mono text-emerald-600 font-bold">3</td>
+                    <td class="p-2 font-mono text-emerald-600 font-bold">15</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h4 class="mt-4 text-base md:text-lg font-black text-purple-950">Same work, fewer waits</h4>
+            <p class="mt-1 text-xs md:text-sm font-semibold text-purple-900">
+              Using a recently fetched ingredient again before it gets replaced is <strong class="text-purple-700 underline">temporal locality</strong>.
+            </p>
+          </div>
+        </aside>
+
+        <!-- Explanatory Details -->
+        <details class="rounded-2xl border-2 border-purple-200 bg-white p-4 text-purple-950 shadow-sm">
+          <summary class="cursor-pointer py-1 text-sm md:text-base font-bold text-purple-900">How it works · Architecture & Cache Details</summary>
+          <div class="mt-3 space-y-2.5 text-xs md:text-sm leading-relaxed text-slate-700 border-t border-purple-100 pt-3">
+            <p>
+              • <strong>Cache Mapping</strong>: 6 independent cake orders with 3 toppings (🍓 Strawberry, 🍫 Chocolate, 🌼 Vanilla). Each jar has enough for all requested cakes and remains on the fast shelf after baking. Jars represent reusable cached data: CPU reads data without destroying it.
+            </p>
+            <p>
+              • <strong>Associativity & Latency</strong>: 1 baker, 2 shelf slots (fully associative). A <em>cache hit</em> takes <strong>1 baking cycle</strong>. A <em>cache miss</em> incurs <strong>3 wait cycles</strong> for the pantry round-trip plus <strong>1 baking cycle</strong> (4 cycles total). When the shelf is full, the least recently used (LRU) jar is evicted.
+            </p>
+          </div>
+        </details>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- LEVEL 2: SPATIAL LOCALITY (PANTRY PAIRS)                        -->
+      <!-- =============================================================== -->
+      <div id="cacheLevel2" class="hidden flex flex-col gap-4 rounded-3xl border-4 border-purple-200 bg-pink-50 p-4 md:p-6 shadow-2xl">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="min-w-0 sm:flex-1">
+            <p class="text-xs md:text-sm font-bold uppercase tracking-wider text-purple-700">Window 3 · Level 2 · Eight cakes</p>
+            <h2 class="text-2xl md:text-3xl font-black text-purple-950">The Baker’s Fast Shelf · Spatial Pairs</h2>
+            <p class="mt-1 text-sm md:text-base text-purple-900">Can you use the same topping—or its pantry neighbor—before their pair leaves the fast shelf?</p>
+          </div>
+          <span id="c2StatusBadge" class="rounded-xl border-2 border-purple-200 bg-white px-3 py-2 font-bold text-purple-900 text-xs font-mono shadow-sm">
+            Ready to arrange
+          </span>
+        </div>
+
+        <div class="grid items-start gap-4 lg:grid-cols-[0.85fr_1.15fr]">
+          <!-- Left Column: Orders & Controls -->
+          <div class="flex min-w-0 flex-col gap-3">
+            <div class="rounded-2xl border-2 border-purple-200 bg-white/90 p-4 shadow-sm">
+              <p id="c2OrderHelp" class="mb-3 text-xs md:text-sm font-semibold text-purple-950">
+                Tap two cake cards to swap the baking order, then press Run.
+              </p>
+              <div id="c2OrdersGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <!-- Dynamically populated 8 orders -->
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button id="btnC2RestoreMixed" type="button" class="min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-3 py-1.5 font-bold text-purple-900 text-xs shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Restore challenge order
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button id="btnC2Run" type="button" class="min-h-12 rounded-2xl border-2 border-purple-700 bg-purple-700 px-4 py-2 font-bold text-white shadow-md hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Run
+              </button>
+              <button id="btnC2Pause" type="button" disabled class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Pause
+              </button>
+              <button id="btnC2Step" type="button" class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                Step one cycle
+              </button>
+              <button id="btnC2Reset" type="button" class="min-h-12 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Metrics & Visual Stage -->
+          <div class="flex min-w-0 flex-col gap-4">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Cakes baked</span>
+                <strong id="c2MetricCakes" class="text-2xl md:text-3xl font-mono tabular-nums">0 / 8</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Elapsed cycles</span>
+                <strong id="c2MetricCycles" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Pantry trips</span>
+                <strong id="c2MetricMisses" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+              <div class="rounded-2xl border-2 border-purple-200 bg-white p-3 text-purple-950 shadow-sm">
+                <span class="block text-xs font-bold">Found on shelf</span>
+                <strong id="c2MetricHits" class="text-2xl md:text-3xl font-mono tabular-nums">0</strong>
+              </div>
+            </div>
+
+            <!-- Visual Stage -->
+            <div class="rounded-2xl border-4 border-purple-300 bg-cover bg-center p-3 shadow-inner"
+              style="background-image: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('sprites/purble_background.png');">
+              <div class="grid items-end gap-3 md:grid-cols-[1fr_1.4fr]">
+                <!-- Distant Shelves (Pantry Pairs) -->
+                <div id="c2PantryBox" class="rounded-t-3xl border-4 border-amber-800 bg-amber-100 p-2.5 shadow-lg transition-all duration-300">
+                  <h3 class="text-center text-lg md:text-xl font-black text-amber-950">Two distant shelves</h3>
+                  <p class="mb-2 text-center text-xs font-semibold text-amber-950">One trip visits one shelf · fetch both jars</p>
+                  <div class="space-y-1.5">
+                    <!-- Shelf 1: A (🍓) + B (🍫) -->
+                    <div class="grid grid-cols-2 overflow-hidden rounded-xl border-2 border-amber-800 bg-white">
+                      <span class="col-span-2 bg-amber-200 py-0.5 text-center text-[11px] font-bold text-amber-950">Shelf 1 (Cache Line 0)</span>
+                      <div class="border-r-2 border-amber-700 px-1 py-1 text-center bg-pink-100 text-pink-950">
+                        <span class="text-xl">🍓</span>
+                        <span class="block text-[10px] font-bold">Strawberry</span>
+                      </div>
+                      <div class="px-1 py-1 text-center bg-orange-100 text-amber-950">
+                        <span class="text-xl">🍫</span>
+                        <span class="block text-[10px] font-bold">Chocolate</span>
+                      </div>
+                    </div>
+                    <!-- Shelf 2: C (🌼) + D (🫐) -->
+                    <div class="grid grid-cols-2 overflow-hidden rounded-xl border-2 border-amber-800 bg-white">
+                      <span class="col-span-2 bg-amber-200 py-0.5 text-center text-[11px] font-bold text-amber-950">Shelf 2 (Cache Line 1)</span>
+                      <div class="border-r-2 border-amber-700 px-1 py-1 text-center bg-yellow-50 text-yellow-950">
+                        <span class="text-xl">🌼</span>
+                        <span class="block text-[10px] font-bold">Vanilla</span>
+                      </div>
+                      <div class="px-1 py-1 text-center bg-blue-100 text-blue-950">
+                        <span class="text-xl">🫐</span>
+                        <span class="block text-[10px] font-bold">Blueberry</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-2.5 flex justify-center gap-2">
+                    <span id="c2Wait1" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">1</span>
+                    <span id="c2Wait2" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">2</span>
+                    <span id="c2Wait3" class="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm">3</span>
+                  </div>
+                </div>
+
+                <!-- Fast Shelf (One Pair) & Baker Plate -->
+                <div class="flex min-w-0 items-end justify-center gap-2 rounded-2xl bg-white/90 p-2.5 shadow-sm border border-purple-100">
+                  <div class="w-32 shrink-0 text-center">
+                    <h3 class="text-sm md:text-base font-black text-purple-950">Fast shelf · one pair</h3>
+                    <p class="text-xs text-purple-900">Two topping jars total</p>
+                    <div class="mt-1.5 grid grid-cols-2 gap-1.5 border-b-8 border-purple-900 pb-1">
+                      <div id="c2ShelfSlot0" class="flex h-14 md:h-16 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500">
+                        —
+                      </div>
+                      <div id="c2ShelfSlot1" class="flex h-14 md:h-16 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500">
+                        —
+                      </div>
+                    </div>
+                    <p class="mt-1.5 text-[10px] md:text-xs font-semibold text-purple-800">Both arrive and leave together</p>
+                  </div>
+                  <div class="min-w-0 flex-1 text-center text-purple-950">
+                    <span id="c2BakerIcon" class="block text-4xl md:text-5xl transition-all">👩‍🍳</span>
+                    <strong id="c2BakerStatus" class="mt-1 block text-xs md:text-sm">Ready to bake</strong>
+                    <div id="c2CakePlateContainer" class="relative mx-auto h-16 w-14 md:h-20 md:w-16 mt-1 flex items-center justify-center">
+                      <img id="c2PlateImg" src="sprites/plate.png" alt="Cake plate" class="mx-auto h-full w-full object-contain" />
+                      <span id="c2CakeTopping" class="hidden absolute right-1 top-[24%] -translate-y-1/2 text-lg md:text-xl leading-none drop-shadow-sm">🍓</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Feedback Status Banner -->
+              <div id="c2FeedbackBox" class="mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm transition-colors">
+                <span id="c2FeedbackSub" class="block text-xs md:text-sm font-mono">The one-pair shelf starts empty.</span>
+                <span id="c2FeedbackMain" class="block">Ready to bake!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Card -->
+        <div id="c2ResultCard" class="hidden rounded-2xl border-2 border-emerald-400 bg-emerald-50 p-4 text-emerald-950 shadow-sm animate-fadeIn">
+          <h3 class="text-lg md:text-xl font-black">Your Level 2 score</h3>
+          <p id="c2ResultScore" class="mt-1 text-base md:text-lg font-bold">8 cakes · 0 pair trips · 0 cycles</p>
+        </div>
+
+        <!-- Optional Hint & Comparison -->
+        <aside class="rounded-2xl border-2 border-purple-300 bg-white p-4 text-purple-950 shadow-sm">
+          <div id="c2HintCollapsed">
+            <button id="btnC2RevealHint" type="button" class="min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm cursor-pointer">
+              💡 Need a hint?
+            </button>
+          </div>
+          <div id="c2HintExpanded" class="hidden">
+            <h3 class="text-base md:text-lg font-black text-purple-950">Hint: Keep each pantry pair together</h3>
+            <button id="btnC2UseHint" type="button" class="mt-3 min-h-10 rounded-2xl border-2 border-purple-300 bg-white px-4 py-2 font-bold text-purple-900 shadow-sm hover:bg-purple-100 text-xs md:text-sm">
+              Try the “both kinds” example (A A B B C C D D)
+            </button>
+            <p class="mt-3 text-xs md:text-sm font-semibold text-purple-900">
+              Using the exact same item again is <strong class="text-purple-700 underline">temporal locality</strong>. Using a different item that arrived in its fixed pair is <strong class="text-indigo-700 underline">spatial locality</strong>.
+            </p>
+            <div class="mt-4 overflow-x-auto">
+              <table class="w-full text-left text-xs md:text-sm">
+                <caption class="mb-2 text-left font-bold text-purple-800">Level 2 examples · all make eight cakes</caption>
+                <thead>
+                  <tr class="border-b-2 border-purple-200">
+                    <th scope="col" class="p-2">Order Strategy</th>
+                    <th scope="col" class="p-2">Trips</th>
+                    <th scope="col" class="p-2">Hits</th>
+                    <th scope="col" class="p-2">Cycles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-purple-100">
+                    <th scope="row" class="p-2 font-semibold">
+                      Interleaved challenge
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono text-rose-600 font-bold">8</td>
+                    <td class="p-2 font-mono">0</td>
+                    <td class="p-2 font-mono text-rose-600 font-bold">32</td>
+                  </tr>
+                  <tr class="border-b border-purple-100">
+                    <th scope="row" class="p-2 font-semibold">
+                      Same-item reuse (Temporal only)
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono">4</td>
+                    <td class="p-2 font-mono text-indigo-600 font-bold">4</td>
+                    <td class="p-2 font-mono">20</td>
+                  </tr>
+                  <tr class="border-b border-purple-100">
+                    <th scope="row" class="p-2 font-semibold">
+                      Neighbor use (Spatial only)
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono">4</td>
+                    <td class="p-2 font-mono text-indigo-600 font-bold">4</td>
+                    <td class="p-2 font-mono">20</td>
+                  </tr>
+                  <tr class="border-b border-purple-100 bg-emerald-50/50">
+                    <th scope="row" class="p-2 font-semibold">
+                      Both kinds of reuse (Spatial + Temporal)
+                      <div class="flex gap-1 text-sm mt-1">
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-pink-100 border border-pink-400">🍓</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-orange-100 border border-amber-800">🍫</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-yellow-50 border border-yellow-400">🌼</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                        <span class="rounded px-1 py-0.5 bg-blue-100 border border-blue-500">🫐</span>
+                      </div>
+                    </th>
+                    <td class="p-2 font-mono font-bold text-emerald-600">2</td>
+                    <td class="p-2 font-mono font-bold text-emerald-600">6</td>
+                    <td class="p-2 font-mono font-bold text-emerald-600">14</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Explanatory Details -->
+        <details class="rounded-2xl border-2 border-purple-200 bg-white p-4 text-purple-950 shadow-sm">
+          <summary class="cursor-pointer py-1 text-sm md:text-base font-bold text-purple-900">How it works · Cache Lines & Spatial Locality</summary>
+          <div class="mt-3 space-y-2.5 text-xs md:text-sm leading-relaxed text-slate-700 border-t border-purple-100 pt-3">
+            <p>
+              • <strong>Pantry Pairs as Cache Lines</strong>: Pantry pairs stand for adjacent memory addresses fetched together in a cache line. Fetching either topping automatically brings its whole pair after 3 waiting cycles.
+            </p>
+            <p>
+              • <strong>Fast Shelf Capacity</strong>: Stores one pair (2 items total). Fetching the other pair evicts both items from the shelf.
+            </p>
+            <p>
+              • <strong>Temporal vs Spatial Hits</strong>: Accessing the exact same item again is a <em>temporal hit</em>. Accessing the neighboring item brought along in the same cache line is a <em>spatial hit</em>!
+            </p>
+          </div>
+        </details>
+      </div>
+
+    </div>
+
   </div>
 
   <!-- Game Over Modal (Exact Names Kept) -->
@@ -576,25 +1080,27 @@
     // -------------------------------------------------------------------------
     const tabWindow1 = document.getElementById('tabWindow1');
     const tabWindow2 = document.getElementById('tabWindow2');
+    const tabWindow3 = document.getElementById('tabWindow3');
     const window1Container = document.getElementById('window1Container');
     const window2Container = document.getElementById('window2Container');
+    const window3Container = document.getElementById('window3Container');
 
     function setActiveWindow(tab) {
-      if (tab === 'dvfs') {
-        tabWindow1.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer';
-        tabWindow2.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
-        window1Container.classList.remove('hidden');
-        window2Container.classList.add('hidden');
-      } else {
-        tabWindow1.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
-        tabWindow2.className = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer';
-        window1Container.classList.add('hidden');
-        window2Container.classList.remove('hidden');
-      }
+      const activeClass = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all shadow-md bg-purple-700 text-white border-2 border-purple-500 shadow-purple-500/25 cursor-pointer';
+      const inactiveClass = 'flex-1 py-3 px-4 rounded-2xl font-mono font-black text-xs md:text-sm tracking-wide transition-all bg-white/80 text-purple-900 border-2 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
+
+      tabWindow1.className = (tab === 'dvfs') ? activeClass : inactiveClass;
+      tabWindow2.className = (tab === 'pipelining') ? activeClass : inactiveClass;
+      tabWindow3.className = (tab === 'cache') ? activeClass : inactiveClass;
+
+      window1Container.classList.toggle('hidden', tab !== 'dvfs');
+      window2Container.classList.toggle('hidden', tab !== 'pipelining');
+      window3Container.classList.toggle('hidden', tab !== 'cache');
     }
 
     tabWindow1.addEventListener('click', () => setActiveWindow('dvfs'));
     tabWindow2.addEventListener('click', () => setActiveWindow('pipelining'));
+    tabWindow3.addEventListener('click', () => setActiveWindow('cache'));
 
     // -------------------------------------------------------------------------
     // CONTINUOUS CONVEYOR BELT ENGINE (Cakes never change while on belt)
@@ -1220,7 +1726,7 @@
       return cakes;
     }
 
-    const STAGE_NAMES = ['PLATE', 'BAKED', 'GLAZED', 'BOXED'];
+    const STAGE_NAMES = ['PLATE', 'CAKE PLATE', 'GLAZED', 'BOXED'];
     const BADGE_STYLES = [
       'text-slate-600 bg-white/95 border-slate-300',
       'text-amber-800 bg-amber-100/95 border-amber-300',
@@ -1326,15 +1832,16 @@
           imgWrap.className = 'relative w-32 flex flex-col items-center justify-end';
           imgWrap.style.height = '105px';
 
+          // Base / Landed stage images
           const plateImg = document.createElement('img');
           plateImg.className = 'cakePlateImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-sm';
           plateImg.src = 'sprites/plate.png';
           plateImg.alt = 'Plate';
 
-          const cakeImg = document.createElement('img');
-          cakeImg.className = 'cakeBakedImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-md';
-          cakeImg.src = 'sprites/cake.png';
-          cakeImg.alt = 'Baked Cake';
+          const cakePlateImg = document.createElement('img');
+          cakePlateImg.className = 'cakePlateImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-md';
+          cakePlateImg.src = 'sprites/cake_plate.png';
+          cakePlateImg.alt = 'Cake Plate';
 
           const glazedImg = document.createElement('img');
           glazedImg.className = 'cakeGlazedImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-lg';
@@ -1346,11 +1853,45 @@
           boxedImg.src = 'sprites/cake_boxed.png';
           boxedImg.alt = 'Boxed Cake';
 
-          imgWrap.append(plateImg, cakeImg, glazedImg, boxedImg);
+          // Falling sprites dropping from overhead machines
+          const fallingCakeImg = document.createElement('img');
+          fallingCakeImg.className = 'cakeFallingCakeImg absolute bottom-3 w-32 h-auto object-contain drop-shadow-md pointer-events-none';
+          fallingCakeImg.src = 'sprites/cake.png';
+          fallingCakeImg.alt = 'Falling Cake Sponge';
+
+          const fallingFrostingImg = document.createElement('img');
+          fallingFrostingImg.className = 'cakeFallingFrostingImg absolute bottom-3 left-0 right-0 mx-auto w-24 h-auto object-contain drop-shadow-md pointer-events-none';
+          fallingFrostingImg.src = 'sprites/frosting.png';
+          fallingFrostingImg.alt = 'Falling Frosting Drop';
+
+          const fallingBoxImg = document.createElement('img');
+          fallingBoxImg.className = 'cakeFallingBoxImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-lg pointer-events-none';
+          fallingBoxImg.src = 'sprites/box.png';
+          fallingBoxImg.alt = 'Falling Box';
+
+          imgWrap.append(
+            plateImg,
+            cakePlateImg,
+            glazedImg,
+            boxedImg,
+            fallingCakeImg,
+            fallingFrostingImg,
+            fallingBoxImg
+          );
           el.append(badge, imgWrap);
           pipeCakesTrack.appendChild(el);
 
-          entity = { el, badge, plateImg, cakeImg, glazedImg, boxedImg };
+          entity = {
+            el,
+            badge,
+            plateImg,
+            cakePlateImg,
+            glazedImg,
+            boxedImg,
+            fallingCakeImg,
+            fallingFrostingImg,
+            fallingBoxImg,
+          };
           pipeEntities.set(cake.id, entity);
         }
 
@@ -1359,10 +1900,12 @@
         const x = stationPos * STATION_SPACING;
         entity.el.style.transform = `translate3d(${x}px, 0, 0)`;
 
-        const imgs = [entity.plateImg, entity.cakeImg, entity.glazedImg, entity.boxedImg];
+        const stageImgs = [entity.plateImg, entity.cakePlateImg, entity.glazedImg, entity.boxedImg];
+        const fallingImgs = [null, entity.fallingCakeImg, entity.fallingFrostingImg, entity.fallingBoxImg];
 
         if (cake.fallingStage === 0) {
-          imgs.forEach((img, idx) => {
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.baseStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
@@ -1370,41 +1913,71 @@
           entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
         } else if (pipePhase < 0.25) {
           // Setup time: moving into station under machine. Base stage visible.
-          imgs.forEach((img, idx) => {
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.baseStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
           entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.baseStage]})`;
           entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
         } else if (pipePhase <= 0.75) {
-          // The "Pulse": stationary under machine, layer drops from nozzle above
-          imgs.forEach((img, idx) => {
-            img.style.display = (idx === cake.baseStage || idx === cake.fallingStage) ? 'block' : 'none';
-          });
-          imgs[cake.baseStage].style.transform = 'translateY(0px) scale(1)';
-
+          // The "Pulse": stationary under machine
           const p = (pipePhase - 0.25) / 0.50;
           if (p < 0.60) {
             // Rapid fall with gravity acceleration
             const q = p / 0.60;
             const dropY = -100 * (1 - q * q);
             const scale = 0.92 + 0.08 * q;
-            imgs[cake.fallingStage].style.transform = `translateY(${dropY}px) scale(${scale})`;
+
+            // Base stage remains stationary on belt
+            stageImgs.forEach((img, idx) => {
+              img.style.display = idx === cake.baseStage ? 'block' : 'none';
+              img.style.transform = 'translateY(0px) scale(1)';
+            });
+
+            // Falling item descends from overhead machine
+            fallingImgs.slice(1).forEach((img, idx) => {
+              if (!img) return;
+              if (idx + 1 === cake.fallingStage) {
+                img.style.display = 'block';
+                img.style.transform = `translateY(${dropY}px) scale(${scale})`;
+              } else {
+                img.style.display = 'none';
+              }
+            });
+
             entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.baseStage]})`;
             entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
           } else {
-            // Landing bounce & tactile squash
+            // Landing bounce & tactile squash:
+            // - cake falls onto plate -> turns into cake_plate.png
+            // - frosting falls onto cake -> turns into cake_glazed.png
+            // - box falls onto cake -> turns into cake_boxed.png
             const b = (p - 0.60) / 0.40;
             const bounceY = -5 * Math.sin(b * Math.PI) * (1 - b * 0.5);
             const scaleX = 1 + 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
             const scaleY = 1 - 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
-            imgs[cake.fallingStage].style.transform = `translateY(${bounceY}px) scale(${scaleX}, ${scaleY})`;
+
+            // Hide all falling sprites
+            fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+
+            // Display target combined stage with landing squash & bounce
+            stageImgs.forEach((img, idx) => {
+              if (idx === cake.fallingStage) {
+                img.style.display = 'block';
+                img.style.transform = `translateY(${bounceY}px) scale(${scaleX}, ${scaleY})`;
+              } else {
+                img.style.display = 'none';
+              }
+            });
+
             entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.fallingStage]})`;
             entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.fallingStage]}`;
           }
         } else {
-          // End of clock: movement towards next machine
-          imgs.forEach((img, idx) => {
+          // End of clock: movement towards next machine as target stage
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.fallingStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
@@ -1448,6 +2021,839 @@
     // Initial single machine state
     updateSingleMachineDisplay(1);
     updateFrequency(1.0);
+
+    // =========================================================================
+    // WINDOW 3: THE BAKER’S FAST SHELF (CACHE BAKERY SIMULATION ENGINE)
+    // =========================================================================
+
+    const TOPPINGS_L1 = {
+      A: { name: 'Strawberry', icon: '🍓', style: 'bg-pink-100 border-pink-400 text-pink-950' },
+      B: { name: 'Chocolate', icon: '🍫', style: 'bg-orange-100 border-amber-800 text-amber-950' },
+      C: { name: 'Vanilla', icon: '🌼', style: 'bg-yellow-50 border-yellow-400 text-yellow-950' }
+    };
+
+    const TOPPINGS_L2 = {
+      ...TOPPINGS_L1,
+      D: { name: 'Blueberry', icon: '🫐', style: 'bg-blue-100 border-blue-500 text-blue-950' }
+    };
+
+    // -------------------------------------------------------------------------
+    // Level Navigation
+    // -------------------------------------------------------------------------
+    const btnLevel1 = document.getElementById('btnLevel1');
+    const btnLevel2 = document.getElementById('btnLevel2');
+    const cacheLevel1 = document.getElementById('cacheLevel1');
+    const cacheLevel2 = document.getElementById('cacheLevel2');
+
+    let currentCacheLevel = 1;
+    function setCacheLevel(lvl) {
+      currentCacheLevel = lvl;
+      if (lvl === 1) {
+        btnLevel1.className = 'py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all shadow-md bg-purple-700 text-white border-purple-500 shadow-purple-500/25 cursor-pointer';
+        btnLevel2.className = 'py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all bg-white/90 text-purple-900 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
+        cacheLevel1.classList.remove('hidden');
+        cacheLevel2.classList.add('hidden');
+      } else {
+        btnLevel1.className = 'py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all bg-white/90 text-purple-900 border-purple-200 hover:bg-purple-100 shadow-sm cursor-pointer';
+        btnLevel2.className = 'py-2.5 px-5 rounded-2xl border-2 font-mono font-bold text-xs md:text-sm transition-all shadow-md bg-purple-700 text-white border-purple-500 shadow-purple-500/25 cursor-pointer';
+        cacheLevel1.classList.add('hidden');
+        cacheLevel2.classList.remove('hidden');
+      }
+    }
+    btnLevel1.addEventListener('click', () => setCacheLevel(1));
+    btnLevel2.addEventListener('click', () => setCacheLevel(2));
+
+    // -------------------------------------------------------------------------
+    // LEVEL 1: TEMPORAL LOCALITY ENGINE
+    // -------------------------------------------------------------------------
+    const c1State = {
+      orders: ['A', 'B', 'C', 'A', 'B', 'C'],
+      status: 'idle', // 'idle' | 'running' | 'paused' | 'complete'
+      cycles: 0,
+      cakes: 0,
+      hits: 0,
+      misses: 0,
+      shelf: [null, null], // array of { ingredient, lastUsed }
+      pending: null,
+      accesses: [],
+      lastCycle: null,
+      selected: null,
+      hasCompletedRound: false,
+      hintRevealed: false
+    };
+
+    let c1Timer = null;
+
+    function resetC1State(keepOrders = true) {
+      stopC1Timer();
+      c1State.status = 'idle';
+      c1State.cycles = 0;
+      c1State.cakes = 0;
+      c1State.hits = 0;
+      c1State.misses = 0;
+      c1State.shelf = [null, null];
+      c1State.pending = null;
+      c1State.accesses = [];
+      c1State.lastCycle = null;
+      c1State.selected = null;
+      if (!keepOrders) {
+        c1State.orders = ['A', 'B', 'C', 'A', 'B', 'C'];
+      }
+      renderC1();
+    }
+
+    function startC1Timer() {
+      if (c1Timer) clearInterval(c1Timer);
+      c1Timer = setInterval(() => {
+        if (c1State.status === 'running') {
+          advanceC1Cycle();
+        }
+      }, 600);
+    }
+
+    function stopC1Timer() {
+      if (c1Timer) {
+        clearInterval(c1Timer);
+        c1Timer = null;
+      }
+    }
+
+    function advanceC1Cycle() {
+      if (c1State.cakes === c1State.orders.length) {
+        c1State.status = 'complete';
+        c1State.hasCompletedRound = true;
+        stopC1Timer();
+        renderC1();
+        return;
+      }
+
+      c1State.cycles++;
+
+      if (!c1State.pending) {
+        const ingredient = c1State.orders[c1State.cakes];
+        let slot = c1State.shelf.findIndex(e => e?.ingredient === ingredient);
+        const hit = slot !== -1;
+        if (!hit) {
+          slot = c1State.shelf.findIndex(e => e === null);
+          if (slot === -1) {
+            slot = (c1State.shelf[0].lastUsed <= c1State.shelf[1].lastUsed) ? 0 : 1;
+          }
+        }
+        c1State.pending = {
+          ingredient,
+          slot,
+          hit,
+          waitsLeft: hit ? 0 : 3,
+          evicted: hit ? null : (c1State.shelf[slot]?.ingredient ?? null)
+        };
+        if (hit) c1State.hits++;
+        else c1State.misses++;
+        c1State.accesses.push({ ingredient, hit, cycle: c1State.cycles, completedAt: null });
+      }
+
+      if (c1State.pending.waitsLeft > 0) {
+        c1State.pending.waitsLeft--;
+        if (c1State.pending.waitsLeft === 0) {
+          c1State.shelf[c1State.pending.slot] = { ingredient: c1State.pending.ingredient, lastUsed: c1State.cycles };
+        }
+        c1State.lastCycle = {
+          order: c1State.cakes,
+          kind: 'wait',
+          hit: false,
+          waitNumber: 3 - c1State.pending.waitsLeft,
+          evicted: c1State.pending.waitsLeft === 0 ? c1State.pending.evicted : null
+        };
+      } else {
+        c1State.shelf[c1State.pending.slot] = { ingredient: c1State.pending.ingredient, lastUsed: c1State.cycles };
+        c1State.lastCycle = {
+          order: c1State.cakes,
+          kind: 'bake',
+          hit: c1State.pending.hit,
+          waitNumber: 0,
+          evicted: null
+        };
+        c1State.cakes++;
+        if (c1State.accesses[c1State.accesses.length - 1]) {
+          c1State.accesses[c1State.accesses.length - 1].completedAt = c1State.cycles;
+        }
+        c1State.pending = null;
+        if (c1State.cakes === c1State.orders.length) {
+          c1State.status = 'complete';
+          c1State.hasCompletedRound = true;
+          stopC1Timer();
+        }
+      }
+
+      renderC1();
+    }
+
+    function renderC1() {
+      // 1. Status badge
+      const badge = document.getElementById('c1StatusBadge');
+      if (c1State.status === 'complete') {
+        badge.textContent = 'Round complete';
+        badge.className = 'rounded-xl border-2 border-emerald-400 bg-emerald-100 text-emerald-900 px-3 py-2 font-bold text-xs font-mono shadow-sm';
+      } else if (c1State.status === 'running') {
+        badge.textContent = 'Running';
+        badge.className = 'rounded-xl border-2 border-purple-400 bg-purple-100 text-purple-900 px-3 py-2 font-bold text-xs font-mono shadow-sm animate-pulse';
+      } else if (c1State.status === 'paused') {
+        badge.textContent = 'Paused';
+        badge.className = 'rounded-xl border-2 border-amber-400 bg-amber-100 text-amber-900 px-3 py-2 font-bold text-xs font-mono shadow-sm';
+      } else {
+        badge.textContent = 'Ready to arrange';
+        badge.className = 'rounded-xl border-2 border-purple-200 bg-white px-3 py-2 font-bold text-purple-900 text-xs font-mono shadow-sm';
+      }
+
+      // 2. Helper message
+      const help = document.getElementById('c1OrderHelp');
+      if (c1State.status === 'idle') {
+        help.textContent = (c1State.selected === null)
+          ? 'Tap two orders to swap, then press Run.'
+          : `Order ${c1State.selected + 1} selected. Tap another order to swap; tap it again to cancel.`;
+      } else {
+        help.textContent = 'Orders locked for this round. Reset to rearrange.';
+      }
+
+      // 3. Orders grid
+      const grid = document.getElementById('c1OrdersGrid');
+      grid.innerHTML = '';
+      const editable = c1State.status === 'idle';
+      const currentOrder = c1State.lastCycle?.order ?? 0;
+
+      c1State.orders.forEach((ing, idx) => {
+        const top = TOPPINGS_L1[ing];
+        const isSelected = c1State.selected === idx;
+        const isCurrent = c1State.lastCycle && currentOrder === idx;
+        const access = c1State.accesses[idx];
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.disabled = !editable;
+        btn.className = `min-h-24 rounded-2xl border-2 p-2 text-center transition-all flex flex-col items-center justify-between ${top.style} ${isSelected ? 'ring-4 ring-purple-700 ring-offset-2 scale-105' : ''} ${isCurrent ? 'outline outline-4 outline-purple-600' : ''} ${editable ? 'hover:shadow-lg cursor-pointer' : 'cursor-default'}`;
+
+        let statusText = top.name;
+        if (!editable && access) {
+          statusText = `${access.completedAt ? '✓ ' : ''}${access.hit ? 'On shelf' : 'Pantry trip'}`;
+        }
+
+        btn.innerHTML = `
+          <span class="block text-xs md:text-sm font-semibold">Order ${idx + 1}</span>
+          <span class="relative mx-auto block h-10 w-12 my-1" aria-hidden="true">
+            <img src="sprites/cake.png" alt="" class="h-full w-full object-contain" />
+            <span class="absolute -right-1 -top-1 text-lg">${top.icon}</span>
+          </span>
+          <span class="block min-h-4 text-[11px] md:text-xs font-bold">${statusText}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          if (!editable) return;
+          if (c1State.selected === null) {
+            c1State.selected = idx;
+          } else if (c1State.selected === idx) {
+            c1State.selected = null;
+          } else {
+            // Swap
+            const first = c1State.selected;
+            const temp = c1State.orders[first];
+            c1State.orders[first] = c1State.orders[idx];
+            c1State.orders[idx] = temp;
+            c1State.selected = null;
+          }
+          renderC1();
+        });
+
+        grid.appendChild(btn);
+      });
+
+      // 4. Control buttons
+      const btnRun = document.getElementById('btnC1Run');
+      const btnPause = document.getElementById('btnC1Pause');
+      const btnStep = document.getElementById('btnC1Step');
+      const btnRestore = document.getElementById('btnC1RestoreMixed');
+
+      btnRun.disabled = (c1State.status === 'running' || c1State.status === 'complete');
+      btnRun.textContent = (c1State.status === 'paused') ? 'Resume' : 'Run';
+      btnPause.disabled = (c1State.status !== 'running');
+      btnStep.disabled = (c1State.status === 'running' || c1State.status === 'complete');
+      btnRestore.disabled = !editable;
+
+      // 5. Metrics
+      document.getElementById('c1MetricCakes').textContent = `${c1State.cakes} / ${c1State.orders.length}`;
+      document.getElementById('c1MetricCycles').textContent = c1State.cycles;
+      document.getElementById('c1MetricMisses').textContent = c1State.misses;
+      document.getElementById('c1MetricHits').textContent = c1State.hits;
+
+      // 6. Pantry wait bubbles & highlight
+      const waiting = c1State.lastCycle?.kind === 'wait';
+      const waitNum = c1State.lastCycle?.waitNumber ?? 0;
+      const pantryBox = document.getElementById('c1PantryBox');
+      if (waiting) {
+        pantryBox.classList.add('ring-4', 'ring-amber-400');
+      } else {
+        pantryBox.classList.remove('ring-4', 'ring-amber-400');
+      }
+
+      [1, 2, 3].forEach(w => {
+        const el = document.getElementById(`c1Wait${w}`);
+        if (waiting && waitNum >= w) {
+          el.className = 'flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-amber-700 text-white text-xs md:text-sm animate-pulse';
+        } else {
+          el.className = 'flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm';
+        }
+      });
+
+      // 7. Fast shelf slots
+      for (let s = 0; s < 2; s++) {
+        const slotEl = document.getElementById(`c1ShelfSlot${s}`);
+        const entry = c1State.shelf[s];
+        if (entry) {
+          const top = TOPPINGS_L1[entry.ingredient];
+          slotEl.className = `flex h-16 md:h-20 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl ${top.style}`;
+          slotEl.innerHTML = `<span>${top.icon}</span>`;
+        } else {
+          slotEl.className = 'flex h-16 md:h-20 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500';
+          slotEl.innerHTML = '<span>—</span>';
+        }
+      }
+
+      // 8. Baker & Plate
+      const bakerIcon = document.getElementById('c1BakerIcon');
+      const bakerStatus = document.getElementById('c1BakerStatus');
+      const cakePlateContainer = document.getElementById('c1CakePlateContainer');
+      const plateImg = document.getElementById('c1PlateImg');
+      const cakeTopping = document.getElementById('c1CakeTopping');
+
+      if (waiting) {
+        bakerIcon.className = 'block text-4xl md:text-5xl animate-bounce';
+        bakerStatus.textContent = 'Waiting…';
+        plateImg.src = 'sprites/plate.png';
+        cakeTopping.classList.add('hidden');
+      } else if (c1State.lastCycle?.kind === 'bake') {
+        bakerIcon.className = 'block text-4xl md:text-5xl';
+        bakerStatus.textContent = 'Cake baked!';
+        plateImg.src = 'sprites/cake.png';
+        const currentIng = c1State.orders[c1State.cakes - 1];
+        if (currentIng && TOPPINGS_L1[currentIng]) {
+          cakeTopping.textContent = TOPPINGS_L1[currentIng].icon;
+          cakeTopping.classList.remove('hidden');
+        }
+      } else {
+        bakerIcon.className = 'block text-4xl md:text-5xl';
+        bakerStatus.textContent = 'Ready to bake';
+        plateImg.src = 'sprites/plate.png';
+        cakeTopping.classList.add('hidden');
+      }
+
+      // 9. Feedback box
+      const fBox = document.getElementById('c1FeedbackBox');
+      const fSub = document.getElementById('c1FeedbackSub');
+      const fMain = document.getElementById('c1FeedbackMain');
+
+      if (!c1State.lastCycle) {
+        fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm';
+        fSub.textContent = 'The shelf starts empty.';
+        fMain.textContent = 'Ready to bake!';
+      } else {
+        const curOrderIdx = c1State.lastCycle.order;
+        const curIng = c1State.orders[curOrderIdx];
+        const curTop = TOPPINGS_L1[curIng];
+        fSub.textContent = `Cycle ${c1State.cycles} · Order ${curOrderIdx + 1} (${curTop.name} ${curTop.icon})${c1State.status === 'paused' ? ' · Paused' : ''}`;
+
+        if (waiting) {
+          fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-amber-500 bg-amber-100 text-amber-950 shadow-sm';
+          let msg = `Pantry trip — baker waiting. Wait ${waitNum} of 3.`;
+          if (waitNum === 3) {
+            if (c1State.lastCycle.evicted) {
+              const evTop = TOPPINGS_L1[c1State.lastCycle.evicted];
+              msg += ` (${evTop.name} jar replaced by ${curTop.name} jar). Next: bake!`;
+            } else {
+              msg += ` (${curTop.name} jar ready on fast shelf). Next: bake!`;
+            }
+          }
+          fMain.textContent = msg;
+        } else {
+          fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm';
+          if (c1State.lastCycle.hit) {
+            fMain.textContent = `Found on fast shelf! Zero waiting cycles. Cake baked.`;
+          } else {
+            fMain.textContent = `Jar freshly fetched from pantry! Cake baked.`;
+          }
+        }
+      }
+
+      if (c1State.status === 'complete') {
+        fMain.textContent = `🎉 All six cakes are ready! Round completed in ${c1State.cycles} cycles with ${c1State.misses} pantry trips.`;
+      }
+
+      // 10. Result card
+      const resCard = document.getElementById('c1ResultCard');
+      const resScore = document.getElementById('c1ResultScore');
+      if (c1State.status === 'complete') {
+        resCard.classList.remove('hidden');
+        resScore.textContent = `${c1State.cakes} cakes · ${c1State.misses} pantry trips · ${c1State.cycles} cycles`;
+      } else {
+        resCard.classList.add('hidden');
+      }
+
+      // 11. Hint collapsed/expanded
+      const hintCollapsed = document.getElementById('c1HintCollapsed');
+      const hintExpanded = document.getElementById('c1HintExpanded');
+      if (c1State.hintRevealed) {
+        hintCollapsed.classList.add('hidden');
+        hintExpanded.classList.remove('hidden');
+      } else {
+        hintCollapsed.classList.remove('hidden');
+        hintExpanded.classList.add('hidden');
+      }
+    }
+
+    // Level 1 Event Listeners
+    document.getElementById('btnC1Run').addEventListener('click', () => {
+      c1State.selected = null;
+      c1State.status = 'running';
+      startC1Timer();
+      renderC1();
+    });
+
+    document.getElementById('btnC1Pause').addEventListener('click', () => {
+      c1State.status = 'paused';
+      stopC1Timer();
+      renderC1();
+    });
+
+    document.getElementById('btnC1Step').addEventListener('click', () => {
+      c1State.selected = null;
+      c1State.status = 'paused';
+      stopC1Timer();
+      advanceC1Cycle();
+    });
+
+    document.getElementById('btnC1Reset').addEventListener('click', () => {
+      resetC1State(true);
+    });
+
+    document.getElementById('btnC1RestoreMixed').addEventListener('click', () => {
+      resetC1State(false);
+    });
+
+    document.getElementById('btnC1RevealHint').addEventListener('click', () => {
+      c1State.hintRevealed = true;
+      renderC1();
+    });
+
+    document.getElementById('btnC1UseHint').addEventListener('click', () => {
+      stopC1Timer();
+      c1State.orders = ['A', 'A', 'B', 'B', 'C', 'C'];
+      resetC1State(true);
+    });
+
+    // -------------------------------------------------------------------------
+    // LEVEL 2: SPATIAL LOCALITY ENGINE (PANTRY PAIRS)
+    // -------------------------------------------------------------------------
+    const c2State = {
+      orders: ['A', 'C', 'B', 'D', 'A', 'C', 'B', 'D'],
+      status: 'idle',
+      cycles: 0,
+      cakes: 0,
+      hits: 0,
+      misses: 0,
+      shelf: null, // null or ['A', 'B'] or ['C', 'D']
+      seenInPair: [],
+      pending: null,
+      accesses: [],
+      lastCycle: null,
+      selected: null,
+      hintRevealed: false
+    };
+
+    let c2Timer = null;
+
+    function resetC2State(keepOrders = true) {
+      stopC2Timer();
+      c2State.status = 'idle';
+      c2State.cycles = 0;
+      c2State.cakes = 0;
+      c2State.hits = 0;
+      c2State.misses = 0;
+      c2State.shelf = null;
+      c2State.seenInPair = [];
+      c2State.pending = null;
+      c2State.accesses = [];
+      c2State.lastCycle = null;
+      c2State.selected = null;
+      if (!keepOrders) {
+        c2State.orders = ['A', 'C', 'B', 'D', 'A', 'C', 'B', 'D'];
+      }
+      renderC2();
+    }
+
+    function startC2Timer() {
+      if (c2Timer) clearInterval(c2Timer);
+      c2Timer = setInterval(() => {
+        if (c2State.status === 'running') {
+          advanceC2Cycle();
+        }
+      }, 600);
+    }
+
+    function stopC2Timer() {
+      if (c2Timer) {
+        clearInterval(c2Timer);
+        c2Timer = null;
+      }
+    }
+
+    function pairFor(ing) {
+      return (ing === 'A' || ing === 'B') ? ['A', 'B'] : ['C', 'D'];
+    }
+
+    function advanceC2Cycle() {
+      if (c2State.cakes === c2State.orders.length) {
+        c2State.status = 'complete';
+        stopC2Timer();
+        renderC2();
+        return;
+      }
+
+      c2State.cycles++;
+
+      if (!c2State.pending) {
+        const ingredient = c2State.orders[c2State.cakes];
+        const pair = pairFor(ingredient);
+        const hit = c2State.shelf !== null && c2State.shelf[0] === pair[0];
+        c2State.pending = {
+          ingredient,
+          pair,
+          hit,
+          waitsLeft: hit ? 0 : 3,
+          evicted: hit ? null : c2State.shelf
+        };
+        if (hit) c2State.hits++;
+        else c2State.misses++;
+        c2State.accesses.push({ ingredient, hit, explanation: null, completedAt: null });
+      }
+
+      if (c2State.pending.waitsLeft > 0) {
+        c2State.pending.waitsLeft--;
+        const arrived = c2State.pending.waitsLeft === 0;
+        if (arrived) {
+          c2State.shelf = c2State.pending.pair;
+          c2State.seenInPair = [];
+        }
+        c2State.lastCycle = {
+          order: c2State.cakes,
+          ingredient: c2State.pending.ingredient,
+          kind: 'wait',
+          hit: false,
+          explanation: null,
+          waitNumber: 3 - c2State.pending.waitsLeft,
+          arriving: arrived ? c2State.pending.pair : null,
+          evicted: arrived ? c2State.pending.evicted : null
+        };
+      } else {
+        let explanation = null;
+        if (c2State.pending.hit) {
+          explanation = c2State.seenInPair.includes(c2State.pending.ingredient)
+            ? 'same item again'
+            : 'neighbor brought along';
+        }
+        if (!c2State.seenInPair.includes(c2State.pending.ingredient)) {
+          c2State.seenInPair.push(c2State.pending.ingredient);
+        }
+        c2State.lastCycle = {
+          order: c2State.cakes,
+          ingredient: c2State.pending.ingredient,
+          kind: 'bake',
+          hit: c2State.pending.hit,
+          explanation,
+          waitNumber: 0,
+          arriving: null,
+          evicted: null
+        };
+        c2State.cakes++;
+        if (c2State.accesses[c2State.accesses.length - 1]) {
+          c2State.accesses[c2State.accesses.length - 1].explanation = explanation;
+          c2State.accesses[c2State.accesses.length - 1].completedAt = c2State.cycles;
+        }
+        c2State.pending = null;
+        if (c2State.cakes === c2State.orders.length) {
+          c2State.status = 'complete';
+          stopC2Timer();
+        }
+      }
+
+      renderC2();
+    }
+
+    function renderC2() {
+      // 1. Status badge
+      const badge = document.getElementById('c2StatusBadge');
+      if (c2State.status === 'complete') {
+        badge.textContent = 'Round complete';
+        badge.className = 'rounded-xl border-2 border-emerald-400 bg-emerald-100 text-emerald-900 px-3 py-2 font-bold text-xs font-mono shadow-sm';
+      } else if (c2State.status === 'running') {
+        badge.textContent = 'Running';
+        badge.className = 'rounded-xl border-2 border-purple-400 bg-purple-100 text-purple-900 px-3 py-2 font-bold text-xs font-mono shadow-sm animate-pulse';
+      } else if (c2State.status === 'paused') {
+        badge.textContent = 'Paused';
+        badge.className = 'rounded-xl border-2 border-amber-400 bg-amber-100 text-amber-900 px-3 py-2 font-bold text-xs font-mono shadow-sm';
+      } else {
+        badge.textContent = 'Ready to arrange';
+        badge.className = 'rounded-xl border-2 border-purple-200 bg-white px-3 py-2 font-bold text-purple-900 text-xs font-mono shadow-sm';
+      }
+
+      // 2. Helper message
+      const help = document.getElementById('c2OrderHelp');
+      if (c2State.status === 'idle') {
+        help.textContent = (c2State.selected === null)
+          ? 'Tap two cake cards to swap the baking order, then press Run.'
+          : `Order ${c2State.selected + 1} selected. Tap another cake card to swap; tap it again to cancel.`;
+      } else {
+        help.textContent = 'Orders locked for this round. Reset to rearrange.';
+      }
+
+      // 3. Orders grid (8 items)
+      const grid = document.getElementById('c2OrdersGrid');
+      grid.innerHTML = '';
+      const editable = c2State.status === 'idle';
+      const currentOrder = c2State.lastCycle?.order ?? 0;
+
+      c2State.orders.forEach((ing, idx) => {
+        const top = TOPPINGS_L2[ing];
+        const isSelected = c2State.selected === idx;
+        const isCurrent = c2State.lastCycle && currentOrder === idx;
+        const access = c2State.accesses[idx];
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.disabled = !editable;
+        btn.className = `min-h-24 rounded-2xl border-2 p-2 text-center transition-all flex flex-col items-center justify-between ${top.style} ${isSelected ? 'ring-4 ring-purple-700 ring-offset-2 scale-105' : ''} ${isCurrent ? 'outline outline-4 outline-purple-600' : ''} ${editable ? 'hover:shadow-lg cursor-pointer' : 'cursor-default'}`;
+
+        let statusText = top.name;
+        if (!editable && access) {
+          if (access.hit) {
+            statusText = access.explanation === 'neighbor brought along' ? '⚡ Spatial Hit' : '✓ Temporal Hit';
+          } else {
+            statusText = 'Pantry trip';
+          }
+        }
+
+        btn.innerHTML = `
+          <span class="block text-xs font-semibold">Order ${idx + 1}</span>
+          <span class="relative mx-auto block h-10 w-12 my-1" aria-hidden="true">
+            <img src="sprites/cake.png" alt="" class="h-full w-full object-contain" />
+            <span class="absolute -right-1 -top-1 text-lg">${top.icon}</span>
+          </span>
+          <span class="block min-h-4 text-[10px] sm:text-[11px] font-bold leading-tight">${statusText}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          if (!editable) return;
+          if (c2State.selected === null) {
+            c2State.selected = idx;
+          } else if (c2State.selected === idx) {
+            c2State.selected = null;
+          } else {
+            const first = c2State.selected;
+            const temp = c2State.orders[first];
+            c2State.orders[first] = c2State.orders[idx];
+            c2State.orders[idx] = temp;
+            c2State.selected = null;
+          }
+          renderC2();
+        });
+
+        grid.appendChild(btn);
+      });
+
+      // 4. Control buttons
+      const btnRun = document.getElementById('btnC2Run');
+      const btnPause = document.getElementById('btnC2Pause');
+      const btnStep = document.getElementById('btnC2Step');
+      const btnRestore = document.getElementById('btnC2RestoreMixed');
+
+      btnRun.disabled = (c2State.status === 'running' || c2State.status === 'complete');
+      btnRun.textContent = (c2State.status === 'paused') ? 'Resume' : 'Run';
+      btnPause.disabled = (c2State.status !== 'running');
+      btnStep.disabled = (c2State.status === 'running' || c2State.status === 'complete');
+      btnRestore.disabled = !editable;
+
+      // 5. Metrics
+      document.getElementById('c2MetricCakes').textContent = `${c2State.cakes} / ${c2State.orders.length}`;
+      document.getElementById('c2MetricCycles').textContent = c2State.cycles;
+      document.getElementById('c2MetricMisses').textContent = c2State.misses;
+      document.getElementById('c2MetricHits').textContent = c2State.hits;
+
+      // 6. Pantry wait bubbles & highlight
+      const waiting = c2State.lastCycle?.kind === 'wait';
+      const waitNum = c2State.lastCycle?.waitNumber ?? 0;
+      const pantryBox = document.getElementById('c2PantryBox');
+      if (waiting) {
+        pantryBox.classList.add('ring-4', 'ring-amber-400');
+      } else {
+        pantryBox.classList.remove('ring-4', 'ring-amber-400');
+      }
+
+      [1, 2, 3].forEach(w => {
+        const el = document.getElementById(`c2Wait${w}`);
+        if (waiting && waitNum >= w) {
+          el.className = 'flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-amber-700 text-white text-xs md:text-sm animate-pulse';
+        } else {
+          el.className = 'flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full border-2 border-amber-800 font-bold bg-white text-amber-950 text-xs md:text-sm';
+        }
+      });
+
+      // 7. Fast shelf pair slots
+      for (let s = 0; s < 2; s++) {
+        const slotEl = document.getElementById(`c2ShelfSlot${s}`);
+        const ing = c2State.shelf ? c2State.shelf[s] : null;
+        if (ing) {
+          const top = TOPPINGS_L2[ing];
+          slotEl.className = `flex h-14 md:h-16 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl ${top.style}`;
+          slotEl.innerHTML = `<span>${top.icon}</span>`;
+        } else {
+          slotEl.className = 'flex h-14 md:h-16 items-center justify-center rounded-t-xl border-2 text-2xl md:text-3xl border-dashed border-purple-300 bg-purple-50 text-purple-500';
+          slotEl.innerHTML = '<span>—</span>';
+        }
+      }
+
+      // 8. Baker & Plate
+      const bakerIcon = document.getElementById('c2BakerIcon');
+      const bakerStatus = document.getElementById('c2BakerStatus');
+      const plateImg = document.getElementById('c2PlateImg');
+      const cakeTopping = document.getElementById('c2CakeTopping');
+
+      if (waiting) {
+        bakerIcon.className = 'block text-4xl md:text-5xl animate-bounce';
+        bakerStatus.textContent = 'Waiting for pair…';
+        plateImg.src = 'sprites/plate.png';
+        cakeTopping.classList.add('hidden');
+      } else if (c2State.lastCycle?.kind === 'bake') {
+        bakerIcon.className = 'block text-4xl md:text-5xl';
+        bakerStatus.textContent = 'Cake baked!';
+        plateImg.src = 'sprites/cake.png';
+        const currentIng = c2State.orders[c2State.cakes - 1];
+        if (currentIng && TOPPINGS_L2[currentIng]) {
+          cakeTopping.textContent = TOPPINGS_L2[currentIng].icon;
+          cakeTopping.classList.remove('hidden');
+        }
+      } else {
+        bakerIcon.className = 'block text-4xl md:text-5xl';
+        bakerStatus.textContent = 'Ready to bake';
+        plateImg.src = 'sprites/plate.png';
+        cakeTopping.classList.add('hidden');
+      }
+
+      // 9. Feedback box
+      const fBox = document.getElementById('c2FeedbackBox');
+      const fSub = document.getElementById('c2FeedbackSub');
+      const fMain = document.getElementById('c2FeedbackMain');
+
+      if (!c2State.lastCycle) {
+        fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm';
+        fSub.textContent = 'The one-pair shelf starts empty.';
+        fMain.textContent = 'Ready to bake!';
+      } else {
+        const curOrderIdx = c2State.lastCycle.order;
+        const curIng = c2State.orders[curOrderIdx];
+        const curTop = TOPPINGS_L2[curIng];
+        fSub.textContent = `Cycle ${c2State.cycles} · Order ${curOrderIdx + 1} (${curTop.name} ${curTop.icon})${c2State.status === 'paused' ? ' · Paused' : ''}`;
+
+        if (waiting) {
+          fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-amber-500 bg-amber-100 text-amber-950 shadow-sm';
+          let msg = `Both toppings in cache line on pantry trip. Wait ${waitNum} of 3.`;
+          if (waitNum === 3) {
+            const arrivingPair = c2State.lastCycle.arriving;
+            if (arrivingPair) {
+              const a0 = TOPPINGS_L2[arrivingPair[0]].icon;
+              const a1 = TOPPINGS_L2[arrivingPair[1]].icon;
+              msg += ` (Pair ${a0} + ${a1} arrived together). Next: bake!`;
+            }
+          }
+          fMain.textContent = msg;
+        } else {
+          fBox.className = 'mt-3 rounded-2xl border-2 p-3 text-sm md:text-base font-bold border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm';
+          if (c2State.lastCycle.hit) {
+            if (c2State.lastCycle.explanation === 'neighbor brought along') {
+              fMain.textContent = `✨ SPATIAL HIT! ${curTop.name} was already brought along with its shelf neighbor. Cake baked with 0 wait cycles!`;
+            } else {
+              fMain.textContent = `🔄 TEMPORAL HIT! ${curTop.name} reused again while still on the shelf. Cake baked with 0 wait cycles!`;
+            }
+          } else {
+            fMain.textContent = `Pair fetched from pantry shelf! Cake baked.`;
+          }
+        }
+      }
+
+      if (c2State.status === 'complete') {
+        fMain.textContent = `🎉 All eight cakes are ready! Finished in ${c2State.cycles} cycles with ${c2State.misses} pantry pair trips.`;
+      }
+
+      // 10. Result card
+      const resCard = document.getElementById('c2ResultCard');
+      const resScore = document.getElementById('c2ResultScore');
+      if (c2State.status === 'complete') {
+        resCard.classList.remove('hidden');
+        resScore.textContent = `${c2State.cakes} cakes · ${c2State.misses} pair trips · ${c2State.cycles} cycles`;
+      } else {
+        resCard.classList.add('hidden');
+      }
+
+      // 11. Hint collapsed/expanded
+      const hintCollapsed = document.getElementById('c2HintCollapsed');
+      const hintExpanded = document.getElementById('c2HintExpanded');
+      if (c2State.hintRevealed) {
+        hintCollapsed.classList.add('hidden');
+        hintExpanded.classList.remove('hidden');
+      } else {
+        hintCollapsed.classList.remove('hidden');
+        hintExpanded.classList.add('hidden');
+      }
+    }
+
+    // Level 2 Event Listeners
+    document.getElementById('btnC2Run').addEventListener('click', () => {
+      c2State.selected = null;
+      c2State.status = 'running';
+      startC2Timer();
+      renderC2();
+    });
+
+    document.getElementById('btnC2Pause').addEventListener('click', () => {
+      c2State.status = 'paused';
+      stopC2Timer();
+      renderC2();
+    });
+
+    document.getElementById('btnC2Step').addEventListener('click', () => {
+      c2State.selected = null;
+      c2State.status = 'paused';
+      stopC2Timer();
+      advanceC2Cycle();
+    });
+
+    document.getElementById('btnC2Reset').addEventListener('click', () => {
+      resetC2State(true);
+    });
+
+    document.getElementById('btnC2RestoreMixed').addEventListener('click', () => {
+      resetC2State(false);
+    });
+
+    document.getElementById('btnC2RevealHint').addEventListener('click', () => {
+      c2State.hintRevealed = true;
+      renderC2();
+    });
+
+    document.getElementById('btnC2UseHint').addEventListener('click', () => {
+      stopC2Timer();
+      c2State.orders = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D'];
+      resetC2State(true);
+    });
+
+    // Initial render for Window 3
+    renderC1();
+    renderC2();
   </script>
 </body>
 </html>

@@ -18,9 +18,12 @@ interface CakeEntity {
   el: HTMLDivElement;
   badge: HTMLSpanElement;
   plateImg: HTMLImageElement;
-  cakeImg: HTMLImageElement;
+  cakePlateImg: HTMLImageElement;
   glazedImg: HTMLImageElement;
   boxedImg: HTMLImageElement;
+  fallingCakeImg: HTMLImageElement;
+  fallingFrostingImg: HTMLImageElement;
+  fallingBoxImg: HTMLImageElement;
 }
 
 function getStationPos(sMid: number, sFrom: number, sTo: number, u: number): number {
@@ -96,7 +99,7 @@ export default function PipeliningConveyor({
     let lastTime = performance.now();
     let animationId: number;
 
-    const STAGE_NAMES = ['PLATE', 'BAKED', 'GLAZED', 'BOXED'];
+    const STAGE_NAMES = ['PLATE', 'CAKE PLATE', 'GLAZED', 'BOXED'];
     const BADGE_STYLES = [
       'text-slate-600 bg-white/95 border-slate-300',
       'text-amber-800 bg-amber-100/95 border-amber-300',
@@ -147,15 +150,16 @@ export default function PipeliningConveyor({
           imgWrap.className = 'relative w-32 flex flex-col items-center justify-end';
           imgWrap.style.height = '105px';
 
+          // Base / Landed stage images
           const plateImg = document.createElement('img');
           plateImg.className = 'absolute bottom-0 w-32 h-auto object-contain drop-shadow-sm';
           plateImg.src = '/sprites/plate.png';
           plateImg.alt = 'Plate';
 
-          const cakeImg = document.createElement('img');
-          cakeImg.className = 'absolute bottom-0 w-32 h-auto object-contain drop-shadow-md';
-          cakeImg.src = '/sprites/cake.png';
-          cakeImg.alt = 'Baked Cake';
+          const cakePlateImg = document.createElement('img');
+          cakePlateImg.className = 'absolute bottom-0 w-32 h-auto object-contain drop-shadow-md';
+          cakePlateImg.src = '/sprites/cake_plate.png';
+          cakePlateImg.alt = 'Cake Plate';
 
           const glazedImg = document.createElement('img');
           glazedImg.className = 'absolute bottom-0 w-32 h-auto object-contain drop-shadow-lg';
@@ -167,11 +171,45 @@ export default function PipeliningConveyor({
           boxedImg.src = '/sprites/cake_boxed.png';
           boxedImg.alt = 'Boxed Cake';
 
-          imgWrap.append(plateImg, cakeImg, glazedImg, boxedImg);
+          // Falling sprites dropping from overhead machines
+          const fallingCakeImg = document.createElement('img');
+          fallingCakeImg.className = 'absolute bottom-3 w-32 h-auto object-contain drop-shadow-md pointer-events-none';
+          fallingCakeImg.src = '/sprites/cake.png';
+          fallingCakeImg.alt = 'Falling Cake Sponge';
+
+          const fallingFrostingImg = document.createElement('img');
+          fallingFrostingImg.className = 'absolute bottom-3 left-0 right-0 mx-auto w-24 h-auto object-contain drop-shadow-md pointer-events-none';
+          fallingFrostingImg.src = '/sprites/frosting.png';
+          fallingFrostingImg.alt = 'Falling Frosting Drop';
+
+          const fallingBoxImg = document.createElement('img');
+          fallingBoxImg.className = 'absolute bottom-0 w-32 h-auto object-contain drop-shadow-lg pointer-events-none';
+          fallingBoxImg.src = '/sprites/box.png';
+          fallingBoxImg.alt = 'Falling Box';
+
+          imgWrap.append(
+            plateImg,
+            cakePlateImg,
+            glazedImg,
+            boxedImg,
+            fallingCakeImg,
+            fallingFrostingImg,
+            fallingBoxImg
+          );
           el.append(badge, imgWrap);
           track!.appendChild(el);
 
-          entity = { el, badge, plateImg, cakeImg, glazedImg, boxedImg };
+          entity = {
+            el,
+            badge,
+            plateImg,
+            cakePlateImg,
+            glazedImg,
+            boxedImg,
+            fallingCakeImg,
+            fallingFrostingImg,
+            fallingBoxImg,
+          };
           entities.set(cake.id, entity);
         }
 
@@ -183,10 +221,12 @@ export default function PipeliningConveyor({
         entity.el.style.transform = 'translate3d(' + x + 'px, 0, 0)';
 
         // 3-Phase vertical layers and pulse animations
-        const imgs = [entity.plateImg, entity.cakeImg, entity.glazedImg, entity.boxedImg];
+        const stageImgs = [entity.plateImg, entity.cakePlateImg, entity.glazedImg, entity.boxedImg];
+        const fallingImgs = [null, entity.fallingCakeImg, entity.fallingFrostingImg, entity.fallingBoxImg];
 
         if (cake.fallingStage === 0 || reducedMotion.matches) {
-          imgs.forEach((img, idx) => {
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.baseStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
@@ -194,41 +234,71 @@ export default function PipeliningConveyor({
           entity.badge.className = 'text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ' + BADGE_STYLES[cake.baseStage];
         } else if (u < 0.25) {
           // Phase 1: Setup Time - Plate/Cake moves into station under machine
-          imgs.forEach((img, idx) => {
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.baseStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
           entity.badge.textContent = 'PKG#' + cake.id + ' (' + STAGE_NAMES[cake.baseStage] + ')';
           entity.badge.className = 'text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ' + BADGE_STYLES[cake.baseStage];
         } else if (u <= 0.75) {
-          // Phase 2: The "Pulse" - Dwells stationary under machine, layer drops from nozzle above
-          imgs.forEach((img, idx) => {
-            img.style.display = (idx === cake.baseStage || idx === cake.fallingStage) ? 'block' : 'none';
-          });
-          imgs[cake.baseStage].style.transform = 'translateY(0px) scale(1)';
-
+          // Phase 2: The "Pulse" - Dwells stationary under machine
           const p = (u - 0.25) / 0.50;
           if (p < 0.60) {
-            // Rapid fall with gravity acceleration
+            // Rapid fall from machine nozzle with gravity acceleration
             const q = p / 0.60;
             const dropY = -100 * (1 - q * q);
             const scale = 0.92 + 0.08 * q;
-            imgs[cake.fallingStage].style.transform = 'translateY(' + dropY + 'px) scale(' + scale + ')';
+
+            // Base stage remains stationary on belt
+            stageImgs.forEach((img, idx) => {
+              img.style.display = idx === cake.baseStage ? 'block' : 'none';
+              img.style.transform = 'translateY(0px) scale(1)';
+            });
+
+            // Falling item descends from overhead machine
+            fallingImgs.slice(1).forEach((img, idx) => {
+              if (!img) return;
+              if (idx + 1 === cake.fallingStage) {
+                img.style.display = 'block';
+                img.style.transform = 'translateY(' + dropY + 'px) scale(' + scale + ')';
+              } else {
+                img.style.display = 'none';
+              }
+            });
+
             entity.badge.textContent = 'PKG#' + cake.id + ' (' + STAGE_NAMES[cake.baseStage] + ')';
             entity.badge.className = 'text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ' + BADGE_STYLES[cake.baseStage];
           } else {
-            // Landing bounce & tactile squash
+            // Landing bounce & tactile squash:
+            // - cake falls onto plate -> turns into cake_plate.png
+            // - frosting falls onto cake -> turns into cake_glazed.png
+            // - box falls onto cake -> turns into cake_boxed.png
             const b = (p - 0.60) / 0.40;
             const bounceY = -5 * Math.sin(b * Math.PI) * (1 - b * 0.5);
             const scaleX = 1 + 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
             const scaleY = 1 - 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
-            imgs[cake.fallingStage].style.transform = 'translateY(' + bounceY + 'px) scale(' + scaleX + ', ' + scaleY + ')';
+
+            // Hide all falling sprites
+            fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+
+            // Display target combined stage with landing squash & bounce
+            stageImgs.forEach((img, idx) => {
+              if (idx === cake.fallingStage) {
+                img.style.display = 'block';
+                img.style.transform = 'translateY(' + bounceY + 'px) scale(' + scaleX + ', ' + scaleY + ')';
+              } else {
+                img.style.display = 'none';
+              }
+            });
+
             entity.badge.textContent = 'PKG#' + cake.id + ' (' + STAGE_NAMES[cake.fallingStage] + ')';
             entity.badge.className = 'text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ' + BADGE_STYLES[cake.fallingStage];
           }
         } else {
-          // Phase 3: End of Clock - Begins movement towards next machine
-          imgs.forEach((img, idx) => {
+          // Phase 3: End of Clock - Begins movement towards next machine as target stage
+          fallingImgs.slice(1).forEach(img => { if (img) img.style.display = 'none'; });
+          stageImgs.forEach((img, idx) => {
             img.style.display = idx === cake.fallingStage ? 'block' : 'none';
             img.style.transform = 'translateY(0px) scale(1)';
           });
