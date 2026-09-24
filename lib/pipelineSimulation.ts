@@ -30,7 +30,8 @@ export function advancePipelineCycle(state: PipelineState): PipelineState {
   }
   if (state.mode === 'pipeline' || !cakes.some(cake => cake.stage < 3)) {
     const position = state.mode === 'pipeline' ? 1 : 0;
-    cakes.push({ id: nextId++, stage: 0, position, previousPosition: position });
+    const previousPosition = state.mode === 'pipeline' ? 2 : 1;
+    cakes.push({ id: nextId++, stage: 0, position, previousPosition });
   }
   for (const cake of cakes) {
     if (cake.stage < 3) {
@@ -60,3 +61,54 @@ export function advancePipelineClock(clock: PipelineClock, seconds: number, spee
   }
   return { simulation, phase };
 }
+
+export interface ActivePipelineCake {
+  id: number;
+  baseStage: number;     // 0: Plate, 1: Baked, 2: Glazed, 3: Boxed
+  fallingStage: number;  // 0: none, 1: Bake, 2: Glaze, 3: Box
+  sFrom: number;         // Station moving from
+  sMid: number;          // Station during pulse
+  sTo: number;           // Station moving to
+}
+
+export function getActivePipelineCakes(mode: PipelineMode, currentCycle: number): ActivePipelineCake[] {
+  const cakes: ActivePipelineCake[] = [];
+  if (currentCycle < 1) return cakes;
+
+  if (mode === 'pipeline') {
+    for (let age = 1; age <= Math.min(5, currentCycle); age++) {
+      const id = 100 + currentCycle - age + 1;
+      if (age === 1) {
+        cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 2, sMid: 1, sTo: 0 });
+      } else if (age === 2) {
+        cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 1, sMid: 0, sTo: -1 });
+      } else if (age === 3) {
+        cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: -1, sTo: -2 });
+      } else if (age === 4) {
+        cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+      } else if (age === 5) {
+        cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+      }
+    }
+  } else {
+    const id = 101 + Math.floor((currentCycle - 1) / 3);
+    const step = ((currentCycle - 1) % 3) + 1;
+    if (step === 1) {
+      cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0 });
+    } else if (step === 2) {
+      cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0 });
+    } else if (step === 3) {
+      cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: -1 });
+    }
+    if (currentCycle > 3) {
+      const prevId = id - 1;
+      if (step === 1) {
+        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+      } else if (step === 2) {
+        cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+      }
+    }
+  }
+  return cakes;
+}
+

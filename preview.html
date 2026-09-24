@@ -357,7 +357,7 @@
             <!-- PIPELINED ASSEMBLY: 3 Dedicated Machines in Series (Right to Left: Cake -> Frosting -> Box) -->
             <div id="pipeThreeMachines" class="hidden w-full h-full relative">
               <!-- Machine 3: Box (Left: -190px from center) -->
-              <div class="absolute top-0 flex flex-col items-center pointer-events-auto" style="left: calc(50% - 190px); transform: translateX(-50%); width: 130px;">
+              <div id="pipeMachine3" class="absolute top-0 flex flex-col items-center pointer-events-auto transition-all duration-200" style="left: calc(50% - 190px); transform: translateX(-50%); width: 130px;">
                 <span class="text-[10px] font-mono font-black text-purple-900 bg-purple-200/95 border border-purple-400 px-2.5 py-0.5 rounded-lg mb-1 shadow-sm">
                   STAGE 3: BOX
                 </span>
@@ -365,7 +365,7 @@
               </div>
 
               <!-- Machine 2: Glaze (Center: 0px from center) -->
-              <div class="absolute top-0 flex flex-col items-center pointer-events-auto" style="left: 50%; transform: translateX(-50%); width: 130px;">
+              <div id="pipeMachine2" class="absolute top-0 flex flex-col items-center pointer-events-auto transition-all duration-200" style="left: 50%; transform: translateX(-50%); width: 130px;">
                 <span class="text-[10px] font-mono font-black text-pink-900 bg-pink-200/95 border border-pink-400 px-2.5 py-0.5 rounded-lg mb-1 shadow-sm">
                   STAGE 2: GLAZE
                 </span>
@@ -373,7 +373,7 @@
               </div>
 
               <!-- Machine 1: Cake (Right: +190px from center) -->
-              <div class="absolute top-0 flex flex-col items-center pointer-events-auto" style="left: calc(50% + 190px); transform: translateX(-50%); width: 130px;">
+              <div id="pipeMachine1" class="absolute top-0 flex flex-col items-center pointer-events-auto transition-all duration-200" style="left: calc(50% + 190px); transform: translateX(-50%); width: 130px;">
                 <span class="text-[10px] font-mono font-black text-amber-900 bg-amber-200/95 border border-amber-400 px-2.5 py-0.5 rounded-lg mb-1 shadow-sm">
                   STAGE 1: BAKE
                 </span>
@@ -1071,93 +1071,99 @@
       pipeMachineDesc.textContent = theme.desc;
     }
 
-    // Factory helper to create an empty plate cake entity
-    function createPipeCakeItem(pkg, initialStage = 0, initialGridX = 0) {
-      const cakeEl = document.createElement('div');
-      cakeEl.className = 'w-36 flex flex-col items-center justify-end absolute select-none pointer-events-none';
-      cakeEl.style.bottom = '0px';
-      cakeEl.style.left = '50%';
-      cakeEl.style.marginLeft = '-72px';
-      cakeEl.innerHTML = `
-        <span class="cakeBadge text-[9px] font-mono font-black text-purple-900 bg-white/95 px-2.5 py-0.5 rounded-full mb-1 shadow-sm border border-purple-200">
-          PKG#${pkg}
-        </span>
-        <div class="relative w-32 flex flex-col items-center justify-end" style="height: 105px;">
-          <!-- Stage 3: Boxed Cake -->
-          <img src="sprites/cake_boxed.png" alt="Boxed Cake" class="cakeBoxedImg absolute bottom-0 w-32 h-auto filter drop-shadow-xl" style="display: none; transform: translateY(0);" />
-
-          <!-- Stage 2: Glazed Cake -->
-          <img src="sprites/cake_glazed.png" alt="Glazed Cake" class="cakeGlazedImg absolute bottom-0 w-32 h-auto filter drop-shadow-lg" style="display: none; transform: translateY(0);" />
-
-          <!-- Stage 1: Baked Sponge Cake -->
-          <img src="sprites/cake.png" alt="Baked Cake" class="cakeBakedImg absolute bottom-0 w-32 h-auto filter drop-shadow-md" style="display: none; transform: translateY(0);" />
-
-          <!-- Stage 0: Empty Plate Base -->
-          <img src="sprites/plate.png" alt="Plate" class="cakePlateImg absolute bottom-0 w-32 h-auto filter drop-shadow-sm" style="display: block; transform: translateY(0);" />
-        </div>
-      `;
-      cakeEl.style.transform = `translate3d(${initialGridX}px, 0, 0)`;
-      pipeCakesTrack.appendChild(cakeEl);
-
-      const item = {
-        el: cakeEl,
-        badgeEl: cakeEl.querySelector('.cakeBadge'),
-        plateImgEl: cakeEl.querySelector('.cakePlateImg'),
-        cakeImgEl: cakeEl.querySelector('.cakeBakedImg'),
-        glazedImgEl: cakeEl.querySelector('.cakeGlazedImg'),
-        boxedImgEl: cakeEl.querySelector('.cakeBoxedImg'),
-        gridX: initialGridX,
-        pkg: pkg,
-        stage: initialStage,
-        fallingStage: 0,
-      };
-
-      updatePipeCakeVisual(item);
-      return item;
-    }
-
-    function updatePipeCakeVisual(item) {
-      item.plateImgEl.style.display = item.stage === 0 ? 'block' : 'none';
-      item.cakeImgEl.style.display = item.stage === 1 ? 'block' : 'none';
-      item.glazedImgEl.style.display = item.stage === 2 ? 'block' : 'none';
-      item.boxedImgEl.style.display = item.stage >= 3 ? 'block' : 'none';
-
-      if (item.stage === 0) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (EMPTY)`;
-        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-slate-500 bg-white/90 px-2 py-0.5 rounded-full mb-1 border border-slate-300 shadow-sm';
-      } else if (item.stage === 1) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (BAKED)`;
-        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full mb-1 border border-amber-300 shadow-sm';
-      } else if (item.stage === 2) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (GLAZED)`;
-        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-bold text-pink-800 bg-pink-100 px-2 py-0.5 rounded-full mb-1 border border-pink-300 shadow-sm';
-      } else if (item.stage >= 3) {
-        item.badgeEl.textContent = `PKG#${item.pkg} (BOXED)`;
-        item.badgeEl.className = 'cakeBadge text-[9px] font-mono font-black text-purple-900 bg-purple-100 px-2 py-0.5 rounded-full mb-1 border border-purple-300 shadow-sm';
+    function getStationPos(sMid, sFrom, sTo, u) {
+      if (u < 0.25) {
+        const prog = 0.5 + u / 0.50;
+        const w = (1 - Math.cos(Math.PI * prog)) / 2;
+        return sFrom + (sMid - sFrom) * w;
+      } else if (u <= 0.75) {
+        return sMid;
+      } else {
+        const prog = (u - 0.75) / 0.50;
+        const w = (1 - Math.cos(Math.PI * prog)) / 2;
+        return sMid + (sTo - sMid) * w;
       }
     }
 
-    // Belt starts completely EMPTY!
+    function getBeltTravel(cycle, u) {
+      if (u < 0.25) {
+        const w = (1 - Math.cos(Math.PI * (0.5 + u / 0.50))) / 2;
+        return (cycle - 1) + w;
+      } else if (u <= 0.75) {
+        return cycle;
+      } else {
+        const w = (1 - Math.cos(Math.PI * (u - 0.75) / 0.50)) / 2;
+        return cycle + w;
+      }
+    }
+
+    function getActivePipelineCakes(mode, currentCycle) {
+      const cakes = [];
+      if (currentCycle < 1) return cakes;
+
+      if (mode === 'pipeline') {
+        for (let age = 1; age <= Math.min(5, currentCycle); age++) {
+          const id = 100 + currentCycle - age + 1;
+          if (age === 1) {
+            cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 2, sMid: 1, sTo: 0 });
+          } else if (age === 2) {
+            cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 1, sMid: 0, sTo: -1 });
+          } else if (age === 3) {
+            cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: -1, sTo: -2 });
+          } else if (age === 4) {
+            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+          } else if (age === 5) {
+            cakes.push({ id, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+          }
+        }
+      } else {
+        const id = 101 + Math.floor((currentCycle - 1) / 3);
+        const step = ((currentCycle - 1) % 3) + 1;
+        if (step === 1) {
+          cakes.push({ id, baseStage: 0, fallingStage: 1, sFrom: 1, sMid: 0, sTo: 0 });
+        } else if (step === 2) {
+          cakes.push({ id, baseStage: 1, fallingStage: 2, sFrom: 0, sMid: 0, sTo: 0 });
+        } else if (step === 3) {
+          cakes.push({ id, baseStage: 2, fallingStage: 3, sFrom: 0, sMid: 0, sTo: -1 });
+        }
+        if (currentCycle > 3) {
+          const prevId = id - 1;
+          if (step === 1) {
+            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -1, sMid: -2, sTo: -3 });
+          } else if (step === 2) {
+            cakes.push({ id: prevId, baseStage: 3, fallingStage: 0, sFrom: -2, sMid: -3, sTo: -4 });
+          }
+        }
+      }
+      return cakes;
+    }
+
+    const STAGE_NAMES = ['PLATE', 'BAKED', 'GLAZED', 'BOXED'];
+    const BADGE_STYLES = [
+      'text-slate-600 bg-white/95 border-slate-300',
+      'text-amber-800 bg-amber-100/95 border-amber-300',
+      'text-pink-800 bg-pink-100/95 border-pink-300',
+      'text-purple-900 bg-purple-100/95 border-purple-300',
+    ];
+
     pipeCakesTrack.innerHTML = '';
-    let pipeCakesList = [];
+    const pipeEntities = new Map();
 
     let pipeLastAnimTime = performance.now();
-    let pipeStepPhase = 0;
-    let pipeBaseTreadOffset = 0;
-    let pipeBaseRollerDeg = 0;
-    let nonPipelinedCycleCounter = 0;
+    let pipePhase = 0;
+    let pipeSimCycles = 0;
+    let pipeSimProduced = 0;
 
     btnTogglePipeline.addEventListener('click', () => {
       pipeEnabled = !pipeEnabled;
-      pipeCycleCounter = 0;
-      pipeProducedCount = 0;
-      nonPipelinedCycleCounter = 0;
+      pipeSimCycles = 0;
+      pipeSimProduced = 0;
+      pipePhase = 0;
       pCycleCount.textContent = '#0';
       pTotalProduced.textContent = '0 units';
 
-      // Reset track so it starts empty
       pipeCakesTrack.innerHTML = '';
-      pipeCakesList = [];
+      pipeEntities.clear();
 
       if (pipeEnabled) {
         btnTogglePipeline.className = 'px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30 hover:bg-emerald-700';
@@ -1183,210 +1189,173 @@
       }
     });
 
-    // Stations relative to center (50%):
-    // Station 1: +190px (Machine 1: Cake)
-    // Station 2: 0px (Machine 2: Frosting / Single Machine)
-    // Station 3: -190px (Machine 3: Box)
-    // Exit: -380px
-    const S1 = STATION_SPACING;
-    const S2 = 0;
-    const S3 = -STATION_SPACING;
-    const EXIT_X = -STATION_SPACING * 2;
+    const pipeMachine1 = document.getElementById('pipeMachine1');
+    const pipeMachine2 = document.getElementById('pipeMachine2');
+    const pipeMachine3 = document.getElementById('pipeMachine3');
 
     function renderPipeConveyor(now) {
       const dt = Math.min(0.1, (now - pipeLastAnimTime) / 1000);
       pipeLastAnimTime = now;
 
       const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
-      pipeStepPhase += dt * effectiveSpeed;
+      pipePhase += dt * effectiveSpeed;
 
-      while (pipeStepPhase >= 1.0) {
-        pipeStepPhase -= 1.0;
-        pipeCycleCounter++;
-        pCycleCount.textContent = `#${pipeCycleCounter}`;
-
+      while (pipePhase >= 1.0) {
+        pipePhase -= 1.0;
+        pipeSimCycles++;
         if (pipeEnabled) {
-          // PIPELINED: Steps every single cycle!
-          for (let i = 0; i < pipeCakesList.length; i++) {
-            pipeCakesList[i].gridX -= STATION_SPACING;
-          }
-
-          // Check for completed cakes at exit
-          for (let i = pipeCakesList.length - 1; i >= 0; i--) {
-            const c = pipeCakesList[i];
-            if (c.gridX <= EXIT_X) {
-              if (c.stage >= 3) {
-                pipeProducedCount++;
-                pTotalProduced.textContent = `${pipeProducedCount} units`;
-              }
-            }
-            if (c.gridX < EXIT_X - 100) {
-              c.el.remove();
-              pipeCakesList.splice(i, 1);
-            }
-          }
-
-          // Introduce a new empty plate at Station 1 for this cycle
-          const newCake = createPipeCakeItem(pipeNextPkg++, 0, S1);
-          pipeCakesList.push(newCake);
-
-          // Trigger falling animations directly from overhead machine spouts!
-          for (let i = 0; i < pipeCakesList.length; i++) {
-            const c = pipeCakesList[i];
-            // Station 1: Cake drops from Machine 1
-            if (Math.abs(c.gridX - S1) < 20) {
-              c.stage = 1;
-              c.fallingStage = 1;
-              c.cakeImgEl.style.display = 'block';
-              c.plateImgEl.style.display = 'block';
-              updatePipeCakeVisual(c);
-            }
-            // Station 2: Glaze drops from Machine 2
-            else if (Math.abs(c.gridX - S2) < 20 && c.stage >= 1) {
-              c.stage = 2;
-              c.fallingStage = 2;
-              c.glazedImgEl.style.display = 'block';
-              c.cakeImgEl.style.display = 'block';
-              updatePipeCakeVisual(c);
-            }
-            // Station 3: Box drops from Machine 3
-            else if (Math.abs(c.gridX - S3) < 20 && c.stage >= 2) {
-              c.stage = 3;
-              c.fallingStage = 3;
-              c.boxedImgEl.style.display = 'block';
-              c.glazedImgEl.style.display = 'block';
-              updatePipeCakeVisual(c);
-            }
-          }
-
-          pipeBaseTreadOffset = (pipeBaseTreadOffset + STATION_SPACING) % 96;
-          pipeBaseRollerDeg = (pipeBaseRollerDeg + (STATION_SPACING * 360 / 96)) % 360;
+          pipeSimProduced = pipeSimCycles >= 3 ? 1 + (pipeSimCycles - 3) : 0;
         } else {
-          // NON-PIPELINED: 1 Machine takes 3 cycles per cake
-          nonPipelinedCycleCounter = (nonPipelinedCycleCounter + 1) % 3;
-          updateSingleMachineDisplay(nonPipelinedCycleCounter);
+          pipeSimProduced = Math.floor(pipeSimCycles / 3);
+        }
+        pCycleCount.textContent = `#${pipeSimCycles}`;
+        pTotalProduced.textContent = `${pipeSimProduced} units`;
 
-          // Find or create cake at the central machine station (S2 = 0)
-          let targetCake = pipeCakesList.find((c) => Math.abs(c.gridX - S2) < 30);
-          if (!targetCake) {
-            targetCake = createPipeCakeItem(pipeNextPkg++, 0, S2);
-            pipeCakesList.push(targetCake);
-          }
+        const curStep = (pipeSimCycles % 3) + 1;
+        updateSingleMachineDisplay(curStep === 3 ? 0 : curStep);
+      }
 
-          if (nonPipelinedCycleCounter === 1) {
-            // Cycle 1: Baked cake drops from single machine
-            targetCake.stage = 1;
-            targetCake.fallingStage = 1;
-            targetCake.cakeImgEl.style.display = 'block';
-            targetCake.plateImgEl.style.display = 'block';
-            updatePipeCakeVisual(targetCake);
-          } else if (nonPipelinedCycleCounter === 2) {
-            // Cycle 2: Glazed cake drops from single machine
-            targetCake.stage = 2;
-            targetCake.fallingStage = 2;
-            targetCake.glazedImgEl.style.display = 'block';
-            targetCake.cakeImgEl.style.display = 'block';
-            updatePipeCakeVisual(targetCake);
-          } else if (nonPipelinedCycleCounter === 0) {
-            // Cycle 3: Box drops, packaging complete!
-            targetCake.stage = 3;
-            targetCake.fallingStage = 3;
-            targetCake.boxedImgEl.style.display = 'block';
-            targetCake.glazedImgEl.style.display = 'block';
-            updatePipeCakeVisual(targetCake);
+      const activeCycle = pipeSimCycles + 1;
+      const activeCakes = getActivePipelineCakes(pipeEnabled ? 'pipeline' : 'sequential', activeCycle);
+      const activeIds = new Set(activeCakes.map(c => c.id));
 
-            // Step the belt forward to deliver the boxed cake
-            for (let i = 0; i < pipeCakesList.length; i++) {
-              pipeCakesList[i].gridX -= STATION_SPACING;
-            }
-
-            // Remove cakes offscreen
-            for (let i = pipeCakesList.length - 1; i >= 0; i--) {
-              const c = pipeCakesList[i];
-              if (c.gridX <= EXIT_X && c.stage >= 3) {
-                pipeProducedCount++;
-                pTotalProduced.textContent = `${pipeProducedCount} units`;
-              }
-              if (c.gridX < EXIT_X - 100) {
-                c.el.remove();
-                pipeCakesList.splice(i, 1);
-              }
-            }
-
-            pipeBaseTreadOffset = (pipeBaseTreadOffset + STATION_SPACING) % 96;
-            pipeBaseRollerDeg = (pipeBaseRollerDeg + (STATION_SPACING * 360 / 96)) % 360;
-          }
+      for (const [id, entity] of pipeEntities) {
+        if (!activeIds.has(id)) {
+          entity.el.remove();
+          pipeEntities.delete(id);
         }
       }
 
-      // Stepped motion calculation
-      const isMovingCycle = pipeEnabled || nonPipelinedCycleCounter === 0;
-      let currentStepOffset = 0;
-      let currentEased = 0;
+      for (const cake of activeCakes) {
+        let entity = pipeEntities.get(cake.id);
+        if (!entity) {
+          const el = document.createElement('div');
+          el.className = 'w-36 flex flex-col items-center justify-end absolute bottom-0 select-none pointer-events-none transition-none';
+          el.style.left = '50%';
+          el.style.marginLeft = '-72px';
+          el.dataset.cakeId = String(cake.id);
 
-      if (isMovingCycle) {
-        if (pipeStepPhase < MOVE_FRACTION) {
-          const moveProgress = pipeStepPhase / MOVE_FRACTION;
-          currentEased = easeInOutCubic(moveProgress);
-          currentStepOffset = currentEased * STATION_SPACING;
+          const badge = document.createElement('span');
+          badge.className = 'cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm';
+
+          const imgWrap = document.createElement('div');
+          imgWrap.className = 'relative w-32 flex flex-col items-center justify-end';
+          imgWrap.style.height = '105px';
+
+          const plateImg = document.createElement('img');
+          plateImg.className = 'cakePlateImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-sm';
+          plateImg.src = 'sprites/plate.png';
+          plateImg.alt = 'Plate';
+
+          const cakeImg = document.createElement('img');
+          cakeImg.className = 'cakeBakedImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-md';
+          cakeImg.src = 'sprites/cake.png';
+          cakeImg.alt = 'Baked Cake';
+
+          const glazedImg = document.createElement('img');
+          glazedImg.className = 'cakeGlazedImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-lg';
+          glazedImg.src = 'sprites/cake_glazed.png';
+          glazedImg.alt = 'Glazed Cake';
+
+          const boxedImg = document.createElement('img');
+          boxedImg.className = 'cakeBoxedImg absolute bottom-0 w-32 h-auto object-contain drop-shadow-xl';
+          boxedImg.src = 'sprites/cake_boxed.png';
+          boxedImg.alt = 'Boxed Cake';
+
+          imgWrap.append(plateImg, cakeImg, glazedImg, boxedImg);
+          el.append(badge, imgWrap);
+          pipeCakesTrack.appendChild(el);
+
+          entity = { el, badge, plateImg, cakeImg, glazedImg, boxedImg };
+          pipeEntities.set(cake.id, entity);
+        }
+
+        // Horizontal position based on 3-phase clock cycle
+        const stationPos = getStationPos(cake.sMid, cake.sFrom, cake.sTo, pipePhase);
+        const x = stationPos * STATION_SPACING;
+        entity.el.style.transform = `translate3d(${x}px, 0, 0)`;
+
+        const imgs = [entity.plateImg, entity.cakeImg, entity.glazedImg, entity.boxedImg];
+
+        if (cake.fallingStage === 0) {
+          imgs.forEach((img, idx) => {
+            img.style.display = idx === cake.baseStage ? 'block' : 'none';
+            img.style.transform = 'translateY(0px) scale(1)';
+          });
+          entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.baseStage]})`;
+          entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
+        } else if (pipePhase < 0.25) {
+          // Setup time: moving into station under machine. Base stage visible.
+          imgs.forEach((img, idx) => {
+            img.style.display = idx === cake.baseStage ? 'block' : 'none';
+            img.style.transform = 'translateY(0px) scale(1)';
+          });
+          entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.baseStage]})`;
+          entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
+        } else if (pipePhase <= 0.75) {
+          // The "Pulse": stationary under machine, layer drops from nozzle above
+          imgs.forEach((img, idx) => {
+            img.style.display = (idx === cake.baseStage || idx === cake.fallingStage) ? 'block' : 'none';
+          });
+          imgs[cake.baseStage].style.transform = 'translateY(0px) scale(1)';
+
+          const p = (pipePhase - 0.25) / 0.50;
+          if (p < 0.60) {
+            // Rapid fall with gravity acceleration
+            const q = p / 0.60;
+            const dropY = -100 * (1 - q * q);
+            const scale = 0.92 + 0.08 * q;
+            imgs[cake.fallingStage].style.transform = `translateY(${dropY}px) scale(${scale})`;
+            entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.baseStage]})`;
+            entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.baseStage]}`;
+          } else {
+            // Landing bounce & tactile squash
+            const b = (p - 0.60) / 0.40;
+            const bounceY = -5 * Math.sin(b * Math.PI) * (1 - b * 0.5);
+            const scaleX = 1 + 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
+            const scaleY = 1 - 0.06 * Math.sin(b * Math.PI) * (1 - b * 0.5);
+            imgs[cake.fallingStage].style.transform = `translateY(${bounceY}px) scale(${scaleX}, ${scaleY})`;
+            entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.fallingStage]})`;
+            entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.fallingStage]}`;
+          }
         } else {
-          currentEased = 1.0;
-          currentStepOffset = STATION_SPACING;
+          // End of clock: movement towards next machine
+          imgs.forEach((img, idx) => {
+            img.style.display = idx === cake.fallingStage ? 'block' : 'none';
+            img.style.transform = 'translateY(0px) scale(1)';
+          });
+          entity.badge.textContent = `PKG#${cake.id} (${STAGE_NAMES[cake.fallingStage]})`;
+          entity.badge.className = `cakeBadge text-[9px] font-mono font-bold px-2 py-0.5 rounded-full mb-1 border shadow-sm ${BADGE_STYLES[cake.fallingStage]}`;
         }
       }
 
-      // FALLING ANIMATIONS (From overhead machines during dwell phase)
-      const inDwellPhase = pipeStepPhase >= MOVE_FRACTION && pipeStepPhase < 0.95;
-      const dwellNormalized = inDwellPhase ? (pipeStepPhase - MOVE_FRACTION) / (0.95 - MOVE_FRACTION) : 1.0;
-
-      for (let i = 0; i < pipeCakesList.length; i++) {
-        const c = pipeCakesList[i];
-
-        // Horizontal position along the conveyor relative to center (50%)
-        const renderX = c.gridX - currentStepOffset;
-        c.el.style.transform = `translate3d(${renderX}px, 0, 0)`;
-
-        // Vertical drop animation directly from dispenser nozzles above
-        if (c.fallingStage > 0) {
-          let targetEl = null;
-          if (c.fallingStage === 1) targetEl = c.cakeImgEl;
-          else if (c.fallingStage === 2) targetEl = c.glazedImgEl;
-          else if (c.fallingStage === 3) targetEl = c.boxedImgEl;
-
-          if (targetEl) {
-            if (inDwellPhase) {
-              if (dwellNormalized < 0.65) {
-                // Falling rapidly with gravity acceleration from dispenser nozzle (-100px)
-                const dropProgress = dwellNormalized / 0.65;
-                const dropY = -100 * (1 - dropProgress * dropProgress);
-                const scale = 0.92 + 0.08 * dropProgress;
-                targetEl.style.transform = `translateY(${dropY}px) scale(${scale})`;
-              } else {
-                // Landed with tactile squash and bounce
-                const bounceProgress = (dwellNormalized - 0.65) / 0.35;
-                const bounceY = -5 * Math.sin(bounceProgress * Math.PI);
-                const scaleX = 1 + 0.05 * Math.sin(bounceProgress * Math.PI);
-                const scaleY = 1 - 0.05 * Math.sin(bounceProgress * Math.PI);
-                targetEl.style.transform = `translateY(${bounceY}px) scale(${scaleX}, ${scaleY})`;
-              }
-            } else {
-              targetEl.style.transform = 'translateY(0px) scale(1)';
-              c.fallingStage = 0;
-              updatePipeCakeVisual(c);
-            }
-          }
-        }
-      }
-
-      // Render belt tread
-      const currentTread = (pipeBaseTreadOffset + currentStepOffset) % 96;
-      pipeBeltTread.style.backgroundPosition = `-${currentTread}px 0`;
-
-      // Render rollers
-      const currentRollerDeg = (pipeBaseRollerDeg + (STATION_SPACING * 360 / 96) * currentEased) % 360;
-      pRollers.forEach((r) => {
-        r.style.transform = `rotate(${currentRollerDeg}deg)`;
+      // Conveyor tread & rollers
+      const travel = getBeltTravel(activeCycle, pipePhase) * STATION_SPACING;
+      pipeBeltTread.style.backgroundPosition = `-${travel % 96}px 0`;
+      const deg = (travel * 360 / 96) % 360;
+      pRollers.forEach(r => {
+        r.style.transform = `rotate(${deg}deg)`;
       });
+
+      // Machine pulse glowing effects during pulse
+      const inPulse = pipePhase >= 0.25 && pipePhase <= 0.75;
+      if (pipeEnabled) {
+        if (pipeMachine1) {
+          pipeMachine1.style.filter = (inPulse && activeCakes.some(c => c.sMid === 1 && c.fallingStage === 1))
+            ? 'drop-shadow(0 0 16px rgba(245, 158, 11, 0.85))'
+            : '';
+        }
+        if (pipeMachine2) {
+          pipeMachine2.style.filter = (inPulse && activeCakes.some(c => c.sMid === 0 && c.fallingStage === 2))
+            ? 'drop-shadow(0 0 16px rgba(244, 63, 94, 0.85))'
+            : '';
+        }
+        if (pipeMachine3) {
+          pipeMachine3.style.filter = (inPulse && activeCakes.some(c => c.sMid === -1 && c.fallingStage === 3))
+            ? 'drop-shadow(0 0 16px rgba(168, 85, 247, 0.85))'
+            : '';
+        }
+      }
 
       requestAnimationFrame(renderPipeConveyor);
     }
