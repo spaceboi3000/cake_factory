@@ -101,7 +101,7 @@ try {
   await viewport(1440);
   await call('Page.navigate', { url: process.env.APP_URL ?? 'http://127.0.0.1:3000' });
   await until(`document.body?.innerText.includes('WINDOW 3')`);
-  await sleep(500);
+  await until(`[...window.__intervals.values()].includes(100)`);
   const battery = () => evaluate(`Number([...document.querySelectorAll('span')].find(el => el.textContent === 'POWER CELL REMAINING').nextElementSibling.textContent.replace('%',''))`);
   assert.equal(await timers(100), 1, 'one DVFS interval under Strict Mode');
   await screenshot('dvfs-desktop');
@@ -110,40 +110,75 @@ try {
   assert.equal(await timers(100), 0);
   assert.equal(await timers(600), 0);
   assert.equal(await evaluate(`document.body.innerText.includes('POWER CELL REMAINING') || document.body.innerText.includes('SCROLL DOWN TO VIEW')`), false);
+  async function assertHintHidden() {
+    assert.equal(await evaluate(`document.querySelector('[data-testid="cache-hint"]') !== null`), false);
+    assert.equal(await evaluate(`/matching toppings together|Hint comparison|15 cycles|saves 9/.test(document.querySelector('.cache-game').textContent)`), false, 'no answer in results or optional explanatory text');
+  }
+  await assertHintHidden();
+  assert.equal(await evaluate(`document.querySelector('.cache-game').textContent.includes('Need a hint?')`), false);
+  assert.equal(await evaluate(`document.getElementById('cache-challenge').textContent`), 'Six cakes, two of each topping. Can you make fewer pantry trips?');
+  const orderNames = () => evaluate(`[...document.querySelectorAll('[data-testid="cache-orders"] button')].map(b => b.getAttribute('aria-label'))`);
+  const initialNames = await orderNames();
+  for (const topping of ['Strawberry', 'Chocolate', 'Vanilla']) assert.equal(initialNames.filter(name => name.includes(topping)).length, 2);
+  assert.ok(initialNames.every((name, index) => name.startsWith('Order ' + (index + 1) + ':')));
+  const accessibility = await call('Accessibility.getFullAXTree');
+  assert.ok(accessibility.nodes.some(node => node.role?.value === 'button' && node.name?.value === initialNames[0]));
+  assert.match(await evaluate(`document.querySelector('details').textContent`), /a CPU reads data without consuming it/);
+  const visibleGameText = () => evaluate(`document.querySelector('.cache-game').innerText`);
+  const idleText = await visibleGameText();
+  for (const topping of ['Strawberry', 'Chocolate', 'Vanilla']) assert.equal(idleText.split(topping).length - 1, 2, 'names appear only on the two relevant order cards');
+  assert.equal(idleText.includes('Position'), false);
+  assert.ok(await evaluate(`document.querySelector('[data-testid="cache-feedback"]').getBoundingClientRect().bottom <= innerHeight`), 'bakery feedback fits the desktop viewport');
+  assert.ok(await evaluate(`document.querySelector('[aria-label="Round controls"]').getBoundingClientRect().bottom <= innerHeight`), 'controls fit the desktop viewport');
   await screenshot('cache-desktop');
   for (let cycle = 1; cycle <= 24; cycle++) {
     await click('Step one cycle');
     assert.equal(await metric('cache-cycles'), String(cycle));
     assert.equal(await metric('cache-cakes'), `${Math.floor(cycle / 4)} / 6`);
     if (cycle < 4) assert.match(await metric('cache-feedback'), new RegExp(`baker waiting. Wait ${cycle} of 3`));
+    assert.equal(/Strawberry|Chocolate|Vanilla/.test(await visibleGameText()), false, 'active rounds use icons without repeated topping words');
+    assert.deepEqual(await orderNames(), initialNames, 'full accessible order names remain available');
     if (cycle === 2) assert.equal(await metric('cache-shelf'), '——');
-    if (cycle === 3) assert.equal(await metric('cache-shelf'), 'A—');
+    if (cycle === 3) assert.match(await metric('cache-shelf'), /🍓—/);
   }
   assert.equal(await metric('cache-misses'), '6');
   assert.equal(await metric('cache-hits'), '0');
   assert.equal(await metric('cache-status'), 'Round complete');
-  assert.match(await metric('cache-result'), /Same work, fewer waits/);
+  assert.match(await metric('cache-result'), /Your round score.*6 cakes · 6 pantry trips · 24 cycles/);
+  await assertHintHidden();
+  assert.equal(await evaluate(`document.querySelector('.cache-game').textContent.includes('Need a hint?')`), true);
   await screenshot('cache-mixed-result');
   console.log('PASS: mixed trace; wait feedback, shelf arrival, cake count and 24 cycles');
 
   await click('Reset');
-  await evaluate(`document.querySelector('[aria-label="Order 1, ingredient A"]').focus()`);
+  assert.match(await visibleGameText(), /Strawberry/);
+  await evaluate(`document.querySelector('[aria-label="Order 1: Strawberry topping cake"]').focus()`);
   await key('Enter', 'Enter', 13, '\r');
   assert.equal(await evaluate(`document.activeElement.getAttribute('aria-pressed')`), 'true');
-  await evaluate(`document.querySelector('[aria-label="Order 2, ingredient B"]').focus()`);
+  await evaluate(`document.querySelector('[aria-label="Order 2: Chocolate topping cake"]').focus()`);
   await key(' ', 'Space', 32, ' ');
-  assert.ok(await evaluate(`document.querySelector('[aria-label="Order 1, ingredient B"]') !== null`));
+  assert.ok(await evaluate(`document.querySelector('[aria-label="Order 1: Chocolate topping cake"]') !== null`));
   console.log('PASS: keyboard swaps using Enter and Space');
 
-  await click('Grouped orders');
+  await assertHintHidden();
+  assert.equal(await evaluate(`document.querySelector('.cache-game').textContent.includes('Need a hint?')`), true, 'hint availability survives Reset');
+  await click('Restore mixed orders');
+  await click('Need a hint?');
+  assert.match(await metric('cache-hint'), /Hint comparison/);
+  assert.match(await metric('cache-hint'), /Same work, fewer waits/);
+  await click('Reset');
+  assert.ok(await metric('cache-hint'), 'revealed hint survives Reset');
+  await click('Try hint example');
+  assert.match((await orderNames()).join(' / '), /Order 2: Strawberry.*Order 3: Chocolate.*Order 4: Chocolate.*Order 5: Vanilla/);
   await click('Run');
   assert.equal(await timers(600), 1);
+  assert.equal(/Strawberry|Chocolate|Vanilla/.test(await visibleGameText()), false);
   await until(`document.querySelector('[data-testid="cache-cycles"]').textContent === '2'`);
   await click('Pause');
   assert.equal(await timers(600), 0);
   await sleep(750);
   assert.equal(await metric('cache-cycles'), '2');
-  assert.ok(await evaluate(`[...document.querySelectorAll('[aria-label^="Order "]')].every(b => b.disabled)`));
+  assert.ok(await evaluate(`[...document.querySelectorAll('[data-testid="cache-orders"] button')].every(b => b.disabled)`));
   await click('Step one cycle');
   assert.equal(await metric('cache-cycles'), '3');
   await click('Resume');
@@ -154,10 +189,40 @@ try {
   assert.equal(await metric('cache-misses'), '3');
   assert.equal(await metric('cache-hits'), '3');
   assert.equal(await timers(600), 0);
+  assert.match(await metric('cache-result'), /Hint-assisted round score/);
+  assert.equal((await metric('cache-result')).includes('Your round score'), false);
   await screenshot('cache-grouped-result');
   console.log('PASS: grouped automatic round, 15 cycles, pause/resume/step, locked orders and timer cleanup');
 
+  // A fresh visit must protect discovery again. Complete a self-arranged round
+  // using real mouse input and verify automatic reveal only at completion.
+  await click('WINDOW 2');
+  await click('WINDOW 3');
+  await assertHintHidden();
+  async function mouseCard(position) {
+    const point = await evaluate(`(() => { const el = document.querySelector('[data-testid="cache-orders"] button:nth-child(${position})'); el.scrollIntoView({block:'center'}); const r = el.getBoundingClientRect(); return { x:r.x+r.width/2, y:r.y+r.height/2 }; })()`);
+    await call('Input.dispatchMouseEvent', { type: 'mousePressed', ...point, button: 'left', clickCount: 1 });
+    await call('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point, button: 'left', clickCount: 1 });
+    await sleep(60);
+  }
+  await mouseCard(2);
+  await mouseCard(4);
+  await mouseCard(3);
+  await mouseCard(5);
+  await assertHintHidden();
+  for (let cycle = 1; cycle <= 15; cycle++) {
+    await click('Step one cycle');
+    if (cycle < 15) await assertHintHidden();
+  }
+  assert.equal(await metric('cache-cycles'), '15');
+  assert.match(await metric('cache-result'), /Your round score/);
+  assert.ok(await metric('cache-hint'), 'completed self-arrangement reveals example');
+  const selfArranged = await orderNames();
   await click('Reset');
+  assert.deepEqual(await orderNames(), selfArranged);
+  assert.equal(await metric('cache-shelf'), '——');
+  assert.ok(await metric('cache-hint'));
+  console.log('PASS: protected discovery, persistent hint access, assisted score labels and mouse self-arrangement auto-reveal');
   await click('Run');
   await click('WINDOW 2');
   assert.equal(await timers(600), 0);
@@ -203,9 +268,9 @@ try {
     await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await sleep(100);
   }
-  await tapOrder('Order 1, ingredient A');
-  await tapOrder('Order 2, ingredient B');
-  assert.ok(await evaluate(`document.querySelector('[aria-label="Order 1, ingredient B"]') !== null`));
+  await tapOrder('Order 1: Strawberry topping cake');
+  await tapOrder('Order 2: Chocolate topping cake');
+  assert.ok(await evaluate(`document.querySelector('[aria-label="Order 1: Chocolate topping cake"]') !== null`));
   await click('Run');
   await until(`document.querySelector('[data-testid="cache-cycles"]').textContent === '1'`);
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('[aria-label="One baker"]')).animationName`), 'none');
@@ -213,7 +278,11 @@ try {
   await click('Pause');
   await screenshot('cache-mobile-wait');
   const overflow = () => evaluate(`({ width: innerWidth, scroll: document.documentElement.scrollWidth })`);
-  console.log('Cache narrow width:', await overflow());
+  const cacheWidth = await overflow();
+  assert.equal(cacheWidth.width, cacheWidth.scroll, 'no page overflow on mobile');
+  assert.equal(await evaluate(`[...document.querySelectorAll('[data-testid="cache-orders"] button')].every(el => el.scrollWidth <= el.clientWidth)`), true, 'all topping names fit the cards');
+  await call('Accessibility.getFullAXTree');
+  console.log('Cache narrow width:', cacheWidth);
   await click('WINDOW 2');
   await screenshot('pipeline-mobile');
   await click('PIPELINING:');

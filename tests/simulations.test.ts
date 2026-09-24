@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { cacheLessonReducer, createCacheLesson, TOPPINGS, type CacheLesson } from '../lib/cacheLesson';
 import {
   MIXED_ORDERS, GROUPED_ORDERS, advanceCacheCycle, cacheReducer, createCacheState, runCacheTrace,
 } from '../lib/cacheSimulation';
@@ -7,6 +8,102 @@ import {
   advancePipelineClock, advancePipelineCycle, createPipelineClock, createPipelineState,
   type PipelineMode,
 } from '../lib/pipelineSimulation';
+
+function finishLesson(lesson: CacheLesson): CacheLesson {
+  while (lesson.simulation.status !== 'complete') lesson = cacheLessonReducer(lesson, { type: 'step' });
+  return lesson;
+}
+
+test('lesson starts with six requested cakes, two per named topping, and no hint access', () => {
+  const lesson = createCacheLesson();
+  assert.deepEqual(lesson.simulation.orders, MIXED_ORDERS);
+  assert.deepEqual(lesson.simulation.orders.map(id => TOPPINGS[id].name), ['Strawberry', 'Chocolate', 'Vanilla', 'Strawberry', 'Chocolate', 'Vanilla']);
+  assert.equal(lesson.hasCompletedRound, false);
+  assert.equal(lesson.hintRevealed, false);
+  assert.equal(cacheLessonReducer(lesson, { type: 'revealHint' }), lesson);
+  assert.equal(cacheLessonReducer(lesson, { type: 'useHint' }), lesson);
+});
+
+test('first mixed result unlocks the optional hint without revealing the answer; Reset retains availability', () => {
+  let lesson = finishLesson(createCacheLesson());
+  assert.equal(lesson.simulation.cycles, 24);
+  assert.equal(lesson.hasCompletedRound, true);
+  assert.equal(lesson.hintRevealed, false);
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  assert.deepEqual(lesson.simulation, createCacheState());
+  assert.equal(lesson.hasCompletedRound, true);
+  assert.equal(lesson.hintRevealed, false);
+  const before = lesson.simulation;
+  lesson = cacheLessonReducer(lesson, { type: 'revealHint' });
+  assert.equal(lesson.hintRevealed, true);
+  assert.equal(lesson.simulation, before, 'revealing teaching material does not change the round');
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  assert.equal(lesson.hintRevealed, true);
+});
+
+test('swapping preserves the six requested toppings; only completing a changed self-arrangement auto-reveals', () => {
+  let lesson = cacheLessonReducer(createCacheLesson(), { type: 'swap', first: 1, second: 3 });
+  assert.deepEqual([...lesson.simulation.orders].sort(), [...MIXED_ORDERS].sort());
+  assert.equal(lesson.source, 'self');
+  assert.equal(lesson.hintRevealed, false);
+  const orders = [...lesson.simulation.orders];
+  lesson = cacheLessonReducer(lesson, { type: 'step' });
+  assert.equal(lesson.hintRevealed, false);
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  assert.deepEqual(lesson.simulation.orders, orders);
+  assert.equal(lesson.source, 'self');
+  lesson = finishLesson(lesson);
+  assert.equal(lesson.hasCompletedRound, true);
+  assert.equal(lesson.hintRevealed, true);
+  assert.equal(lesson.source, 'self');
+  assert.deepEqual(lesson.simulation, runCacheTrace(orders));
+});
+
+test('same-topping swaps, undoing swaps and restoring mixed do not auto-reveal', () => {
+  let lesson = cacheLessonReducer(createCacheLesson(), { type: 'swap', first: 0, second: 3 });
+  assert.equal(finishLesson(lesson).hintRevealed, false);
+  lesson = cacheLessonReducer(createCacheLesson(), { type: 'swap', first: 0, second: 1 });
+  lesson = cacheLessonReducer(lesson, { type: 'swap', first: 0, second: 1 });
+  assert.equal(finishLesson(lesson).hintRevealed, false);
+  lesson = cacheLessonReducer(createCacheLesson(), { type: 'swap', first: 0, second: 1 });
+  lesson = cacheLessonReducer(lesson, { type: 'restoreMixed' });
+  assert.equal(finishLesson(lesson).hintRevealed, false);
+});
+
+test('hint examples require reveal, remain labeled assisted through Reset/swaps, and use the unchanged model', () => {
+  let lesson = finishLesson(createCacheLesson());
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  assert.equal(cacheLessonReducer(lesson, { type: 'useHint' }), lesson);
+  lesson = cacheLessonReducer(lesson, { type: 'revealHint' });
+  lesson = cacheLessonReducer(lesson, { type: 'useHint' });
+  assert.equal(lesson.source, 'hint');
+  assert.deepEqual(lesson.simulation.orders, GROUPED_ORDERS);
+  lesson = finishLesson(lesson);
+  assert.equal(lesson.simulation.cycles, 15);
+  assert.equal(lesson.simulation.misses, 3);
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  assert.equal(lesson.source, 'hint');
+  assert.equal(lesson.hintRevealed, true);
+  assert.deepEqual(lesson.simulation, createCacheState(GROUPED_ORDERS));
+  lesson = cacheLessonReducer(lesson, { type: 'swap', first: 0, second: 2 });
+  assert.equal(lesson.source, 'hint');
+  lesson = cacheLessonReducer(lesson, { type: 'restoreMixed' });
+  assert.equal(lesson.source, 'mixed');
+  assert.equal(lesson.hintRevealed, true);
+});
+
+test('lesson controls keep order locked mid-round and a new visit hides the hint', () => {
+  let lesson = finishLesson(createCacheLesson());
+  lesson = cacheLessonReducer(lesson, { type: 'reset' });
+  lesson = cacheLessonReducer(lesson, { type: 'revealHint' });
+  lesson = cacheLessonReducer(lesson, { type: 'run' });
+  for (const type of ['useHint', 'restoreMixed'] as const) assert.equal(cacheLessonReducer(lesson, { type }), lesson);
+  assert.equal(cacheLessonReducer(lesson, { type: 'swap', first: 0, second: 1 }), lesson);
+  lesson = cacheLessonReducer(lesson, { type: 'pause' });
+  assert.equal(cacheLessonReducer(lesson, { type: 'useHint' }), lesson);
+  assert.equal(createCacheLesson().hintRevealed, false);
+  assert.equal(createCacheLesson().hasCompletedRound, false);
+});
 
 test('mixed orders: six misses, 18 waits, six bakes, 24 cycles', () => {
   let state = createCacheState(MIXED_ORDERS);
