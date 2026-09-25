@@ -12,7 +12,7 @@ class TestSimulationPhysics(unittest.TestCase):
         self.tick_rate_ms = 100
         self.initial_battery = 100.0
         self.base_production = 0.1
-        self.base_drain = 0.05
+        self.base_drain = 0.03
         self.min_clock = 1.0
         self.max_clock = 5.0
 
@@ -43,8 +43,8 @@ class TestSimulationPhysics(unittest.TestCase):
         return cakes, ticks
 
     def test_theoretical_max_score(self):
-        """Theoretical maximum cakes should equal exactly 200 units at baseline 1.0 GHz."""
-        self.assertEqual(self.calculate_theoretical_max(), 200)
+        """Theoretical maximum cakes should equal exactly 333 units at baseline 1.0 GHz."""
+        self.assertEqual(self.calculate_theoretical_max(), 333)
 
     def test_heat_boundaries(self):
         """Heat percentage must be strictly 0% at 1.0 GHz and 100% at 5.0 GHz."""
@@ -54,17 +54,17 @@ class TestSimulationPhysics(unittest.TestCase):
     def test_cubic_decay_punishment(self):
         """
         Verify that overclocking reduces total lifetime cakes produced:
-        - 1.0 GHz yields 200 cakes
-        - 2.0 GHz yields 50 cakes (4x reduction)
-        - 5.0 GHz yields 8 cakes (25x reduction)
+        - 1.0 GHz yields 333 cakes
+        - 2.0 GHz yields 83 cakes (4x reduction)
+        - 5.0 GHz yields 13-14 cakes (25x reduction)
         """
         cakes_1ghz, _ = self.simulate_run(1.0)
         cakes_2ghz, _ = self.simulate_run(2.0)
         cakes_5ghz, _ = self.simulate_run(5.0)
 
-        self.assertAlmostEqual(cakes_1ghz, 200, delta=1)
-        self.assertAlmostEqual(cakes_2ghz, 50, delta=1)
-        self.assertAlmostEqual(cakes_5ghz, 8, delta=1)
+        self.assertAlmostEqual(cakes_1ghz, 333, delta=1)
+        self.assertAlmostEqual(cakes_2ghz, 83, delta=1)
+        self.assertAlmostEqual(cakes_5ghz, 14, delta=1)
 
         # Overclocking must always yield fewer cakes overall than baseline
         self.assertGreater(cakes_1ghz, cakes_2ghz)
@@ -80,14 +80,14 @@ class TestSimulationPhysics(unittest.TestCase):
         """
         Demonstrate VLIW energy efficiency over frequency scaling:
         - Both 1.0 GHz VLIW (2 lanes) and 2.0 GHz Scalar (1 lane) produce 0.2 cakes/tick (identical throughput).
-        - But 1.0 GHz VLIW yields 200 total lifetime cakes, whereas 2.0 GHz Scalar yields only 50 cakes!
+        - But 1.0 GHz VLIW yields 333 total lifetime cakes, whereas 2.0 GHz Scalar yields only 83 cakes!
         - VLIW provides a 4x efficiency advantage for the exact same throughput.
         """
         cakes_vliw_1ghz, _ = self.simulate_run(1.0, lanes=2)
         cakes_scalar_2ghz, _ = self.simulate_run(2.0, lanes=1)
 
-        self.assertAlmostEqual(cakes_vliw_1ghz, 200, delta=1)
-        self.assertAlmostEqual(cakes_scalar_2ghz, 50, delta=1)
+        self.assertAlmostEqual(cakes_vliw_1ghz, 333, delta=1)
+        self.assertAlmostEqual(cakes_scalar_2ghz, 83, delta=1)
         self.assertAlmostEqual(cakes_vliw_1ghz / cakes_scalar_2ghz, 4.0, places=1)
 
 

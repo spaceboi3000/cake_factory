@@ -19,8 +19,8 @@ const INITIAL_BATTERY = 100.0; // Battery starts at 100.0%
 // At 1.0 GHz: 0.1 cakes/tick -> 1.0 cake/sec
 const BASE_PRODUCTION = 0.1;
 
-// At 1.0 GHz: 0.05% battery/tick -> 0.5% battery/sec -> 200s total runtime
-const BASE_DRAIN = 0.05;
+// At 1.0 GHz: 0.03% battery/tick -> 0.3% battery/sec -> 333s total runtime
+const BASE_DRAIN = 0.03;
 
 // Clock speed range boundaries
 const MIN_CLOCK = 1.0;
@@ -54,8 +54,8 @@ export function useFactorySimulation(inputClockSpeed: number, vliwEnabled: boole
   }, [inputClockSpeed, vliwEnabled]);
 
   // Theoretical maximum cakes: score if operated strictly at optimal 1.0 GHz efficiency.
-  // Lifetime ticks at 1.0 GHz = INITIAL_BATTERY / (BASE_DRAIN * 1.0^3) = 100 / 0.05 = 2000 ticks.
-  // Maximum cakes = 2000 ticks * (BASE_PRODUCTION * 1.0) = 200 cakes.
+  // Lifetime ticks at 1.0 GHz = INITIAL_BATTERY / (BASE_DRAIN * 1.0^3) = 100 / 0.03 = 3333.3 ticks.
+  // Maximum cakes = 3333.3 ticks * (BASE_PRODUCTION * 1.0) = 333 cakes.
   const theoreticalMaxCakes = useMemo(() => {
     const totalTicksAtBase = INITIAL_BATTERY / (BASE_DRAIN * Math.pow(MIN_CLOCK, 3));
     return Math.floor(totalTicksAtBase * (BASE_PRODUCTION * MIN_CLOCK));

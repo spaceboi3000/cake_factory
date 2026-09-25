@@ -233,7 +233,7 @@
           <div class="w-full flex flex-col items-center gap-1.5 border-t border-purple-100 pt-2 font-mono">
             <div class="w-full bg-purple-50/90 border border-purple-200 rounded-xl py-1 px-1 text-center">
               <span class="text-[8px] text-purple-700 font-bold block uppercase leading-none mb-0.5">DRAIN</span>
-              <span id="drainRate" class="text-slate-800 font-black text-[10px] block leading-none">0.50%/s</span>
+              <span id="drainRate" class="text-slate-800 font-black text-[10px] block leading-none">0.30%/s</span>
             </div>
             <span class="text-[9px] text-rose-600 font-black text-center leading-none">P ∝ f³</span>
           </div>
@@ -255,7 +255,7 @@
           <div class="border-t border-pink-100 pt-3 flex flex-col gap-1">
             <div class="flex justify-between text-xs font-mono">
               <span class="text-slate-600 font-medium">Optimal Yield (1.0 GHz):</span>
-              <span class="text-emerald-600 font-bold">200 units</span>
+              <span class="text-emerald-600 font-bold">333 units</span>
             </div>
             <p class="text-[11px] text-slate-500 leading-snug">
               Operating above 1.0 GHz reduces total yield due to cubic energy decay.
@@ -1364,9 +1364,9 @@
     // SIMULATION STATE & CONSTANTS
     // -------------------------------------------------------------------------
     const BASE_PRODUCTION = 0.1;
-    const BASE_DRAIN = 0.05;
+    const BASE_DRAIN = 0.03;
     const TICK_INTERVAL = 100; // ms
-    const THEORETICAL_MAX = 200;
+    const THEORETICAL_MAX = 333;
 
     let cakes = 0;
     let battery = 100.0;
@@ -1417,7 +1417,7 @@
       battery -= drain;
 
       // Update drain rate display (%/sec = drain per tick * 10)
-      drainRateEl.textContent = (drain * 10).toFixed(2) + ' %/sec';
+      drainRateEl.textContent = (drain * 10).toFixed(2) + '%/s';
 
       if (battery <= 0) {
         battery = 0;

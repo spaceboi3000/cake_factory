@@ -282,7 +282,7 @@ export default function FactoryDashboard() {
                     <div className="w-full bg-purple-50/90 border border-purple-200 rounded-xl py-1 px-1 text-center">
                       <span className="text-[8px] text-purple-700 font-bold block uppercase leading-none mb-0.5">DRAIN</span>
                       <span className="text-slate-800 font-black text-[10px] block leading-none">
-                        {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)}%/s
+                        {(0.03 * Math.pow(effectiveClockSpeed, 3) * (vliwEnabled ? 2 : 1) * 10).toFixed(2)}%/s
                       </span>
                     </div>
                     <span className="text-[9px] text-rose-600 font-black text-center leading-none">P ∝ f³</span>
