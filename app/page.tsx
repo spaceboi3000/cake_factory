@@ -214,15 +214,166 @@ export default function FactoryDashboard() {
 
           {/* Active Factory Window Component */}
           {activeWindow === 'dvfs' ? (
-            /* Window 1: DVFS & VLIW Conveyor */
-            <ConveyorBelt
-              clockSpeed={effectiveClockSpeed}
-              powerHeat={powerHeat}
-              isDead={isDead}
-              onSetSpeed={(s) => setManualClockSpeed(s)}
-              vliwEnabled={vliwEnabled}
-              onToggleVliw={setVliwEnabled}
-            />
+            /* Window 1: DVFS & VLIW Factory with Sidebar Layout */
+            <div className="flex flex-col gap-6">
+              {/* Main Stage Grid: Factory Screen on Left + Sidebar on Right */}
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-6 items-start">
+                {/* Left: Conveyor Screen */}
+                <div className="w-full">
+                  <ConveyorBelt
+                    clockSpeed={effectiveClockSpeed}
+                    powerHeat={powerHeat}
+                    isDead={isDead}
+                    onSetSpeed={(s) => setManualClockSpeed(s)}
+                    vliwEnabled={vliwEnabled}
+                    onToggleVliw={setVliwEnabled}
+                  />
+                </div>
+
+                {/* Right: Sidebar (Factory Instrumentation & Power Cell) */}
+                <aside className="w-full bg-white/90 backdrop-blur-md border-3 border-purple-200 rounded-3xl p-5 shadow-2xl flex flex-col gap-4">
+                  <div className="flex items-center justify-between border-b border-purple-100 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">📊</span>
+                      <h2 className="text-sm font-black text-purple-950 uppercase tracking-tight font-mono">
+                        Factory Instrumentation
+                      </h2>
+                    </div>
+                    <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+                      LIVE
+                    </span>
+                  </div>
+
+                  {/* Battery Reserve (Power Cell Remaining) with Battery Shape */}
+                  <div className="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-purple-900 font-bold tracking-wider flex items-center gap-1.5">
+                        <span>🔋</span> POWER CELL
+                      </span>
+                      <span className={`font-black text-sm ${battery < 20 ? 'text-rose-600 animate-pulse' : 'text-slate-800'}`}>
+                        {battery.toFixed(1)}%
+                      </span>
+                    </div>
+
+                    {/* Battery-Shaped Progress Bar Gauge */}
+                    <div className="flex items-center gap-1.5 my-1">
+                      {/* Battery Outer Housing */}
+                      <div className="relative flex-1 h-11 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex items-center">
+                        <div
+                          className={`h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden ${
+                            battery > 50
+                              ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]'
+                              : battery > 20
+                              ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
+                              : 'bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]'
+                          }`}
+                          style={{ width: `${Math.max(0, battery)}%` }}
+                        >
+                          <span className="text-[11px] font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+                        </div>
+                        {/* Glass Specular Reflection Sheen */}
+                        <div className="absolute inset-x-2 top-0.5 h-3 bg-gradient-to-b from-white/35 to-transparent rounded-t-lg pointer-events-none z-20" />
+                        {/* 5 Battery Level Segment Ticks */}
+                        <div className="absolute inset-0 grid grid-cols-5 pointer-events-none z-10 divide-x-2 divide-slate-800/50">
+                          <div /><div /><div /><div /><div />
+                        </div>
+                      </div>
+                      {/* Battery Positive Terminal Nub (+) */}
+                      <div className="w-2.5 h-5 bg-gradient-to-r from-slate-400 to-slate-300 border-2 border-l-0 border-slate-600 rounded-r-md shadow-sm" />
+                    </div>
+
+                    <div className="border-t border-purple-100 pt-2 flex justify-between items-center text-[11px] font-mono text-slate-600">
+                      <span className="font-medium">Drain Rate:</span>
+                      <span className="text-slate-800 font-bold">
+                        {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)} %/sec
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Production Output Card */}
+                  <div className="bg-gradient-to-br from-pink-50/90 to-purple-50/80 border-2 border-pink-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+                    <span className="text-xs font-mono font-bold text-pink-700 tracking-wider">TOTAL CAKES PRODUCED</span>
+                    <div className="my-2 flex items-baseline gap-2">
+                      <span className="text-4xl font-black tracking-tight text-slate-800 font-mono">
+                        {Math.floor(cakes).toLocaleString()}
+                      </span>
+                      <span className="text-purple-600 font-mono font-bold text-sm">cakes</span>
+                    </div>
+                    <div className="border-t border-pink-100 pt-2 flex flex-col gap-0.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-600 font-medium">Optimal (1.0 GHz):</span>
+                        <span className="text-emerald-600 font-bold">{theoreticalMaxCakes} units</span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 leading-snug">
+                        Operating above 1.0 GHz reduces total yield due to cubic energy decay.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Operating Frequency (Clock Speed) Card */}
+                  <div className="bg-gradient-to-br from-indigo-50/90 to-purple-50/80 border-2 border-indigo-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-indigo-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
+                      <span className="bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-lg text-[10px] border border-indigo-200">
+                        {isConnected ? 'HARDWARE (ADC0)' : 'MANUAL SLIDER'}
+                      </span>
+                    </div>
+
+                    <div className="my-2 flex items-baseline gap-2">
+                      <span className="text-4xl font-black font-mono text-purple-700">
+                        {effectiveClockSpeed.toFixed(2)}
+                      </span>
+                      <span className="text-slate-500 font-mono text-sm font-bold">GHz</span>
+                    </div>
+
+                    {/* Slider & Presets */}
+                    <div className="flex flex-col gap-1.5 pt-1 border-t border-indigo-100">
+                      <div className="flex justify-between text-[10px] font-mono text-slate-500 font-bold">
+                        <button type="button" onClick={() => setManualClockSpeed(1.0)} className="hover:text-purple-700 underline cursor-pointer">1.0 GHz (Min)</button>
+                        <span>3.0 GHz</span>
+                        <button type="button" onClick={() => setManualClockSpeed(5.0)} className="hover:text-purple-700 underline cursor-pointer">5.0 GHz (Max)</button>
+                      </div>
+                      <input
+                        type="range"
+                        min="1.0"
+                        max="5.0"
+                        step="0.05"
+                        disabled={isConnected}
+                        value={effectiveClockSpeed}
+                        onChange={(e) => setManualClockSpeed(parseFloat(e.target.value))}
+                        className={`w-full accent-purple-600 cursor-pointer ${
+                          isConnected ? 'opacity-40 cursor-not-allowed' : ''
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                </aside>
+              </div>
+
+              {/* DVFS & VLIW Educational Insight Footer (Full Width Below) */}
+              <section className="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 text-xs text-slate-600 flex flex-col md:flex-row gap-6 items-start justify-between shadow-lg">
+                <div className="flex-1">
+                  <h2 className="text-sm font-black text-purple-900 mb-1">
+                    Why did my battery deplete so quickly?
+                  </h2>
+                  <p className="leading-relaxed">
+                    When clock frequency increases from <span className="text-purple-700 font-bold">1.0 GHz</span> to{' '}
+                    <span className="text-purple-700 font-bold">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
+                    However, dynamic power scales with the cube of the frequency:
+                    <span className="text-rose-600 font-mono font-bold ml-1">
+                      (5.0 / 1.0)³ = 125× greater power consumption!
+                    </span>
+                  </p>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto shadow-sm">
+                  <span className="text-purple-600 font-bold">// DVFS & VLIW EQUATIONS</span>
+                  <span className="text-slate-700 font-bold">Throughput = Base × f × (VLIW ? 2 : 1)</span>
+                  <span className="text-rose-600 font-bold">Power = Base × f³ × (VLIW ? 2 : 1)</span>
+                  <span className="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
+                </div>
+              </section>
+            </div>
           ) : activeWindow === 'pipelining' ? (
             /* Window 2: CPU Instruction Pipelining Conveyor */
             <PipeliningConveyor
@@ -231,138 +382,7 @@ export default function FactoryDashboard() {
               hardwareControlled={isConnected}
             />
           ) : <CacheBakery />}
-
-          {/* Scroll Down Hint Banner */}
-          {activeWindow === 'dvfs' && <div className="w-full flex items-center justify-center py-3 bg-purple-100/70 border-2 border-purple-200 rounded-2xl text-purple-800 text-xs font-bold font-mono tracking-wider shadow-sm animate-bounce">
-            ⬇️ SCROLL DOWN TO VIEW POWER CELL, DVFS GAUGES & EQUATIONS ⬇️
-          </div>}
         </section>
-
-        {/* SECTION 2: METRICS DASHBOARD (REQUIRING SCROLLING DOWN) */}
-        {activeWindow === 'dvfs' && <section className="flex flex-col gap-8 pt-6 border-t-4 border-purple-200">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">📊</span>
-            <h2 className="text-2xl font-black text-purple-950 uppercase tracking-tight">
-              Factory Instrumentation & Power Cell
-            </h2>
-          </div>
-
-          {/* Primary Metrics Grid (Exact Gauge Names Kept) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            {/* Production Output Card */}
-            <div className="bg-white/85 backdrop-blur-sm border-2 border-pink-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/50">
-              <span className="text-xs font-mono font-bold text-pink-700 tracking-wider">TOTAL CAKES PRODUCED</span>
-              <div className="my-4">
-                <span className="text-6xl font-black tracking-tight text-slate-800 font-mono">
-                  {Math.floor(cakes).toLocaleString()}
-                </span>
-                <span className="text-purple-600 font-mono font-bold text-sm ml-2">units</span>
-              </div>
-              <div className="border-t border-pink-100 pt-3 flex flex-col gap-1">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-600 font-medium">Optimal (1.0 GHz):</span>
-                  <span className="text-emerald-600 font-bold">{theoreticalMaxCakes} units</span>
-                </div>
-                <p className="text-[11px] text-slate-500 leading-snug">
-                  Operating above 1.0 GHz reduces total yield due to cubic energy decay.
-                </p>
-              </div>
-            </div>
-
-            {/* Battery Reserve Card */}
-            <div className="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-purple-100/50">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-purple-700 font-bold tracking-wider">POWER CELL REMAINING</span>
-                <span className={`font-black ${battery < 20 ? 'text-rose-600 animate-pulse' : 'text-slate-700'}`}>
-                  {battery.toFixed(1)}%
-                </span>
-              </div>
-
-              {/* Battery Progress Bar */}
-              <div className="my-4 w-full h-10 bg-slate-200/80 rounded-2xl overflow-hidden p-1.5 border-2 border-slate-300 flex items-center shadow-inner">
-                <div
-                  className={`h-full rounded-xl transition-all duration-100 ease-linear ${
-                    battery > 50
-                      ? 'bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]'
-                      : battery > 20
-                      ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]'
-                      : 'bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.6)]'
-                  }`}
-                  style={{ width: `${Math.max(0, battery)}%` }}
-                />
-              </div>
-
-              <div className="border-t border-purple-100 pt-3 flex justify-between items-center text-xs font-mono text-slate-600">
-                <span className="font-medium">Drain Rate:</span>
-                <span className="text-slate-800 font-bold">
-                  {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)} %/sec
-                </span>
-              </div>
-            </div>
-
-            {/* Operating Frequency (Clock Speed) Card */}
-            <div className="bg-white/85 backdrop-blur-sm border-2 border-indigo-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-indigo-100/50">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-indigo-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
-                <span className="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-lg text-[11px] border border-indigo-200">
-                  {isConnected ? 'HARDWARE (ADC0)' : 'MANUAL SLIDER'}
-                </span>
-              </div>
-
-              <div className="my-4">
-                <span className="text-5xl font-black font-mono text-purple-700">
-                  {effectiveClockSpeed.toFixed(2)}
-                </span>
-                <span className="text-slate-500 font-mono text-xl ml-2 font-bold">GHz</span>
-              </div>
-
-              {/* Slider Fallback when Hardware is Disconnected */}
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between text-[11px] font-mono text-slate-500 font-bold">
-                  <span>1.0 GHz</span>
-                  <span>3.0 GHz</span>
-                  <span>5.0 GHz</span>
-                </div>
-                <input
-                  type="range"
-                  min="1.0"
-                  max="5.0"
-                  step="0.05"
-                  disabled={isConnected}
-                  value={effectiveClockSpeed}
-                  onChange={(e) => setManualClockSpeed(parseFloat(e.target.value))}
-                  className={`w-full accent-purple-600 cursor-pointer ${
-                    isConnected ? 'opacity-40 cursor-not-allowed' : ''
-                  }`}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* DVFS Educational Insight Footer (Exact Names Kept) */}
-          <section className="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 text-xs text-slate-600 flex flex-col md:flex-row gap-6 items-start justify-between shadow-lg">
-            <div className="flex-1">
-              <h2 className="text-sm font-black text-purple-900 mb-1">
-                Why did my battery deplete so quickly?
-              </h2>
-              <p className="leading-relaxed">
-                When clock frequency increases from <span className="text-purple-700 font-bold">1.0 GHz</span> to{' '}
-                <span className="text-purple-700 font-bold">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
-                However, dynamic power scales with the cube of the frequency:
-                <span className="text-rose-600 font-mono font-bold ml-1">
-                  (5.0 / 1.0)³ = 125× greater power consumption!
-                </span>
-              </p>
-            </div>
-            <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 font-mono text-[11px] flex flex-col gap-1 w-full md:w-auto shadow-sm">
-              <span className="text-purple-600 font-bold">// DVFS & VLIW EQUATIONS</span>
-              <span className="text-slate-700 font-bold">Throughput = Base × f × (VLIW ? 2 : 1)</span>
-              <span className="text-rose-600 font-bold">Power = Base × f³ × (VLIW ? 2 : 1)</span>
-              <span className="text-emerald-600 font-bold">Max Yield occurs at min(f)</span>
-            </div>
-          </section>
-        </section>}
       </div>
 
       {/* Game Over Modal Overlay (Exact Names Kept) */}

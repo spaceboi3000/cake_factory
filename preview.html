@@ -66,12 +66,10 @@
     <!-- ================================================================= -->
     <!-- WINDOW 1 CONTAINER: DVFS & VLIW FACTORY                           -->
     <!-- ================================================================= -->
-    <div id="window1Container" class="flex flex-col gap-10">
+    <div id="window1Container" class="flex flex-col gap-6">
 
-      <!-- ================================================================= -->
-      <!-- SECTION 1: MASSIVE GAME SCREEN (REQUIRES SCROLLING DOWN TO VIEW) -->
-      <!-- ================================================================= -->
-      <section class="flex flex-col gap-5 min-h-[92vh] justify-between">
+      <!-- Main Stage Grid: Factory Screen on Left + Sidebar on Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-6 items-start">
 
         <!-- Purble Place Stage Visual Assembly (Enlarged to 680px with Authentic In-Game Background) -->
         <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
@@ -197,94 +195,104 @@
         </div>
       </div>
 
-      <!-- Scroll Down Banner -->
-      <div class="w-full flex items-center justify-center py-3 bg-purple-100/70 border-2 border-purple-200 rounded-2xl text-purple-800 text-xs font-bold font-mono tracking-wider shadow-sm animate-bounce">
-        ⬇️ SCROLL DOWN TO VIEW POWER CELL, DVFS GAUGES & EQUATIONS ⬇️
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- SECTION 2: METRICS DASHBOARD (REQUIRING SCROLLING DOWN)          -->
-    <!-- ================================================================= -->
-    <section class="flex flex-col gap-8 pt-6 border-t-4 border-purple-200">
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">📊</span>
-        <h2 class="text-2xl font-black text-purple-950 uppercase tracking-tight">
-          Factory Instrumentation & Power Cell
-        </h2>
-      </div>
-
-      <!-- Primary Metrics Grid (Exact Gauge Names Kept) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <!-- Total Cakes Produced Card -->
-        <div class="bg-white/85 backdrop-blur-sm border-2 border-pink-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/50">
-          <span class="text-xs font-mono font-bold text-pink-700 tracking-wider">TOTAL CAKES PRODUCED</span>
-          <div class="my-4">
-            <span id="cakeCount" class="text-6xl font-black tracking-tight text-slate-800 font-mono">0</span>
-            <span class="text-purple-600 font-mono font-bold text-sm ml-2">units</span>
-          </div>
-          <div class="border-t border-pink-100 pt-3 flex flex-col gap-1">
-            <div class="flex justify-between text-xs font-mono">
-              <span class="text-slate-600 font-medium">Optimal (1.0 GHz):</span>
-              <span class="text-emerald-600 font-bold">200 units</span>
+        <!-- Right: Sidebar (Factory Instrumentation & Power Cell) -->
+        <aside class="w-full bg-white/90 backdrop-blur-md border-3 border-purple-200 rounded-3xl p-5 shadow-2xl flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-purple-100 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📊</span>
+              <h2 class="text-sm font-black text-purple-950 uppercase tracking-tight font-mono">
+                Factory Instrumentation
+              </h2>
             </div>
-            <p class="text-[11px] text-slate-500 leading-snug">
-              Operating above 1.0 GHz reduces total yield due to cubic energy decay.
-            </p>
-          </div>
-        </div>
-
-        <!-- Battery Reserve Card -->
-        <div class="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-purple-100/50">
-          <div class="flex justify-between items-center text-xs font-mono">
-            <span class="text-purple-700 font-bold tracking-wider">POWER CELL REMAINING</span>
-            <span id="batteryPercent" class="font-black text-slate-700">100.0%</span>
+            <span class="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+              LIVE
+            </span>
           </div>
 
-          <!-- Battery Progress Bar -->
-          <div class="my-4 w-full h-10 bg-slate-200/80 rounded-2xl overflow-hidden p-1.5 border-2 border-slate-300 flex items-center shadow-inner">
-            <div id="batteryBar" class="h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-400 to-teal-400 w-full shadow-[0_0_12px_rgba(52,211,153,0.5)]"></div>
-          </div>
-
-          <div class="border-t border-purple-100 pt-3 flex justify-between items-center text-xs font-mono text-slate-600">
-            <span class="font-medium">Drain Rate:</span>
-            <span id="drainRate" class="text-slate-800 font-bold">0.50 %/sec</span>
-          </div>
-        </div>
-
-        <!-- Frequency (Clock Speed) Card -->
-        <div class="bg-white/85 backdrop-blur-sm border-2 border-indigo-200 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-indigo-100/50">
-          <div class="flex justify-between items-center text-xs font-mono">
-            <span class="text-indigo-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
-            <span id="sourceLabel" class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-lg text-[11px] border border-indigo-200">MANUAL SLIDER</span>
-          </div>
-
-          <div class="my-4">
-            <span id="freqDisplay" class="text-5xl font-black font-mono text-purple-700">1.00</span>
-            <span class="text-slate-500 font-mono text-xl ml-2 font-bold">GHz</span>
-          </div>
-
-          <!-- Manual Slider -->
-          <div class="flex flex-col gap-1">
-            <div class="flex justify-between text-[11px] font-mono text-slate-500 font-bold">
-              <button type="button" id="btnPreset1G" class="hover:text-purple-700 underline cursor-pointer">1.0 GHz (Min)</button>
-              <span>3.0 GHz</span>
-              <button type="button" id="btnPreset5G" class="hover:text-purple-700 underline cursor-pointer">5.0 GHz (Max)</button>
+          <!-- Battery Reserve (Power Cell Remaining) with Battery Shape -->
+          <div class="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-purple-900 font-bold tracking-wider flex items-center gap-1.5">
+                <span>🔋</span> POWER CELL
+              </span>
+              <span id="batteryPercent" class="font-black text-slate-800 text-sm">100.0%</span>
             </div>
-            <input id="sliderFreq" type="range" min="1.0" max="5.0" step="0.05" value="1.00" class="w-full accent-purple-600 cursor-pointer">
+
+            <!-- Battery-Shaped Progress Bar Gauge -->
+            <div class="flex items-center gap-1.5 my-1">
+              <!-- Battery Outer Housing -->
+              <div class="relative flex-1 h-11 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex items-center">
+                <div id="batteryBar" class="h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]" style="width: 100%;">
+                  <span class="text-[11px] font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+                </div>
+                <!-- Glass Specular Reflection Sheen -->
+                <div class="absolute inset-x-2 top-0.5 h-3 bg-gradient-to-b from-white/35 to-transparent rounded-t-lg pointer-events-none z-20"></div>
+                <!-- 5 Battery Level Segment Ticks -->
+                <div class="absolute inset-0 grid grid-cols-5 pointer-events-none z-10 divide-x-2 divide-slate-800/50">
+                  <div></div><div></div><div></div><div></div><div></div>
+                </div>
+              </div>
+              <!-- Battery Positive Terminal Nub (+) -->
+              <div class="w-2.5 h-5 bg-gradient-to-r from-slate-400 to-slate-300 border-2 border-l-0 border-slate-600 rounded-r-md shadow-sm"></div>
+            </div>
+
+            <div class="border-t border-purple-100 pt-2 flex justify-between items-center text-[11px] font-mono text-slate-600">
+              <span class="font-medium">Drain Rate:</span>
+              <span id="drainRate" class="text-slate-800 font-bold">0.50 %/sec</span>
+            </div>
           </div>
-        </div>
+
+          <!-- Production Output Card -->
+          <div class="bg-gradient-to-br from-pink-50/90 to-purple-50/80 border-2 border-pink-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+            <span class="text-xs font-mono font-bold text-pink-700 tracking-wider">TOTAL CAKES PRODUCED</span>
+            <div class="my-2 flex items-baseline gap-2">
+              <span id="cakeCount" class="text-4xl font-black tracking-tight text-slate-800 font-mono">0</span>
+              <span class="text-purple-600 font-mono font-bold text-sm">cakes</span>
+            </div>
+            <div class="border-t border-pink-100 pt-2 flex flex-col gap-0.5">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="text-slate-600 font-medium">Optimal (1.0 GHz):</span>
+                <span class="text-emerald-600 font-bold">200 units</span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-snug">
+                Operating above 1.0 GHz reduces total yield due to cubic energy decay.
+              </p>
+            </div>
+          </div>
+
+          <!-- Operating Frequency (Clock Speed) Card -->
+          <div class="bg-gradient-to-br from-indigo-50/90 to-purple-50/80 border-2 border-indigo-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-indigo-700 font-bold tracking-wider">PROCESSOR CLOCK (f)</span>
+              <span id="sourceLabel" class="bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-lg text-[10px] border border-indigo-200">MANUAL SLIDER</span>
+            </div>
+
+            <div class="my-2 flex items-baseline gap-2">
+              <span id="freqDisplay" class="text-4xl font-black font-mono text-purple-700">1.00</span>
+              <span class="text-slate-500 font-mono text-sm font-bold">GHz</span>
+            </div>
+
+            <!-- Slider & Presets -->
+            <div class="flex flex-col gap-1.5 pt-1 border-t border-indigo-100">
+              <div class="flex justify-between text-[10px] font-mono text-slate-500 font-bold">
+                <button type="button" id="btnPreset1G" class="hover:text-purple-700 underline cursor-pointer">1.0 GHz (Min)</button>
+                <span>3.0 GHz</span>
+                <button type="button" id="btnPreset5G" class="hover:text-purple-700 underline cursor-pointer">5.0 GHz (Max)</button>
+              </div>
+              <input id="sliderFreq" type="range" min="1.0" max="5.0" step="0.05" value="1.00" class="w-full accent-purple-600 cursor-pointer">
+            </div>
+          </div>
+        </aside>
       </div>
 
-      <!-- DVFS Educational Insight Footer (Exact Names Kept) -->
+      <!-- DVFS Educational Insight Footer (Full Width Below) -->
       <section class="bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-6 text-xs text-slate-600 flex flex-col md:flex-row gap-6 items-start justify-between shadow-lg">
         <div class="flex-1">
           <h2 class="text-sm font-black text-purple-900 mb-1">
             Why did my battery deplete so quickly?
           </h2>
-          <p className="leading-relaxed">
-            When clock frequency increases from <span class="text-purple-700 font-bold">1.0 GHz</span> to{' '}
+          <p class="leading-relaxed">
+            When clock frequency increases from <span class="text-purple-700 font-bold">1.0 GHz</span> to
             <span class="text-purple-700 font-bold">5.0 GHz</span> (a 5× increase), cake throughput only increases 5×.
             However, dynamic power scales with the cube of the frequency:
             <span class="text-rose-600 font-mono font-bold ml-1">
@@ -1393,14 +1401,14 @@
       batteryBarEl.style.width = Math.max(0, battery) + '%';
 
       if (battery > 50) {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
-        batteryPercentEl.className = 'font-black text-slate-700';
+        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
+        batteryPercentEl.className = 'font-black text-slate-800 text-sm';
       } else if (battery > 20) {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]';
-        batteryPercentEl.className = 'font-black text-amber-700';
+        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]';
+        batteryPercentEl.className = 'font-black text-amber-700 text-sm';
       } else {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.6)]';
-        batteryPercentEl.className = 'font-black text-rose-600 animate-pulse';
+        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]';
+        batteryPercentEl.className = 'font-black text-rose-600 text-sm animate-pulse';
       }
     }, TICK_INTERVAL);
 
@@ -1493,7 +1501,7 @@
       cakeCountEl.textContent = '0';
       batteryPercentEl.textContent = '100.0%';
       batteryBarEl.style.width = '100%';
-      batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
+      batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
       gameOverModalEl.classList.add('hidden');
 
       const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;
