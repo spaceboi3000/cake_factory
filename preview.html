@@ -16,7 +16,7 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-[#ffe4e6] via-[#fef3c7]/30 to-[#f3e8ff] text-slate-800 antialiased p-4 md:p-8 min-h-screen flex flex-col items-center justify-start select-none font-sans">
-  <div class="w-full max-w-[96vw] 2xl:max-w-[1760px] flex flex-col gap-8">
+  <div class="w-full max-w-[1440px] mx-auto flex flex-col gap-8">
 
     <!-- Top Header -->
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-purple-200">
@@ -90,8 +90,8 @@
           </div>
         </div>
 
-        <!-- Purble Place Large Stage View (Authentic In-Game Background) -->
-        <div id="bakeryStage" class="relative w-full h-[540px] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
+        <!-- Purble Place Large Stage View (Authentic In-Game Background with 1200:744 Aspect Ratio) -->
+        <div id="bakeryStage" class="relative w-full aspect-[1200/744] rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
 
           <!-- Top Zone: Overhead Dispensers (Touching Top), VLIW Toggle & Frequency Badge -->
           <div class="w-full px-8 flex justify-between items-start z-10 select-none">
@@ -317,7 +317,7 @@
     <div id="window2Container" class="hidden flex flex-col gap-8">
 
       <!-- Top Instrumentation & Pipelining Controls Bar -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-5 shadow-xl">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/85 backdrop-blur-sm border-2 border-purple-200 rounded-3xl p-5 shadow-xl max-w-[1024px] mx-auto w-full">
         <div class="flex items-center gap-3">
           <button id="btnTogglePipeline" type="button" class="px-5 py-2.5 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer bg-indigo-600 text-white border-indigo-400 shadow-indigo-500/30 hover:bg-indigo-700">
             <span class="text-base" id="pipeBtnIcon">🔄</span>
@@ -349,7 +349,7 @@
       </div>
 
       <!-- Purble Place Stage Visual Assembly for Window 2 -->
-      <div class="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
+      <div class="w-full max-w-[1024px] mx-auto bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
         <div id="pipeBakeryStage" class="relative w-full h-[440px] rounded-2xl border-4 border-[#c084fc] overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300" style="background-image: url('sprites/purble_background.png');">
 
           <!-- TOP ZONE: Overhead Machines Placement (Centered using exact station offsets) -->
@@ -1345,15 +1345,13 @@
       vliwEnabled = !vliwEnabled;
       if (vliwEnabled) {
         vliwLaneContainer.classList.remove('hidden');
-        bakeryStage.classList.remove('h-[540px]');
-        bakeryStage.classList.add('min-h-[740px]');
+        bakeryStage.classList.add('min-h-[700px]');
         btnToggleVliw.className = 'mt-4 px-4 py-2 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-lg flex items-center gap-2 cursor-pointer bg-purple-600 text-white border-purple-400 shadow-purple-500/30';
         btnToggleVliw.querySelector('span:first-child').textContent = '⚡';
         vliwLabel.textContent = 'VLIW 2nd LANE: ON';
       } else {
         vliwLaneContainer.classList.add('hidden');
-        bakeryStage.classList.remove('min-h-[740px]');
-        bakeryStage.classList.add('h-[540px]');
+        bakeryStage.classList.remove('min-h-[700px]');
         btnToggleVliw.className = 'mt-4 px-4 py-2 rounded-2xl border-2 font-mono font-bold text-xs transition-all shadow-lg flex items-center gap-2 cursor-pointer bg-white/85 text-purple-900 border-purple-300 hover:bg-purple-100';
         btnToggleVliw.querySelector('span:first-child').textContent = '⚙️';
         vliwLabel.textContent = 'VLIW 2nd LANE: OFF';

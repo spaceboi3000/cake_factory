@@ -417,7 +417,7 @@ export default function PipeliningConveyor({
   const machineTheme = getSingleMachineTheme();
 
   return (
-    <div className="w-full bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
+    <div className="w-full max-w-[1024px] mx-auto bg-[#fdf2f8] border-4 border-[#e9d5ff] rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col gap-6 relative">
       {/* Pipelining Instrumentation & Metrics Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-2xl p-4 shadow-sm">
         <div className="flex items-center gap-3">

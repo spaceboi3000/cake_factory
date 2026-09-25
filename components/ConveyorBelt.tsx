@@ -293,7 +293,7 @@ export default function ConveyorBelt({
 
       {/* Bakery Stage: Top dispensers, Conveyor Belt Lane 1, and Replicated Lane 2 if VLIW active */}
       <div
-        className={`relative w-full ${vliwEnabled ? 'min-h-[740px]' : 'h-[520px]'} rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300`}
+        className={`relative w-full aspect-[1200/744] ${vliwEnabled ? 'min-h-[700px]' : ''} rounded-2xl border-4 border-[#c084fc] flex flex-col justify-between overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300`}
         style={{ backgroundImage: `url('/sprites/purble_background.png')` }}
       >
         {/* Top Zone: Overhead Dispensers (Touching Top), VLIW Toggle & Frequency Badge */}

@@ -125,7 +125,7 @@ export default function FactoryDashboard() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#ffe4e6] via-[#fef3c7]/30 to-[#f3e8ff] text-slate-800 p-4 md:p-8 font-sans flex flex-col items-center justify-start relative">
-      <div className="w-full max-w-[96vw] 2xl:max-w-[1760px] flex flex-col gap-8">
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-8">
 
         {/* SECTION 1: PRIMARY BIG GAME SCREEN */}
         <section className="flex flex-col gap-5 min-h-[92vh] justify-between">
