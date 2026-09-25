@@ -41,7 +41,7 @@ export default function ConveyorBelt({
     const rollers = rollersContainer.querySelectorAll<HTMLDivElement>('.roller');
     const cakeEmojis = ['🎂', '🧁', '🍰'];
     const CAKE_SPACING = 110;
-    const NUM_CAKES = 14;
+    const NUM_CAKES = 20;
     let nextPkgNumber = 100;
 
     trackEl.innerHTML = '';
