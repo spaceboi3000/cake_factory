@@ -192,6 +192,7 @@
                 <div class="roller2 w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 relative flex items-center justify-center shadow-md"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
               </div>
             </div>
+          </div>
         </div>
       </div>
 
@@ -209,8 +210,8 @@
             </span>
           </div>
 
-          <!-- Battery Reserve (Power Cell Remaining) with Battery Shape -->
-          <div class="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+          <!-- Battery Reserve (Power Cell Remaining) with Vertical Battery Shape -->
+          <div class="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-3 shadow-sm">
             <div class="flex justify-between items-center text-xs font-mono">
               <span class="text-purple-900 font-bold tracking-wider flex items-center gap-1.5">
                 <span>🔋</span> POWER CELL
@@ -218,27 +219,43 @@
               <span id="batteryPercent" class="font-black text-slate-800 text-sm">100.0%</span>
             </div>
 
-            <!-- Battery-Shaped Progress Bar Gauge -->
-            <div class="flex items-center gap-1.5 my-1">
-              <!-- Battery Outer Housing -->
-              <div class="relative flex-1 h-11 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex items-center">
-                <div id="batteryBar" class="h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]" style="width: 100%;">
-                  <span class="text-[11px] font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+            <!-- Vertical Battery Assembly & Live Stats -->
+            <div class="flex items-center justify-center gap-5 my-1">
+              <!-- Vertical Battery Body -->
+              <div class="flex flex-col items-center">
+                <!-- Positive Terminal Nub (+) on top -->
+                <div class="w-8 h-2.5 bg-gradient-to-t from-slate-400 to-slate-200 border-2 border-b-0 border-slate-600 rounded-t-md shadow-sm"></div>
+                <!-- Battery Outer Housing -->
+                <div class="relative w-20 h-44 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col justify-end">
+                  <div id="batteryBar" class="w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden bg-gradient-to-t from-emerald-500 via-teal-400 to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.6)]" style="height: 100%;">
+                    <span class="text-xs font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+                  </div>
+                  <!-- Glass Specular Reflection Sheen (Vertical left edge) -->
+                  <div class="absolute inset-y-2 left-1 w-2 bg-gradient-to-r from-white/35 to-transparent rounded-l-md pointer-events-none z-20"></div>
+                  <!-- 5 Battery Level Segment Ticks (Horizontal rows) -->
+                  <div class="absolute inset-0 grid grid-rows-5 pointer-events-none z-10 divide-y-2 divide-slate-800/50">
+                    <div></div><div></div><div></div><div></div><div></div>
+                  </div>
                 </div>
-                <!-- Glass Specular Reflection Sheen -->
-                <div class="absolute inset-x-2 top-0.5 h-3 bg-gradient-to-b from-white/35 to-transparent rounded-t-lg pointer-events-none z-20"></div>
-                <!-- 5 Battery Level Segment Ticks -->
-                <div class="absolute inset-0 grid grid-cols-5 pointer-events-none z-10 divide-x-2 divide-slate-800/50">
-                  <div></div><div></div><div></div><div></div><div></div>
+                <!-- Battery Negative Base Indicator (-) -->
+                <div class="w-12 h-1 bg-slate-700 rounded-b-sm mt-0.5 opacity-60"></div>
+              </div>
+
+              <!-- Battery Live Readouts -->
+              <div class="flex flex-col justify-between py-1 gap-2 text-xs font-mono">
+                <div class="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                  <span class="text-[10px] text-purple-700 font-bold block uppercase">Drain Rate</span>
+                  <span id="drainRate" class="text-slate-800 font-black text-sm">0.50 %/sec</span>
+                </div>
+                <div class="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                  <span class="text-[10px] text-purple-700 font-bold block uppercase">Power Scaling</span>
+                  <span class="text-rose-600 font-bold text-xs">P ∝ f³</span>
+                </div>
+                <div class="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                  <span class="text-[10px] text-purple-700 font-bold block uppercase">Optimal f</span>
+                  <span class="text-emerald-700 font-bold text-xs">1.00 GHz</span>
                 </div>
               </div>
-              <!-- Battery Positive Terminal Nub (+) -->
-              <div class="w-2.5 h-5 bg-gradient-to-r from-slate-400 to-slate-300 border-2 border-l-0 border-slate-600 rounded-r-md shadow-sm"></div>
-            </div>
-
-            <div class="border-t border-purple-100 pt-2 flex justify-between items-center text-[11px] font-mono text-slate-600">
-              <span class="font-medium">Drain Rate:</span>
-              <span id="drainRate" class="text-slate-800 font-bold">0.50 %/sec</span>
             </div>
           </div>
 
@@ -1396,18 +1413,18 @@
         handleGameOver();
       }
 
-      // Update Battery Bar with smooth linear duration
+      // Update Battery Bar with smooth linear duration (vertical fill: height)
       batteryPercentEl.textContent = battery.toFixed(1) + '%';
-      batteryBarEl.style.width = Math.max(0, battery) + '%';
+      batteryBarEl.style.height = Math.max(0, battery) + '%';
 
       if (battery > 50) {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
+        batteryBarEl.className = 'w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden bg-gradient-to-t from-emerald-500 via-teal-400 to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
         batteryPercentEl.className = 'font-black text-slate-800 text-sm';
       } else if (battery > 20) {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]';
+        batteryBarEl.className = 'w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-300 shadow-[0_0_15px_rgba(251,191,36,0.6)]';
         batteryPercentEl.className = 'font-black text-amber-700 text-sm';
       } else {
-        batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]';
+        batteryBarEl.className = 'w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden bg-gradient-to-t from-red-600 to-rose-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]';
         batteryPercentEl.className = 'font-black text-rose-600 text-sm animate-pulse';
       }
     }, TICK_INTERVAL);
@@ -1500,8 +1517,8 @@
       isDead = false;
       cakeCountEl.textContent = '0';
       batteryPercentEl.textContent = '100.0%';
-      batteryBarEl.style.width = '100%';
-      batteryBarEl.className = 'h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
+      batteryBarEl.style.height = '100%';
+      batteryBarEl.className = 'w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden bg-gradient-to-t from-emerald-500 via-teal-400 to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
       gameOverModalEl.classList.add('hidden');
 
       const effectiveSpeed = isConnected && hardwareSpeed !== null ? hardwareSpeed : clockSpeed;

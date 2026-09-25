@@ -244,8 +244,8 @@ export default function FactoryDashboard() {
                     </span>
                   </div>
 
-                  {/* Battery Reserve (Power Cell Remaining) with Battery Shape */}
-                  <div className="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+                  {/* Battery Reserve (Power Cell Remaining) with Vertical Battery Shape */}
+                  <div className="bg-gradient-to-br from-purple-50/90 to-pink-50/80 border-2 border-purple-200 rounded-2xl p-4 flex flex-col gap-3 shadow-sm">
                     <div className="flex justify-between items-center text-xs font-mono">
                       <span className="text-purple-900 font-bold tracking-wider flex items-center gap-1.5">
                         <span>🔋</span> POWER CELL
@@ -255,38 +255,54 @@ export default function FactoryDashboard() {
                       </span>
                     </div>
 
-                    {/* Battery-Shaped Progress Bar Gauge */}
-                    <div className="flex items-center gap-1.5 my-1">
-                      {/* Battery Outer Housing */}
-                      <div className="relative flex-1 h-11 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex items-center">
-                        <div
-                          className={`h-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-end pr-2 relative overflow-hidden ${
-                            battery > 50
-                              ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_15px_rgba(52,211,153,0.6)]'
-                              : battery > 20
-                              ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
-                              : 'bg-gradient-to-r from-rose-500 to-red-600 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]'
-                          }`}
-                          style={{ width: `${Math.max(0, battery)}%` }}
-                        >
-                          <span className="text-[11px] font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+                    {/* Vertical Battery Assembly & Side Stats */}
+                    <div className="flex items-center justify-center gap-5 my-1">
+                      {/* Vertical Battery Body */}
+                      <div className="flex flex-col items-center">
+                        {/* Positive Terminal Nub (+) on top */}
+                        <div className="w-8 h-2.5 bg-gradient-to-t from-slate-400 to-slate-200 border-2 border-b-0 border-slate-600 rounded-t-md shadow-sm" />
+                        {/* Battery Outer Housing */}
+                        <div className="relative w-20 h-44 bg-slate-900/95 border-3 border-slate-700 rounded-2xl p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col justify-end">
+                          <div
+                            className={`w-full rounded-xl transition-all duration-100 ease-linear flex items-center justify-center relative overflow-hidden ${
+                              battery > 50
+                                ? 'bg-gradient-to-t from-emerald-500 via-teal-400 to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.6)]'
+                                : battery > 20
+                                ? 'bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-300 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
+                                : 'bg-gradient-to-t from-red-600 to-rose-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]'
+                            }`}
+                            style={{ height: `${Math.max(0, battery)}%` }}
+                          >
+                            <span className="text-xs font-black text-slate-900 font-mono select-none drop-shadow-sm relative z-10">⚡</span>
+                          </div>
+                          {/* Glass Specular Reflection Sheen (Vertical left edge) */}
+                          <div className="absolute inset-y-2 left-1 w-2 bg-gradient-to-r from-white/35 to-transparent rounded-l-md pointer-events-none z-20" />
+                          {/* 5 Battery Level Segment Ticks (Horizontal rows) */}
+                          <div className="absolute inset-0 grid grid-rows-5 pointer-events-none z-10 divide-y-2 divide-slate-800/50">
+                            <div /><div /><div /><div /><div />
+                          </div>
                         </div>
-                        {/* Glass Specular Reflection Sheen */}
-                        <div className="absolute inset-x-2 top-0.5 h-3 bg-gradient-to-b from-white/35 to-transparent rounded-t-lg pointer-events-none z-20" />
-                        {/* 5 Battery Level Segment Ticks */}
-                        <div className="absolute inset-0 grid grid-cols-5 pointer-events-none z-10 divide-x-2 divide-slate-800/50">
-                          <div /><div /><div /><div /><div />
+                        {/* Battery Negative Base Indicator (-) */}
+                        <div className="w-12 h-1 bg-slate-700 rounded-b-sm mt-0.5 opacity-60" />
+                      </div>
+
+                      {/* Battery Live Readouts */}
+                      <div className="flex flex-col justify-between py-1 gap-2 text-xs font-mono">
+                        <div className="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                          <span className="text-[10px] text-purple-700 font-bold block uppercase">Drain Rate</span>
+                          <span className="text-slate-800 font-black text-sm">
+                            {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)} %/sec
+                          </span>
+                        </div>
+                        <div className="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                          <span className="text-[10px] text-purple-700 font-bold block uppercase">Power Scaling</span>
+                          <span className="text-rose-600 font-bold text-xs">P ∝ f³</span>
+                        </div>
+                        <div className="bg-white/80 border border-purple-200 rounded-xl p-2.5 shadow-xs">
+                          <span className="text-[10px] text-purple-700 font-bold block uppercase">Optimal f</span>
+                          <span className="text-emerald-700 font-bold text-xs">1.00 GHz</span>
                         </div>
                       </div>
-                      {/* Battery Positive Terminal Nub (+) */}
-                      <div className="w-2.5 h-5 bg-gradient-to-r from-slate-400 to-slate-300 border-2 border-l-0 border-slate-600 rounded-r-md shadow-sm" />
-                    </div>
-
-                    <div className="border-t border-purple-100 pt-2 flex justify-between items-center text-[11px] font-mono text-slate-600">
-                      <span className="font-medium">Drain Rate:</span>
-                      <span className="text-slate-800 font-bold">
-                        {(0.05 * Math.pow(effectiveClockSpeed, 3) * 10).toFixed(2)} %/sec
-                      </span>
                     </div>
                   </div>
 
